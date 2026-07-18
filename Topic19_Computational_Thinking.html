@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topic 19: Computational Thinking and Problem-solving — Cambridge 9618</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #080c18;
+    color: #e0e8f0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+  .presentation { position: relative; width: 100vw; height: 100vh; }
+  .slide {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none;
+    flex-direction: column;
+    padding: 36px 50px;
+    background: linear-gradient(135deg, #0a0e1e 0%, #101838 50%, #0a0e1e 100%);
+    overflow-y: auto;
+  }
+  .slide.active { display: flex; }
+  .slide::-webkit-scrollbar { width: 6px; }
+  .slide::-webkit-scrollbar-track { background: #0a0e1e; }
+  .slide::-webkit-scrollbar-thumb { background: #1a5a6a; border-radius: 3px; }
+  h1 { font-size: 2.4rem; font-weight: 700; color: #f0f6ff; margin-bottom: 8px; letter-spacing: -0.5px; }
+  h2 { font-size: 1.6rem; font-weight: 600; color: #b8d4ff; margin-bottom: 6px; border-bottom: 2px solid #1a7a6a; padding-bottom: 4px; }
+  h3 { font-size: 1.2rem; font-weight: 600; color: #8bb8ff; margin-bottom: 5px; }
+  h4 { font-size: 1rem; font-weight: 600; color: #5ae0c0; margin-bottom: 4px; }
+  p, li { font-size: 1rem; line-height: 1.5; color: #d0dcec; margin-bottom: 4px; }
+  ul { padding-left: 20px; margin-bottom: 6px; }
+  li { margin-bottom: 2px; }
+  strong { color: #e8f0ff; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 0.88rem; }
+  th { background: #0e2840; color: #5ae0c0; font-weight: 600; padding: 7px 10px; text-align: left; border: 1px solid #1a5a6a; }
+  td { padding: 6px 10px; border: 1px solid #1a3a4a; color: #c8d8ec; }
+  tr:nth-child(even) td { background: #0a0e1e; }
+  tr:nth-child(odd) td { background: #0e1428; }
+  .code-block { font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; background: #080c18; border: 1px solid #1a5a6a; border-radius: 8px; padding: 10px 14px; font-size: 0.82rem; line-height: 1.5; color: #d4e4ff; overflow-x: auto; margin: 6px 0; white-space: pre; }
+  .inline-code { font-family: 'Cascadia Code', 'Consolas', monospace; background: #080c18; color: #5ae0c0; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; border: 1px solid #1a5a6a; }
+  .flex-row { display: flex; flex-direction: row; gap: 16px; }
+  .flex-col { display: flex; flex-direction: column; gap: 6px; }
+  .flex-1 { flex: 1; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
+  .mt-6 { margin-top: 6px; } .mt-8 { margin-top: 8px; } .mt-10 { margin-top: 10px; } .mt-12 { margin-top: 12px; }
+  .mb-6 { margin-bottom: 6px; } .mb-8 { margin-bottom: 8px; } .mb-10 { margin-bottom: 10px; }
+  .text-center { text-align: center; }
+  .card { background: #0a0e1e; border: 1px solid #1a5a6a; border-radius: 10px; padding: 10px 12px; transition: border-color 0.2s; }
+  .card:hover { border-color: #2ac8a0; }
+  .card h4 { color: #5ae0c0; margin-bottom: 3px; }
+  .diagram-box { background: #080c18; border: 1px solid #1a5a6a; border-radius: 10px; padding: 12px; margin: 8px 0; display: flex; flex-direction: column; align-items: center; }
+  .diagram-box svg { max-width: 100%; height: auto; }
+  .diagram-caption { margin-top: 5px; font-size: 0.78rem; color: #7ab8a8; font-style: italic; text-align: center; }
+  .callout { background: #0a0e1e; border-left: 4px solid #f78c6c; padding: 8px 12px; border-radius: 0 6px 6px 0; margin: 5px 0; font-size: 0.9rem; }
+  .callout.info { border-left-color: #2ac8a0; }
+  .callout.warn { border-left-color: #f78c6c; }
+  .callout.success { border-left-color: #8bc34a; }
+  .section-badge { display: inline-block; background: linear-gradient(135deg, #0a2840, #1a5a6a); color: #5ae0c0; padding: 3px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; margin-bottom: 6px; letter-spacing: 0.5px; text-transform: uppercase; border: 1px solid #2a9a8a; }
+  .objectives-list { list-style: none; padding: 0; }
+  .objectives-list li { padding: 6px 10px 6px 30px; background: #080c18; border-left: 3px solid #2ac8a0; margin-bottom: 6px; border-radius: 0 6px 6px 0; position: relative; }
+  .objectives-list li::before { content: "\25B8"; position: absolute; left: 10px; color: #2ac8a0; font-weight: bold; }
+  .worked-example { background: linear-gradient(135deg, #0c1a20, #0e2828); border: 1px solid #2a9a8a; border-radius: 10px; padding: 12px 16px; margin: 6px 0; }
+  .worked-example h4 { color: #f78c6c; margin-bottom: 5px; }
+  .key-term-box { background: linear-gradient(135deg, #1a0a2e, #2a0a4a); border: 1px solid #6a3aaa; border-radius: 10px; padding: 10px 14px; margin: 6px 0; }
+  .key-term-box h4 { color: #b080f0; } .key-term-box h4::before { content: "\1F511 "; }
+  .exam-tip-box { background: linear-gradient(135deg, #1a1a0a, #2a2a0a); border: 1px solid #c8a020; border-radius: 10px; padding: 8px 14px; margin: 6px 0; }
+  .exam-tip-box h4 { color: #f0c040; } .exam-tip-box h4::before { content: "\1F4A1 "; }
+  .common-mistake-box { background: linear-gradient(135deg, #2a0a0a, #3a1a0a); border: 1px solid #c04040; border-radius: 10px; padding: 8px 14px; margin: 6px 0; }
+  .common-mistake-box h4 { color: #e06060; } .common-mistake-box h4::before { content: "\26A0 "; }
+  .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 8px 20px; background: rgba(8,12,24,0.94); backdrop-filter: blur(10px); border-top: 1px solid #1a3a4a; z-index: 100; }
+  .nav-bar button { background: #0e2840; border: 1px solid #1a5a6a; color: #5ae0c0; padding: 6px 16px; border-radius: 6px; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+  .nav-bar button:hover { background: #1a5a6a; }
+  .nav-bar button:disabled { opacity: 0.35; cursor: default; }
+  .nav-bar .slide-counter { color: #7ab8a8; font-size: 0.82rem; min-width: 80px; text-align: center; }
+  .nav-bar .progress-dots { display: flex; gap: 3px; flex-wrap: wrap; max-width: 400px; justify-content: center; }
+  .nav-bar .dot { width: 6px; height: 6px; border-radius: 50%; background: #1a3a4a; border: none; cursor: pointer; padding: 0; transition: background 0.2s; }
+  .nav-bar .dot.active { background: #2ac8a0; }
+  .nav-bar .dot:hover { background: #3aaa7a; }
+  .kbd-hint { position: fixed; bottom: 52px; right: 16px; color: #2a5a5a; font-size: 0.7rem; z-index: 90; }
+  .chip-group { display: flex; gap: 6px; flex-wrap: wrap; margin: 5px 0; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; background: #080c18; border: 1px solid #1a5a6a; border-radius: 20px; padding: 3px 10px; font-size: 0.78rem; color: #5ae0c0; }
+  .tag { display: inline-block; background: #0e2840; color: #5ae0c0; padding: 2px 10px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; border: 1px solid #1a5a6a; margin-right: 3px; }
+  .trace-table td { font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 0.8rem; }
+  @media (max-width: 900px) { .slide { padding: 20px 18px; } h1 { font-size: 1.6rem; } h2 { font-size: 1.2rem; } h3 { font-size: 1rem; } .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } .flex-row { flex-direction: column; } .nav-bar .progress-dots { max-width: 200px; } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .slide.active > * { animation: fadeIn 0.35s ease-out; }
+</style>
+</head>
+<body>
+<div class="presentation" id="presentation"></div>
+<div class="nav-bar">
+  <button id="prevBtn" onclick="changeSlide(-1)">&#9664; Prev</button>
+  <span class="slide-counter" id="slideCounter">1 / 1</span>
+  <div class="progress-dots" id="progressDots"></div>
+  <button id="nextBtn" onclick="changeSlide(1)">Next &#9654;</button>
+</div>
+<div class="kbd-hint">&#8592; &#8594; arrow keys to navigate</div>
+<script>
+const slides = [];
+function addSlide(html) { slides.push(html); }
+function renderSlides() {
+  const container = document.getElementById('presentation');
+  slides.forEach((html, i) => {
+    const div = document.createElement('div');
+    div.className = 'slide' + (i === 0 ? ' active' : '');
+    div.dataset.slide = i + 1;
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+  renderDots();
+  updateNav();
+}
+function renderDots() {
+  const dots = document.getElementById('progressDots');
+  if (!dots) return;
+  dots.innerHTML = '';
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'dot' + (i === currentSlide ? ' active' : '');
+    dot.onclick = () => goToSlide(i);
+    dots.appendChild(dot);
+  });
+}
+let currentSlide = 0;
+function changeSlide(dir) {
+  const next = currentSlide + dir;
+  if (next < 0 || next >= slides.length) return;
+  goToSlide(next);
+}
+function goToSlide(idx) {
+  const all = document.querySelectorAll('.slide');
+  all.forEach(s => s.classList.remove('active'));
+  all[idx].classList.add('active');
+  currentSlide = idx;
+  const counter = document.getElementById('slideCounter');
+  if (counter) counter.textContent = (idx + 1) + ' / ' + slides.length;
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === slides.length - 1;
+  renderDots();
+  all[idx].scrollTop = 0;
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+});
+function updateNav() {
+  const counter = document.getElementById('slideCounter');
+  if (counter) counter.textContent = '1 / ' + slides.length;
+  document.getElementById('prevBtn').disabled = true;
+  if (slides.length <= 1) document.getElementById('nextBtn').disabled = true;
+}
+// SLIDES START HERE
+
+// ==================================================================
+// SLIDE 1 – TITLE SLIDE
+// ==================================================================
+addSlide(`
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+    <div class="section-badge" style="margin-bottom:14px;">Cambridge International AS &amp; A Level — 9618</div>
+    <h1 style="font-size:3rem; margin-bottom:6px;">Topic 19</h1>
+    <h1 style="font-size:2.6rem; margin-bottom:8px; color:#5ae0c0;">Computational Thinking<br>and Problem-solving</h1>
+    <div style="width:80px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:18px;"></div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:700px;">
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Linear Search</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Binary Search</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Bubble Sort</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Insertion Sort</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">ADTs</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Big O Notation</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Recursion</span>
+    </div>
+    <div style="margin-top:24px; text-align:left; max-width:680px;">
+      <h4 style="color:#b8d4ff; margin-bottom:8px;">Learning Objectives — 19.1 Algorithms:</h4>
+      <ul>
+        <li>Understand linear and binary searching methods</li>
+        <li>Understand insertion sort and bubble sort</li>
+        <li>Write algorithms to implement searching and sorting</li>
+        <li>Understand conditions for binary search and performance</li>
+        <li>Understand Abstract Data Types (ADTs)</li>
+        <li>Compare algorithms using time and memory criteria</li>
+        <li>Understand Big O notation</li>
+      </ul>
+      <h4 style="color:#b8d4ff; margin-top:8px; margin-bottom:8px;">Learning Objectives — 19.2 Recursion:</h4>
+      <ul>
+        <li>Understand recursion, base case and recursive case</li>
+        <li>Trace recursive algorithms and understand stack frames</li>
+        <li>Compare recursive and iterative solutions</li>
+      </ul>
+    </div>
+    <p style="color:#3a6a6a; font-size:0.82rem; margin-top:20px;">Press <span class="inline-code">\u2192</span> or click navigation to begin</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 2 – WHAT IS AN ALGORITHM?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Algorithms</div>
+  <h2>What Is an Algorithm?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p>An <strong>algorithm</strong> is a step-by-step procedure for solving a problem.</p>
+        <p style="margin-top:6px;">Algorithms must be:</p>
+        <ul>
+          <li><strong>Unambiguous</strong> — each step is clearly defined</li>
+          <li><strong>Finite</strong> — it must terminate after a finite number of steps</li>
+          <li><strong>Effective</strong> — each step is achievable</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Representation</h4>
+        <p>Algorithms can be expressed as:</p>
+        <ul>
+          <li><strong>Pseudocode</strong> (Cambridge 9618 style)</li>
+          <li>Flowcharts</li>
+          <li>Programming languages</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Algorithm:</strong> A finite set of well-defined instructions for completing a task.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Important Note</h4>
+        <p>Different algorithms can solve the <strong>same problem</strong> with <strong>different efficiency</strong>. This is why we study searching and sorting algorithms — to choose the best one for each situation.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 3 – LINEAR SEARCH
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Searching</div>
+  <h2>Linear Search</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How It Works</h4>
+        <ul>
+          <li>Checks each item in a list <strong>sequentially</strong></li>
+          <li>Starts at the <strong>first element</strong> and compares with the target</li>
+          <li>If a match is found, the <strong>index</strong> is returned</li>
+          <li>If the end is reached without a match, the search fails</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Key Properties</h4>
+        <ul>
+          <li>Works on <strong>unsorted and sorted</strong> data</li>
+          <li><strong>Simple</strong> to understand and implement</li>
+          <li>Can be <strong>slow</strong> for large datasets</li>
+          <li>Time complexity: <strong>O(n)</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Linear Search:</strong> A searching algorithm that checks each element in sequence until the target is found or the end of the list is reached.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Analogy:</strong> Searching for a book on a shelf by checking each book one by one from left to right until you find it.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 4 – LINEAR SEARCH PSEUDOCODE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Searching</div>
+  <h2>Linear Search Algorithm (Pseudocode)</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Pseudocode Implementation</h4>
+    <div class="code-block">\nFUNCTION LinearSearch(arr, target)\n    FOR i \u2190 0 TO LENGTH(arr) - 1\n        IF arr[i] = target THEN\n            RETURN i     // Found: return index\n        ENDIF\n    NEXT i\n    RETURN -1             // Not found\nENDFUNCTION</div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>In Cambridge pseudocode, array indexing starts at <strong>0</strong>. The loop runs from i=0 to (length-1). If the target is not found, the function returns <strong>-1</strong> to indicate failure.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 5 – LINEAR SEARCH WORKED EXAMPLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Searching</div>
+  <h2>Linear Search — Worked Example</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Array: [17, 3, 25, 9, 12] &nbsp;|&nbsp; Target: 9</h4>
+    <table class="trace-table">
+      <thead>
+        <tr><th>Step</th><th>Index i</th><th>Check arr[i]</th><th>Match?</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>0</td><td>17</td><td>No</td><td>Continue</td></tr>
+        <tr><td>2</td><td>1</td><td>3</td><td>No</td><td>Continue</td></tr>
+        <tr><td>3</td><td>2</td><td>25</td><td>No</td><td>Continue</td></tr>
+        <tr><td><strong>4</strong></td><td><strong>3</strong></td><td><strong>9</strong></td><td><strong>Yes</strong></td><td><strong>Return 3</strong></td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:6px;"><strong>Result:</strong> Found at index 3 after 4 comparisons.</p>
+    <p>If target were 99: the algorithm would check all 5 elements, fail to find it, and return -1.</p>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>In the <strong>worst case</strong> (target not in list), linear search checks <strong>n</strong> elements. In the <strong>best case</strong> (target is the first element), it checks only 1 element.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 6 – BINARY SEARCH
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Searching</div>
+  <h2>Binary Search</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How It Works</h4>
+        <ul>
+          <li>Works on a <strong>sorted list</strong></li>
+          <li>Repeatedly divides the search interval <strong>in half</strong></li>
+          <li>Compares the target to the <strong>middle element</strong></li>
+          <li>Discards the half that cannot contain the target</li>
+          <li>Repeats until the target is found or the interval is empty</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Key Properties</h4>
+        <ul>
+          <li>Much <strong>faster</strong> than linear search for large datasets</li>
+          <li>Time complexity: <strong>O(log n)</strong></li>
+          <li>Requires <strong>sorted data</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Binary Search:</strong> A searching algorithm that repeatedly divides a sorted list in half to find a target value.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Analogy:</strong> Finding a word in a dictionary by repeatedly opening to the middle and narrowing the search.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 7 – BINARY SEARCH PSEUDOCODE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Searching</div>
+  <h2>Binary Search Algorithm (Pseudocode)</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Pseudocode Implementation</h4>
+    <div class="code-block">\nFUNCTION BinarySearch(arr, target)\n    low \u2190 0\n    high \u2190 LENGTH(arr) - 1\n    WHILE low \u2264 high\n        mid \u2190 (low + high) DIV 2\n        IF arr[mid] = target THEN\n            RETURN mid      // Found\n        ELSE IF arr[mid] < target THEN\n            low \u2190 mid + 1    // Search right half\n        ELSE\n            high \u2190 mid - 1   // Search left half\n        ENDIF\n    ENDWHILE\n    RETURN -1               // Not found\nENDFUNCTION</div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>Note the use of <strong>DIV</strong> (integer division) for finding the middle index. The condition <strong>low \u2264 high</strong> ensures the loop continues while the search space is valid.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 8 – BINARY SEARCH WORKED EXAMPLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Searching</div>
+  <h2>Binary Search — Worked Example</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Sorted Array: [3, 9, 12, 17, 25, 30, 42] &nbsp;|&nbsp; Target: 17</h4>
+    <table class="trace-table">
+      <thead>
+        <tr><th>Step</th><th>low</th><th>high</th><th>mid</th><th>arr[mid]</th><th>Comparison</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>0</td><td>6</td><td>3</td><td>17</td><td>17 = 17</td><td><strong>Found! Return 3</strong></td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:6px;"><strong>Result:</strong> Found at index 3 after just <strong>1 comparison</strong>!</p>
+    <h4 style="margin-top:6px;">Example 2: Target = 30</h4>
+    <table class="trace-table">
+      <thead>
+        <tr><th>Step</th><th>low</th><th>high</th><th>mid</th><th>arr[mid]</th><th>Comparison</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>0</td><td>6</td><td>3</td><td>17</td><td>17 < 30</td><td>Search right (low=4)</td></tr>
+        <tr><td>2</td><td>4</td><td>6</td><td>5</td><td>30</td><td>30 = 30</td><td><strong>Found! Return 5</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 9 – CONDITIONS FOR BINARY SEARCH
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Searching</div>
+  <h2>Conditions for Binary Search</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Required Conditions</h4>
+      <ul>
+        <li>The data must be <strong>sorted</strong> in ascending or descending order</li>
+        <li><strong>Random access</strong> to elements is needed (e.g., array)</li>
+        <li>The data structure must support <strong>indexing</strong></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>When Binary Search Cannot Be Used</h4>
+      <ul>
+        <li>Data is <strong>unsorted</strong></li>
+        <li>Data is in a structure with <strong>sequential access only</strong> (e.g., linked list)</li>
+        <li>The data set <strong>changes frequently</strong> (sorting overhead)</li>
+        <li>For <strong>very small datasets</strong>, linear search may be simpler</li>
+      </ul>
+    </div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>A common exam question: "Explain why binary search cannot be used on this data." The answer is almost always that the data is <strong>not sorted</strong> or does not support <strong>random access</strong>.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 10 – BUBBLE SORT
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Sorting</div>
+  <h2>Bubble Sort</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How It Works</h4>
+        <ul>
+          <li>Repeatedly compares <strong>adjacent elements</strong></li>
+          <li>Swaps them if they are in the <strong>wrong order</strong></li>
+          <li>Each pass "bubbles" the <strong>largest element</strong> to its correct position</li>
+          <li>After each pass, the next largest element is in place</li>
+          <li>Process repeats until <strong>no swaps</strong> are needed</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Key Properties</h4>
+        <ul>
+          <li>Time complexity: <strong>O(n\u00b2)</strong> worst and average case</li>
+          <li>Best case: <strong>O(n)</strong> (already sorted, with early exit)</li>
+          <li><strong>Stable</strong> sorting algorithm</li>
+          <li><strong>In-place</strong> sorting (uses minimal extra memory)</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Bubble Sort:</strong> A simple sorting algorithm that repeatedly steps through a list, compares adjacent elements, and swaps them if they are in the wrong order.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 11 – BUBBLE SORT PSEUDOCODE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Sorting</div>
+  <h2>Bubble Sort Algorithm (Pseudocode)</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Pseudocode Implementation</h4>
+    <div class="code-block">\nFUNCTION BubbleSort(arr)\n    n \u2190 LENGTH(arr)\n    FOR i \u2190 0 TO n - 2\n        swapped \u2190 FALSE\n        FOR j \u2190 0 TO n - 2 - i\n            IF arr[j] > arr[j + 1] THEN\n                temp \u2190 arr[j]\n                arr[j] \u2190 arr[j + 1]\n                arr[j + 1] \u2190 temp\n                swapped \u2190 TRUE\n            ENDIF\n        NEXT j\n        IF NOT swapped THEN\n            EXIT FOR        // Early exit if no swaps\n        ENDIF\n    NEXT i\n    RETURN arr\nENDFUNCTION</div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>The inner loop goes to <strong>n - 2 - i</strong> because after each pass, the largest i+1 elements are already in place. The <strong>swapped</strong> flag allows early exit if the list is already sorted.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 12 – BUBBLE SORT WORKED EXAMPLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Sorting</div>
+  <h2>Bubble Sort — Worked Example</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Initial Array: [5, 1, 4, 2, 8] &nbsp;|&nbsp; Sorting Ascending</h4>
+    <table class="trace-table">
+      <thead>
+        <tr><th>Pass</th><th>Comparisons</th><th>Swaps</th><th>Array after pass</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>5-1, 5-4, 5-2, 5-8</td><td>5\u21941, 5\u21944, 5\u21942</td><td>[1, 4, 2, 5, 8]</td></tr>
+        <tr><td>2</td><td>1-4, 4-2, 4-5</td><td>4\u21942</td><td>[1, 2, 4, 5, 8]</td></tr>
+        <tr><td>3</td><td>1-2, 2-4, 4-5</td><td>None</td><td><strong>[1, 2, 4, 5, 8]</strong></td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:6px;"><strong>Result:</strong> Array sorted in ascending order after 3 passes.</p>
+    <p>Note: Pass 3 made no swaps, so the algorithm exits early (detected by the 'swapped' flag).</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 13 – INSERTION SORT
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Sorting</div>
+  <h2>Insertion Sort</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How It Works</h4>
+        <ul>
+          <li>Builds the sorted list <strong>one element at a time</strong></li>
+          <li>Takes one element from the input and <strong>inserts it</strong> into the correct position</li>
+          <li>The sorted portion grows from left to right</li>
+          <li>Elements are <strong>shifted right</strong> to make space</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Key Properties</h4>
+        <ul>
+          <li>Time complexity: <strong>O(n\u00b2)</strong> worst and average case</li>
+          <li>Best case: <strong>O(n)</strong> (already sorted)</li>
+          <li><strong>Stable</strong> and <strong>in-place</strong></li>
+          <li>Performs well on <strong>small</strong> or <strong>nearly sorted</strong> lists</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Insertion Sort:</strong> A sorting algorithm that builds a sorted array one element at a time by repeatedly inserting the next element into its correct position.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Analogy:</strong> Sorting a hand of playing cards by picking up one card at a time and inserting it into the correct position among already-sorted cards.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 14 – INSERTION SORT PSEUDOCODE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Sorting</div>
+  <h2>Insertion Sort Algorithm (Pseudocode)</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Pseudocode Implementation</h4>
+    <div class="code-block">\nFUNCTION InsertionSort(arr)\n    FOR i \u2190 1 TO LENGTH(arr) - 1\n        key \u2190 arr[i]\n        j \u2190 i - 1\n        WHILE j \u2265 0 AND arr[j] > key\n            arr[j + 1] \u2190 arr[j]\n            j \u2190 j - 1\n        ENDWHILE\n        arr[j + 1] \u2190 key\n    NEXT i\n    RETURN arr\nENDFUNCTION</div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>The outer loop (i) starts at <strong>index 1</strong>, not 0, because the first element (index 0) is trivially sorted. The <strong>key</strong> is the element being inserted. Elements greater than the key are shifted right.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 15 – INSERTION SORT WORKED EXAMPLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Sorting</div>
+  <h2>Insertion Sort — Worked Example</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Initial Array: [5, 1, 4, 2, 8] &nbsp;|&nbsp; Sorting Ascending</h4>
+    <table class="trace-table">
+      <thead>
+        <tr><th>Step</th><th>Key</th><th>Comparisons</th><th>Shift</th><th>Array after insertion</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>i=1</td><td>1</td><td>1 < 5</td><td>5 shifts right</td><td>[1, 5, 4, 2, 8]</td></tr>
+        <tr><td>i=2</td><td>4</td><td>4 < 5, 4 \u2265 1</td><td>5 shifts right</td><td>[1, 4, 5, 2, 8]</td></tr>
+        <tr><td>i=3</td><td>2</td><td>2 < 5, 2 < 4, 2 \u2265 1</td><td>5, 4 shift right</td><td>[1, 2, 4, 5, 8]</td></tr>
+        <tr><td>i=4</td><td>8</td><td>8 \u2265 5</td><td>None</td><td><strong>[1, 2, 4, 5, 8]</strong></td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:6px;"><strong>Result:</strong> Array fully sorted after processing all elements.</p>
+    <p>Note: Insertion sort performs well here because after the first few steps, the sorted portion is already partially ordered.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 16 – SORTING PERFORMANCE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Sorting</div>
+  <h2>Sorting Performance: Initial Order and Data Size</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Effect of Initial Order</h4>
+      <ul>
+        <li><strong>Bubble Sort:</strong> Already sorted = O(n) with early exit. Reverse order = O(n\u00b2).</li>
+        <li><strong>Insertion Sort:</strong> Already sorted = O(n). Reverse order = O(n\u00b2).</li>
+        <li>Both bubble and insertion sort benefit significantly from <strong>nearly sorted</strong> data.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Effect of Data Size</h4>
+      <ul>
+        <li>Both bubble sort and insertion sort have <strong>O(n\u00b2)</strong> complexity</li>
+        <li>Doubling data size roughly <strong>quadruples</strong> the time</li>
+        <li>For large datasets (e.g., 10,000+ items), these sorts become <strong>impractical</strong></li>
+        <li><strong>Binary search</strong> on sorted data is O(log n) — much faster for large data</li>
+      </ul>
+    </div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>You may be asked: "Explain how the performance of bubble/insertion sort varies depending on the initial order of data." The key point is that <strong>nearly sorted</strong> data means O(n), while <strong>random/reverse</strong> data means O(n\u00b2).</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 17 – WHAT IS AN ABSTRACT DATA TYPE?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 ADTs</div>
+  <h2>What Is an Abstract Data Type (ADT)?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p>An <strong>Abstract Data Type (ADT)</strong> is a <strong>logical description</strong> of a data type that specifies:</p>
+        <ul>
+          <li>What <strong>data</strong> is stored</li>
+          <li>What <strong>operations</strong> can be performed on that data</li>
+        </ul>
+        <p style="margin-top:6px;">The ADT does <strong>not</strong> specify <strong>how</strong> it is implemented — that is the key abstraction.</p>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Abstract Data Type (ADT):</strong> A logical description of a data type that defines the data and the operations on it, without specifying the implementation details.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Analogy:</strong> A vending machine. You know what it does (insert money, select item, receive product), but you don't need to know the internal mechanics.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 18 – EXAMPLES OF ADTs
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 ADTs</div>
+  <h2>Examples of Abstract Data Types</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>ADT</th><th>Data</th><th>Operations</th><th>Example Uses</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Stack</strong></td><td>Ordered list (LIFO)</td><td>push, pop, peek, isEmpty</td><td>Undo, function calls, expression evaluation</td></tr>
+      <tr><td><strong>Queue</strong></td><td>Ordered list (FIFO)</td><td>enqueue, dequeue, isEmpty</td><td>Print queue, task scheduling</td></tr>
+      <tr><td><strong>List</strong></td><td>Ordered collection</td><td>add, remove, get, size</td><td>General-purpose data storage</td></tr>
+      <tr><td><strong>Dictionary</strong></td><td>Key-value pairs</td><td>add, get, remove, contains</td><td>Symbol table, lookup operations</td></tr>
+      <tr><td><strong>Set</strong></td><td>Unique elements</td><td>add, remove, contains, union</td><td>Duplicates removal, membership testing</td></tr>
+    </tbody>
+  </table>
+`);
+
+// ==================================================================
+// SLIDE 19 – ADTs FROM OTHER ADTs
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 ADTs</div>
+  <h2>ADTs Implemented from Other ADTs</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Key Concept</h4>
+    <p>An ADT can be <strong>implemented using another ADT</strong> as its underlying data structure. This is called <strong>composition</strong> or <strong>building ADTs from ADTs</strong>.</p>
+  </div>
+  <div class="grid-2 mt-6">
+    <div class="card">
+      <h4>Example: Queue from Two Stacks</h4>
+      <ul>
+        <li>Use <strong>two stacks</strong> (inputStack, outputStack) to implement a Queue</li>
+        <li>enqueue: push onto inputStack</li>
+        <li>dequeue: if outputStack is empty, pop all from inputStack and push onto outputStack, then pop from outputStack</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Example: Stack from a List</h4>
+      <ul>
+        <li>Use a <strong>List</strong> to implement a Stack</li>
+        <li>push: add element to the end of the list</li>
+        <li>pop: remove the last element from the list</li>
+        <li>peek: read the last element without removing it</li>
+      </ul>
+    </div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>You may be asked: "Show how a stack can be implemented using a list" or "Explain how a queue can be implemented using two stacks." Focus on the <strong>logical operations</strong> rather than specific code.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 20 – COMMON ADT OPERATIONS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 ADTs</div>
+  <h2>Common ADT Operations</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>ADT</th><th>Add Operation</th><th>Remove Operation</th><th>Access Operation</th><th>Other</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Stack</strong></td><td>push(item)</td><td>pop()</td><td>peek() / top()</td><td>isEmpty(), size()</td></tr>
+      <tr><td><strong>Queue</strong></td><td>enqueue(item)</td><td>dequeue()</td><td>front()</td><td>isEmpty(), size()</td></tr>
+      <tr><td><strong>List</strong></td><td>add(item), insert(i, item)</td><td>remove(i), remove(item)</td><td>get(i)</td><td>size(), contains(item)</td></tr>
+      <tr><td><strong>Dictionary</strong></td><td>put(key, value)</td><td>remove(key)</td><td>get(key)</td><td>containsKey(), keys()</td></tr>
+      <tr><td><strong>Set</strong></td><td>add(item)</td><td>remove(item)</td><td>contains(item)</td><td>union(), intersection()</td></tr>
+    </tbody>
+  </table>
+  <div class="key-term-box mt-6">
+    <h4>Key Term</h4>
+    <p><strong>LIFO (Last In, First Out):</strong> The last item added is the first item removed — used by stacks.</p>
+    <p><strong>FIFO (First In, First Out):</strong> The first item added is the first item removed — used by queues.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 21 – COMPARING ALGORITHMS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Analysis</div>
+  <h2>Comparing Algorithms</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Criteria for Comparison</h4>
+      <ul>
+        <li><strong>Time taken:</strong> How fast does the algorithm run?</li>
+        <li><strong>Memory used:</strong> How much extra memory does it require?</li>
+        <li><strong>CPU usage:</strong> How much processing power is required?</li>
+        <li><strong>Scalability:</strong> How does performance change with larger input sizes?</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Why Compare?</h4>
+      <ul>
+        <li>Choose the <strong>best algorithm</strong> for a given problem</li>
+        <li>Understand <strong>trade-offs</strong> (e.g., speed vs memory)</li>
+        <li>Predict performance before implementation</li>
+        <li>Identify <strong>bottlenecks</strong> in existing solutions</li>
+      </ul>
+    </div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>When comparing algorithms, always consider <strong>both time and space</strong>. A faster algorithm may use more memory — mention this trade-off in exam answers.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 22 – BIG O NOTATION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Analysis</div>
+  <h2>Big O Notation</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Big O notation</strong> describes the <strong>upper bound</strong> of an algorithm's time or space complexity in terms of input size (n).</p>
+        <ul>
+          <li>Describes <strong>growth rate</strong> as input size increases</li>
+          <li>Focuses on the <strong>dominant term</strong></li>
+          <li>Ignores <strong>constants and lower-order terms</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Big O Notation:</strong> A mathematical notation used to describe the upper bound of an algorithm's time or space complexity relative to the input size.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 23 – BIG O CLASSES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Analysis</div>
+  <h2>Big O Complexity Classes</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Big O</th><th>Name</th><th>Example Algorithm</th><th>Growth (n=10)</th><th>Growth (n=1000)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>O(1)</strong></td><td>Constant</td><td>Array access by index</td><td>1</td><td>1</td></tr>
+      <tr><td><strong>O(log n)</strong></td><td>Logarithmic</td><td>Binary search</td><td>~3</td><td>~10</td></tr>
+      <tr><td><strong>O(n)</strong></td><td>Linear</td><td>Linear search</td><td>10</td><td>1000</td></tr>
+      <tr><td><strong>O(n log n)</strong></td><td>Linearithmic</td><td>Merge sort</td><td>~10</td><td>~10,000</td></tr>
+      <tr><td><strong>O(n\u00b2)</strong></td><td>Quadratic</td><td>Bubble sort, Insertion sort</td><td>100</td><td>1,000,000</td></tr>
+    </tbody>
+  </table>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>Know the Big O for each algorithm in the syllabus:<br>\n      <strong>Linear search</strong> = O(n), <strong>Binary search</strong> = O(log n),<br>\n      <strong>Bubble sort</strong> = O(n\u00b2), <strong>Insertion sort</strong> = O(n\u00b2)</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 24 – ALGORITHM COMPLEXITY SUMMARY
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Analysis</div>
+  <h2>Algorithm Complexity Summary</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Algorithm</th><th>Best Case</th><th>Average Case</th><th>Worst Case</th><th>Space</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Linear Search</strong></td><td>O(1)</td><td>O(n)</td><td>O(n)</td><td>O(1)</td></tr>
+      <tr><td><strong>Binary Search</strong></td><td>O(1)</td><td>O(log n)</td><td>O(log n)</td><td>O(1)</td></tr>
+      <tr><td><strong>Bubble Sort</strong></td><td>O(n)</td><td>O(n\u00b2)</td><td>O(n\u00b2)</td><td>O(1)</td></tr>
+      <tr><td><strong>Insertion Sort</strong></td><td>O(n)</td><td>O(n\u00b2)</td><td>O(n\u00b2)</td><td>O(1)</td></tr>
+    </tbody>
+  </table>
+  <div class="grid-2 mt-6">
+    <div class="card">
+      <h4>Key Observations</h4>
+      <ul>
+        <li>All four algorithms use <strong>O(1) extra space</strong> (in-place)</li>
+        <li>Binary search is the <strong>fastest search</strong> but requires sorted data</li>
+        <li>Sorting best cases (O(n)) only for <strong>already sorted</strong> or nearly sorted data</li>
+      </ul>
+    </div>
+    <div class="diagram-box">
+      <svg viewBox="0 0 300 120" style="width:100%; max-width:300px;">
+        <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Growth Rates (n=1000)</text>
+        <rect x="10" y="32" width="2" height="80" fill="#2ac8a0"/>
+        <text x="16" y="42" fill="#7ab8a8" font-size="7">O(1) = 1</text>
+        <rect x="10" y="32" width="12" height="80" fill="#5ae0c0" opacity="0.8"/>
+        <text x="28" y="42" fill="#7ab8a8" font-size="7">O(log n) \u2248 10</text>
+        <rect x="10" y="32" width="105" height="80" fill="#f0c040" opacity="0.6"/>
+        <text x="16" y="58" fill="#f0c040" font-size="7">O(n) = 1000</text>
+        <rect x="10" y="32" width="280" height="80" fill="#e06060" opacity="0.4"/>
+        <text x="16" y="74" fill="#e06060" font-size="7">O(n\u00b2) = 1,000,000</text>
+      </svg>
+      <div class="diagram-caption">Relative time growth for n=1000</div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 25 – SUMMARY: 19.1 ALGORITHMS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.1 Summary</div>
+  <h2>19.1 Algorithms — Section Summary</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Searching</h4>
+      <ul>
+        <li><strong>Linear Search:</strong> O(n), works on any data, simple</li>
+        <li><strong>Binary Search:</strong> O(log n), requires <strong>sorted data</strong> + random access</li>
+        <li>Binary search is much faster for large datasets</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Sorting</h4>
+      <ul>
+        <li><strong>Bubble Sort:</strong> Compare and swap adjacent elements</li>
+        <li><strong>Insertion Sort:</strong> Build sorted list one element at a time</li>
+        <li>Both are O(n\u00b2) average case, O(n) best case</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Abstract Data Types</h4>
+      <ul>
+        <li>ADTs define <strong>what</strong> operations do, not <strong>how</strong></li>
+        <li>Stack (LIFO), Queue (FIFO), List, Dictionary, Set</li>
+        <li>ADTs can be implemented from other ADTs</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Algorithm Analysis</h4>
+      <ul>
+        <li>Compare by <strong>time taken</strong> and <strong>memory used</strong></li>
+        <li><strong>Big O</strong> describes growth rate with input size (n)</li>
+        <li>Key complexities: O(1), O(log n), O(n), O(n log n), O(n\u00b2)</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// ===== SECTION 6: 19.2 RECURSION =====
+// ==================================================================
+
+// ==================================================================
+// SLIDE 26 – WHAT IS RECURSION?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.2 Recursion</div>
+  <h2>What Is Recursion?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Recursion</strong> is a technique where a function <strong>calls itself</strong> to solve a problem by breaking it into smaller sub-problems.</p>
+        <p style="margin-top:6px;">Each recursive call works on a <strong>smaller instance</strong> of the original problem.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Key Idea</h4>
+        <p>A recursive function solves a problem by:</p>
+        <ol>
+          <li>Handling the <strong>smallest case</strong> directly (base case)</li>
+          <li>Calling <strong>itself</strong> with a smaller version of the problem</li>
+        </ol>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Recursion:</strong> A programming technique where a function calls itself to solve a problem by dividing it into smaller, similar sub-problems.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Analogy:</strong> Russian nesting dolls (matryoshka). Opening each doll reveals a smaller version of itself, until you reach the smallest one (base case).
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 27 – BASE CASE AND RECURSIVE CASE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.2 Recursion</div>
+  <h2>Base Case and Recursive Case</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Every Recursive Function Needs:</h4>
+        <p><strong>1. Base Case</strong></p>
+        <ul>
+          <li>The simplest version of the problem</li>
+          <li>Can be solved <strong>directly</strong> without recursion</li>
+          <li><strong>Stops</strong> the recursion</li>
+          <li>Without it, the function would call itself forever (stack overflow)</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>2. Recursive Case</h4>
+        <ul>
+          <li>Breaks the problem into a <strong>smaller sub-problem</strong></li>
+          <li>Makes a <strong>recursive call</strong> to solve the sub-problem</li>
+          <li>Moves <strong>towards</strong> the base case</li>
+        </ul>
+      </div>
+    </div>
+    <div class="worked-example">
+      <h4>General Structure</h4>
+      <div class="code-block">\nFUNCTION RecursiveFunc(n)\n    IF baseCondition THEN\n        RETURN baseValue   // Base case\n    ELSE\n        RETURN RecursiveFunc(smallerN)  // Recursive case\n    ENDIF\nENDFUNCTION</div>
+      <p style="margin-top:6px;">The base case <strong>must</strong> be reachable, otherwise infinite recursion occurs.</p>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 28 – RECURSION EXAMPLE: FACTORIAL
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.2 Recursion</div>
+  <h2>Recursion Example: Factorial</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Mathematical Definition</h4>
+        <p>n! = n \u00d7 (n-1) \u00d7 (n-2) \u00d7 ... \u00d7 1</p>
+        <p style="margin-top:6px;">Recursive definition:</p>
+        <ul>
+          <li><strong>Base case:</strong> 0! = 1</li>
+          <li><strong>Recursive case:</strong> n! = n \u00d7 (n-1)!</li>
+        </ul>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>Pseudocode</h4>
+        <div class="code-block">\nFUNCTION Factorial(n)\n    IF n = 0 THEN\n        RETURN 1          // Base case\n    ELSE\n        RETURN n * Factorial(n - 1)  // Recursive case\n    ENDIF\nENDFUNCTION</div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Trace for Factorial(4)</h4>
+        <table class="trace-table">
+          <thead>
+            <tr><th>Call</th><th>n</th><th>Returns</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Factorial(4)</td><td>4</td><td>4 \u00d7 Factorial(3)</td></tr>
+            <tr><td>Factorial(3)</td><td>3</td><td>3 \u00d7 Factorial(2)</td></tr>
+            <tr><td>Factorial(2)</td><td>2</td><td>2 \u00d7 Factorial(1)</td></tr>
+            <tr><td>Factorial(1)</td><td>1</td><td>1 \u00d7 Factorial(0)</td></tr>
+            <tr><td><strong>Factorial(0)</strong></td><td><strong>0</strong></td><td><strong>1 (base case)</strong></td></tr>
+            <tr><td>... unwinding ...</td><td></td><td></td></tr>
+            <tr><td>Result</td><td></td><td><strong>24</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 29 – RECURSION EXAMPLE: FIBONACCI
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.2 Recursion</div>
+  <h2>Recursion Example: Fibonacci Sequence</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Mathematical Definition</h4>
+        <p>Fibonacci(n) = Fibonacci(n-1) + Fibonacci(n-2)</p>
+        <ul>
+          <li><strong>Base cases:</strong> Fib(0) = 0, Fib(1) = 1</li>
+          <li><strong>Recursive case:</strong> Fib(n) = Fib(n-1) + Fib(n-2) for n > 1</li>
+        </ul>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>Pseudocode</h4>
+        <div class="code-block">\nFUNCTION Fibonacci(n)\n    IF n = 0 THEN\n        RETURN 0          // Base case 1\n    ELSE IF n = 1 THEN\n        RETURN 1          // Base case 2\n    ELSE\n        RETURN Fibonacci(n-1) + Fibonacci(n-2)\n    ENDIF\nENDFUNCTION</div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Key Observation</h4>
+        <ul>
+          <li>Fibonacci has <strong>two recursive calls</strong> per invocation</li>
+          <li>This leads to <strong>exponential</strong> growth in calls</li>
+          <li>Fib(5) calls Fib(4) and Fib(3); Fib(4) calls Fib(3) and Fib(2), etc.</li>
+          <li>The same values are <strong>recalculated</strong> many times!</li>
+          <li>This makes naive recursive Fibonacci <strong>O(2\u207f)</strong> — very slow</li>
+        </ul>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>You may be asked to trace Fib(5) or Fib(6). Draw a <strong>recursion tree</strong> to show each call. Remember the base cases Fib(0)=0 and Fib(1)=1.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 30 – TRACING RECURSIVE CALLS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.2 Recursion</div>
+  <h2>Tracing Recursive Calls</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Tracing Factorial(3) Step by Step</h4>
+    <table class="trace-table">
+      <thead>
+        <tr><th>Step</th><th>Call</th><th>n</th><th>Action</th><th>Result</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Factorial(3)</td><td>3</td><td>3 \u2260 0, so 3 \u00d7 Factorial(2)</td><td>Pending...</td></tr>
+        <tr><td>2</td><td>Factorial(2)</td><td>2</td><td>2 \u2260 0, so 2 \u00d7 Factorial(1)</td><td>Pending...</td></tr>
+        <tr><td>3</td><td>Factorial(1)</td><td>1</td><td>1 \u2260 0, so 1 \u00d7 Factorial(0)</td><td>Pending...</td></tr>
+        <tr><td>4</td><td><strong>Factorial(0)</strong></td><td><strong>0</strong></td><td><strong>Base case! Return 1</strong></td><td><strong>1</strong></td></tr>
+        <tr><td>5</td><td>Factorial(1)</td><td>1</td><td>Return 1 \u00d7 1</td><td>1</td></tr>
+        <tr><td>6</td><td>Factorial(2)</td><td>2</td><td>Return 2 \u00d7 1</td><td>2</td></tr>
+        <tr><td>7</td><td>Factorial(3)</td><td>3</td><td>Return 3 \u00d7 2</td><td><strong>6</strong></td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:6px;"><strong>Key observation:</strong> The calls go "down" to the base case (winding phase), then results propagate "up" (unwinding phase).</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 31 – HOW RECURSION USES THE CALL STACK
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.2 Recursion</div>
+  <h2>How Recursion Uses the Call Stack</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>The Call Stack</h4>
+        <ul>
+          <li>Each function call creates a <strong>stack frame</strong> (activation record)</li>
+          <li>The frame stores: <strong>return address, parameters, local variables</strong></li>
+          <li>Frames are <strong>pushed</strong> onto the call stack when a function is called</li>
+          <li>Frames are <strong>popped</strong> from the stack when a function returns</li>
+        </ul>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>You may be asked to show the <strong>contents of the call stack</strong> during recursion. List each stack frame with its parameters, in order from bottom (first call) to top (current call).</p>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <h4 style="color:#f0c040; margin-bottom:8px;">Call Stack — Factorial(3)</h4>
+        <svg viewBox="0 0 250 140" style="width:100%; max-width:250px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Step 4: Deepest call</text>
+          <rect x="60" y="18" width="130" height="22" fill="#2a0a2e" stroke="#6a3aaa" stroke-width="1" rx="3"/>
+          <text x="68" y="33" fill="#b080f0" font-size="8">Factorial(0) | n=0</text>
+          <rect x="60" y="42" width="130" height="22" fill="#1a0a3e" stroke="#6a3aaa" stroke-width="1" rx="3"/>
+          <text x="68" y="57" fill="#b080f0" font-size="8">Factorial(1) | n=1</text>
+          <rect x="60" y="66" width="130" height="22" fill="#1a0a3e" stroke="#6a3aaa" stroke-width="1" rx="3"/>
+          <text x="68" y="81" fill="#b080f0" font-size="8">Factorial(2) | n=2</text>
+          <rect x="60" y="90" width="130" height="22" fill="#1a0a3e" stroke="#6a3aaa" stroke-width="1" rx="3"/>
+          <text x="68" y="105" fill="#b080f0" font-size="8">Factorial(3) | n=3</text>
+          <text x="8" y="128" fill="#7ab8a8" font-size="8">Stack grows downward</text>
+        </svg>
+        <div class="diagram-caption">Each frame stores n and return address</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 32 – VISUALISING THE CALL STACK
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.2 Recursion</div>
+  <h2>Visualising the Call Stack — Push and Pop</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Factorial(3) — Stack Growth and Collapse</h4>
+    <table class="trace-table">
+      <thead>
+        <tr><th>Step</th><th>Action</th><th>Stack (bottom → top)</th><th>Returning value</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Call Factorial(3)</td><td>[F(3)]</td><td>—</td></tr>
+        <tr><td>2</td><td>Call Factorial(2)</td><td>[F(3), F(2)]</td><td>—</td></tr>
+        <tr><td>3</td><td>Call Factorial(1)</td><td>[F(3), F(2), F(1)]</td><td>—</td></tr>
+        <tr><td>4</td><td>Call Factorial(0)</td><td>[F(3), F(2), F(1), F(0)]</td><td>—</td></tr>
+        <tr><td>5</td><td><strong>Base case!</strong> Return 1</td><td>[F(3), F(2), F(1)]</td><td><strong>1</strong></td></tr>
+        <tr><td>6</td><td>Return 1 \u00d7 1 = 1</td><td>[F(3), F(2)]</td><td><strong>1</strong></td></tr>
+        <tr><td>7</td><td>Return 2 \u00d7 1 = 2</td><td>[F(3)]</td><td><strong>2</strong></td></tr>
+        <tr><td>8</td><td>Return 3 \u00d7 2 = 6</td><td>[]</td><td><strong>6</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>During recursion tracing, show both the <strong>push phase</strong> (calls going deeper) and the <strong>pop phase</strong> (returns coming back). The stack depth equals the number of nested recursive calls.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 33 – RECURSIVE VS ITERATIVE SOLUTIONS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.2 Recursion</div>
+  <h2>Recursive vs Iterative Solutions</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="worked-example">
+      <h4>Iterative Factorial</h4>
+      <div class="code-block">\nFUNCTION FactorialIter(n)\n    result \u2190 1\n    FOR i \u2190 1 TO n\n        result \u2190 result * i\n    NEXT i\n    RETURN result\nENDFUNCTION</div>
+      <p>Uses a loop. No recursive calls. <strong>O(n)</strong> time, <strong>O(1)</strong> space.</p>
+    </div>
+    <div class="worked-example">
+      <h4>Recursive Factorial</h4>
+      <div class="code-block">\nFUNCTION FactorialRec(n)\n    IF n = 0 THEN\n        RETURN 1\n    ELSE\n        RETURN n * FactorialRec(n-1)\n    ENDIF\nENDFUNCTION</div>
+      <p>Calls itself. Uses call stack. <strong>O(n)</strong> time, <strong>O(n)</strong> stack space.</p>
+    </div>
+  </div>
+  <div class="card mt-6">
+    <h4>Which Should You Use?</h4>
+    <ul>
+      <li><strong>Iteration</strong> is usually more <strong>efficient</strong> (less memory, no function call overhead)</li>
+      <li><strong>Recursion</strong> can be <strong>more elegant</strong> for naturally recursive problems (tree traversal, divide-and-conquer)</li>
+      <li>Many problems can be solved either way — choose based on <strong>clarity and constraints</strong></li>
+    </ul>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 34 – RECURSION WITH DATA STRUCTURES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.2 Recursion</div>
+  <h2>Recursion with Data Structures</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Recursively Defined Data Structures</h4>
+        <p>Some data structures are naturally <strong>recursive</strong>:</p>
+        <ul>
+          <li><strong>Linked List:</strong> A node + a smaller linked list</li>
+          <li><strong>Tree:</strong> A node + child subtrees</li>
+          <li><strong>Binary Search Tree:</strong> Left subtree < node < right subtree</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Example: Sum of Array (Recursive)</h4>
+        <div class="code-block">\nFUNCTION ArraySum(arr, n)\n    IF n = 0 THEN\n        RETURN 0\n    ELSE\n        RETURN arr[n-1] + ArraySum(arr, n-1)\n    ENDIF\nENDFUNCTION</div>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Deep recursion:</strong> Many nested recursive calls, requiring large call stack. Can lead to <strong>stack overflow</strong> if too deep.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Note:</strong> Recursion is particularly useful for <strong>divide-and-conquer</strong> algorithms like merge sort and quicksort, and for traversing tree structures.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 35 – RECURSION WORKED EXAMPLE: BINARY SEARCH (RECURSIVE)
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.2 Recursion</div>
+  <h2>Recursive Binary Search</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="worked-example">
+        <h4>Recursive Pseudocode</h4>
+        <div class="code-block">\nFUNCTION BinarySearchRec(arr,\n    low, high, target)\n    \n    IF low > high THEN\n        RETURN -1      // Base: not found\n    ENDIF\n    \n    mid \u2190 (low + high) DIV 2\n    \n    IF arr[mid] = target THEN\n        RETURN mid     // Base: found\n    ELSE IF arr[mid] < target THEN\n        RETURN BinarySearchRec(arr,\n            mid+1, high, target)\n    ELSE\n        RETURN BinarySearchRec(arr,\n            low, mid-1, target)\n    ENDIF\nENDFUNCTION</div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Trace: Array[3,9,12,17], Target=17</h4>
+        <table class="trace-table">
+          <thead>
+            <tr><th>Call</th><th>low</th><th>high</th><th>mid</th><th>arr[mid]</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>0</td><td>3</td><td>1</td><td>9</td><td>9<17, search right</td></tr>
+            <tr><td>2</td><td>2</td><td>3</td><td>2</td><td>12</td><td>12<17, search right</td></tr>
+            <tr><td><strong>3</strong></td><td><strong>3</strong></td><td><strong>3</strong></td><td><strong>3</strong></td><td><strong>17</strong></td><td><strong>Found! Return 3</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>The recursive version of binary search has <strong>two base cases</strong>: (1) low > high → not found, (2) arr[mid] = target → found. Each recursive call narrows the search range.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 36 – BENEFITS OF RECURSION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.2 Recursion</div>
+  <h2>Benefits of Recursion</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Advantages</h4>
+      <ul>
+        <li><strong>Elegant and concise</strong> code for naturally recursive problems</li>
+        <li>Makes the solution <strong>easier to understand</strong> for certain problems</li>
+        <li>Natural fit for <strong>tree traversal</strong>, graph algorithms, divide-and-conquer</li>
+        <li>Often <strong>shorter</strong> than an equivalent iterative solution</li>
+        <li>Can be easier to <strong>prove correct</strong> (mathematical induction)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Examples Where Recursion Shines</h4>
+      <ul>
+        <li><strong>Tree traversal</strong> (preorder, inorder, postorder)</li>
+        <li><strong>Divide-and-conquer</strong> algorithms (merge sort, quicksort)</li>
+        <li><strong>Backtracking</strong> problems (maze solving, Sudoku)</li>
+        <li><strong>Recursive descent parsing</strong></li>
+        <li><strong>Fractal generation</strong></li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 37 – LIMITATIONS OF RECURSION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.2 Recursion</div>
+  <h2>Limitations of Recursion</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Disadvantages</h4>
+      <ul>
+        <li><strong>Memory overhead:</strong> Each call uses stack space (O(n) space)</li>
+        <li><strong>Risk of stack overflow</strong> if recursion is too deep</li>
+        <li><strong>Slower</strong> than iteration due to function call overhead</li>
+        <li>Can be <strong>harder to debug</strong> (many nested calls)</li>
+        <li><strong>Inefficient</strong> if the same sub-problem is solved multiple times</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Example: Fibonacci Inefficiency</h4>
+      <p>Recursive Fib(5) computes Fib(3) twice, Fib(2) three times:</p>
+      <ul>
+        <li>Fib(5) = Fib(4) + Fib(3)</li>
+        <li>Fib(4) = Fib(3) + Fib(2)</li>
+        <li>Fib(3) = Fib(2) + Fib(1)</li>
+        <li><strong>Fib(3) is called twice!</strong></li>
+      </ul>
+      <p style="margin-top:4px;">Time: <strong>O(2\u207f)</strong> vs iterative <strong>O(n)</strong></p>
+    </div>
+  </div>
+  <div class="common-mistake-box mt-6">
+    <h4>Common Mistake</h4>
+    <p>Forgetting the <strong>base case</strong>, or having a recursive case that does not move towards the base case, causes <strong>infinite recursion</strong> and eventually a <strong>stack overflow</strong>.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 38 – RECURSION VS ITERATION COMPARISON
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.2 Recursion</div>
+  <h2>Recursion vs Iteration — Comparison</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Recursion</th><th>Iteration</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Mechanism</strong></td><td>Function calls itself</td><td>Loop (FOR, WHILE, REPEAT)</td></tr>
+      <tr><td><strong>Termination</strong></td><td>Base case reached</td><td>Loop condition becomes false</td></tr>
+      <tr><td><strong>Memory usage</strong></td><td>O(n) stack space (each call adds a frame)</td><td>O(1) extra space (usually)</td></tr>
+      <tr><td><strong>Speed</strong></td><td>Slower (function call overhead)</td><td>Faster (no call overhead)</td></tr>
+      <tr><td><strong>Code length</strong></td><td>Often shorter and more elegant</td><td>May be longer for complex problems</td></tr>
+      <tr><td><strong>Risk</strong></td><td>Stack overflow if too deep</td><td>Infinite loop if condition not met</td></tr>
+      <tr><td><strong>Best for</strong></td><td>Tree traversal, divide-and-conquer</td><td>Simple repetitive tasks</td></tr>
+      <tr><td><strong>Readability</strong></td><td>Elegant for recursive problems</td><td>Easy to follow for simple loops</td></tr>
+    </tbody>
+  </table>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>When asked to "compare recursion and iteration", mention <strong>memory usage</strong> (stack space), <strong>speed</strong> (function call overhead), and <strong>code clarity</strong> (elegance vs simplicity). Give a specific example like factorial.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 39 – SUMMARY: 19.2 RECURSION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">19.2 Summary</div>
+  <h2>19.2 Recursion — Section Summary</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-3">
+    <div class="card">
+      <h4>Core Concepts</h4>
+      <ul>
+        <li>A function that <strong>calls itself</strong></li>
+        <li>Must have a <strong>base case</strong> to stop</li>
+        <li><strong>Recursive case</strong> breaks problem into smaller sub-problems</li>
+        <li>Uses the <strong>call stack</strong> behind the scenes</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Trace Example</h4>
+      <p><strong>Factorial(3):</strong></p>
+      <ul>
+        <li>3! = 3 \u00d7 2!</li>
+        <li>2! = 2 \u00d7 1!</li>
+        <li>1! = 1 \u00d7 0!</li>
+        <li>0! = 1 (base)</li>
+        <li>Result: 6</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Key Exam Points</h4>
+      <ul>
+        <li>Know base case vs recursive case</li>
+        <li>Be able to <strong>trace</strong> recursive calls</li>
+        <li>Understand stack frame contents</li>
+        <li>Compare with iteration</li>
+        <li>Recognise when recursion is/isn't appropriate</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 40 – EXAM PRACTICE QUESTIONS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Exam Practice</div>
+  <h2>Exam Practice Questions</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>19.1 Algorithms</h4>
+      <ol style="padding-left:16px;">
+        <li>Explain how <strong>linear search</strong> finds an element in an array. [2]</li>
+        <li>Describe the conditions needed for <strong>binary search</strong> to work. [3]</li>
+        <li>Compare linear search and binary search in terms of efficiency. [3]</li>
+        <li>Write pseudocode for <strong>bubble sort</strong>. [5]</li>
+        <li>Trace bubble sort on [64, 34, 25, 12]. [4]</li>
+        <li>Write pseudocode for <strong>insertion sort</strong>. [5]</li>
+        <li>Explain how the performance of bubble sort varies with <strong>initial order</strong>. [3]</li>
+        <li>Define what an <strong>ADT</strong> is and give two examples. [3]</li>
+        <li>Explain how a <strong>queue</strong> can be implemented using two stacks. [4]</li>
+        <li>State the Big O notation for binary search and bubble sort. [2]</li>
+        <li>Explain the difference between <strong>time complexity</strong> and <strong>space complexity</strong>. [3]</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h4>19.2 Recursion</h4>
+      <ol style="padding-left:16px;">
+        <li>Define <strong>recursion</strong> and explain the terms <strong>base case</strong> and <strong>recursive case</strong>. [3]</li>
+        <li>Write a recursive function to calculate <strong>factorial</strong>. [4]</li>
+        <li>Trace the execution of <strong>Factorial(4)</strong>, showing all calls and returns. [5]</li>
+        <li>Explain how recursion uses the <strong>call stack</strong>. [3]</li>
+        <li>Compare recursion and iteration, giving one advantage and one disadvantage of each. [4]</li>
+        <li>Write a recursive function to compute the <strong>nth Fibonacci number</strong>. [4]</li>
+        <li>Explain why recursive Fibonacci is <strong>inefficient</strong>. [2]</li>
+      </ol>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 41 – FINAL EXAM TIPS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Exam Tips</div>
+  <h2>Final Exam Tips</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>For Searching &amp; Sorting Questions</h4>
+      <ul>
+        <li>Use Cambridge-style <strong>pseudocode</strong> (e.g., assignment arrow \u2190, DIV for integer division)</li>
+        <li>Show <strong>intermediate steps</strong> in trace tables</li>
+        <li>Mention <strong>Big O</strong> for efficiency comparisons</li>
+        <li>Remember binary search requires <strong>sorted data</strong> and <strong>random access</strong></li>
+        <li>For sorting: mention the <strong>swapped flag</strong> for early exit (bubble sort)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>For Recursion Questions</h4>
+      <ul>
+        <li>Always identify the <strong>base case</strong> first</li>
+        <li>Show both the <strong>winding</strong> (calls going down) and <strong>unwinding</strong> (returns coming back) phases</li>
+        <li>Explain how the <strong>call stack</strong> grows and shrinks</li>
+        <li>For comparison questions, mention <strong>memory usage</strong> vs <strong>code clarity</strong></li>
+        <li>Give a specific example (factorial is the standard)</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 42 – KEY COMPARISON SUMMARY
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Revision Summary</div>
+  <h2>Key Comparison Summary</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Concept</th><th>Key Point</th><th>Complexity</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Linear Search</strong></td><td>Sequential checking, works on unsorted data</td><td>O(n)</td></tr>
+      <tr><td><strong>Binary Search</strong></td><td>Divide in half, requires sorted data</td><td>O(log n)</td></tr>
+      <tr><td><strong>Bubble Sort</strong></td><td>Compare and swap adjacent elements</td><td>O(n\u00b2) / O(n) best</td></tr>
+      <tr><td><strong>Insertion Sort</strong></td><td>Build sorted list one element at a time</td><td>O(n\u00b2) / O(n) best</td></tr>
+      <tr><td><strong>ADT</strong></td><td>Logical description of data + operations</td><td>—</td></tr>
+      <tr><td><strong>Big O</strong></td><td>Upper bound of growth rate</td><td>—</td></tr>
+      <tr><td><strong>Recursion</strong></td><td>Function calls itself, needs base case</td><td>O(n) stack space</td></tr>
+      <tr><td><strong>Iteration</strong></td><td>Loop-based repetition</td><td>O(1) extra space</td></tr>
+    </tbody>
+  </table>
+`);
+
+// ==================================================================
+// SLIDE 43 – END SLIDE
+// ==================================================================
+addSlide(`
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+    <div class="section-badge" style="margin-bottom:14px;">Cambridge International AS &amp; A Level — 9618</div>
+    <h1 style="font-size:2.8rem; margin-bottom:8px; color:#5ae0c0;">Computational Thinking<br>and Problem-solving</h1>
+    <div style="width:80px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:18px;"></div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:600px; margin-bottom:20px;">
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Revise definitions</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Practise trace tables</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Write pseudocode</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Know Big O</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Trace recursion</span>
+    </div>
+    <div class="card" style="max-width:500px;">
+      <h4>Ready for Exam Practice</h4>
+      <ul>
+        <li>Know searching and sorting algorithms</li>
+        <li>Practise writing pseudocode for each algorithm</li>
+        <li>Understand Big O notation</li>
+        <li>Be able to trace recursive calls</li>
+        <li>Compare recursion and iteration</li>
+        <li>Use mark schemes to check wording</li>
+      </ul>
+    </div>
+    <p style="color:#3a6a6a; font-size:0.82rem; margin-top:20px;">\u2190 Revise again | Use the navigation bar \u2192</p>
+  </div>
+`);
+
+// ==================================================================
+// RENDER ALL SLIDES
+// ==================================================================
+renderSlides();
+</script></body>
+</html>

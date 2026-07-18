@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AS & A Level 9618 — Communication & Internet Technologies</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0a0e1a; color: #e0e8f0; overflow: hidden; height: 100vh; width: 100vw; }
+  .presentation { position: relative; width: 100vw; height: 100vh; }
+  .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; padding: 32px 48px; background: linear-gradient(135deg, #0a1420 0%, #12223a 50%, #0a1420 100%); overflow-y: auto; }
+  .slide.active { display: flex; }
+  .slide::-webkit-scrollbar { width: 6px; }
+  .slide::-webkit-scrollbar-track { background: #0a1420; }
+  .slide::-webkit-scrollbar-thumb { background: #1a8a7a; border-radius: 3px; }
+
+  /* Typography */
+  h1 { font-size: 2.4rem; font-weight: 700; color: #f0faff; margin-bottom: 8px; letter-spacing: -0.5px; }
+  h2 { font-size: 1.6rem; font-weight: 600; color: #5ce0c8; margin-bottom: 6px; border-bottom: 2px solid #1a8a7a; padding-bottom: 4px; }
+  h3 { font-size: 1.2rem; font-weight: 600; color: #7ae8d4; margin-bottom: 5px; }
+  h4 { font-size: 1.02rem; font-weight: 600; color: #4ad4be; margin-bottom: 4px; }
+  p, li { font-size: 1.0rem; line-height: 1.5; color: #d0e4ec; margin-bottom: 4px; }
+  ul { padding-left: 20px; margin-bottom: 6px; }
+  ol { padding-left: 22px; margin-bottom: 6px; }
+  li { margin-bottom: 2px; }
+  strong { color: #e8f6ff; }
+
+  .code-block { font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; background: #0a0f1e; border: 1px solid #1a8a7a; border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; line-height: 1.5; color: #d4e8ff; overflow-x: auto; margin: 6px 0; box-shadow: inset 0 2px 6px rgba(0,0,0,0.3); white-space: pre; }
+  .inline-code { font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; background: #0a0f1e; color: #5ce0c8; padding: 2px 7px; border-radius: 4px; font-size: 0.85rem; border: 1px solid #1a4a42; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 0.88rem; }
+  th { background: #0a2a24; color: #7ae8d4; font-weight: 600; padding: 6px 10px; text-align: left; border: 1px solid #1a8a7a; }
+  td { padding: 5px 10px; border: 1px solid #1a4a42; color: #c8dce8; }
+  tr:nth-child(even) td { background: #0c1828; }
+  tr:nth-child(odd) td { background: #0e1e2e; }
+
+  /* Diagram box */
+  .diagram-box { background: #0a0f1e; border: 1px solid #1a8a7a; border-radius: 10px; padding: 12px; margin: 8px 0; display: flex; flex-direction: column; align-items: center; }
+  .diagram-box svg { max-width: 100%; height: auto; }
+  .diagram-caption { margin-top: 4px; font-size: 0.8rem; color: #5a9a8a; font-style: italic; text-align: center; line-height: 1.4; }
+
+  /* Layout helpers */
+  .flex-row { display: flex; flex-direction: row; gap: 16px; }
+  .flex-col { display: flex; flex-direction: column; gap: 6px; }
+  .flex-1 { flex: 1; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
+  .mt-6 { margin-top: 6px; } .mt-8 { margin-top: 8px; } .mt-10 { margin-top: 10px; } .mt-12 { margin-top: 12px; }
+  .mb-6 { margin-bottom: 6px; } .mb-8 { margin-bottom: 8px; } .mb-10 { margin-bottom: 10px; } .mb-12 { margin-bottom: 12px; }
+
+  /* Cards */
+  .card { background: #0c1828; border: 1px solid #1a4a42; border-radius: 10px; padding: 10px 12px; transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s; }
+  .card:hover { border-color: #2ac8b0; box-shadow: 0 0 18px rgba(42,200,176,0.1); transform: translateY(-1px); }
+
+  /* Tags & Badges */
+  .tag { display: inline-block; background: #0a2a24; color: #7ae8d4; padding: 2px 10px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; border: 1px solid #1a8a7a; margin-right: 2px; }
+  .section-badge { display: inline-block; background: linear-gradient(135deg, #0a3a32, #1a6a5a); color: #7ae8d4; padding: 3px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; letter-spacing: 0.5px; text-transform: uppercase; border: 1px solid #1a8a7a; }
+
+  /* Callout boxes */
+  .callout { background: #0c1828; border-left: 4px solid #2ac8b0; padding: 8px 12px; border-radius: 0 6px 6px 0; margin: 5px 0; font-size: 0.9rem; }
+  .callout.info { border-left-color: #2ac8b0; }
+  .callout.warn { border-left-color: #f0a030; }
+  .callout.success { border-left-color: #8bc34a; }
+  .callout.exam { border-left-color: #f08080; background: #1a0e0e; }
+
+  /* Key Term box */
+  .key-term { display: inline-flex; align-items: center; gap: 6px; background: #0a2a24; border: 1px solid #1a8a7a; border-radius: 20px; padding: 3px 14px; font-size: 0.78rem; color: #5ce0c8; font-weight: 600; margin: 2px 0; }
+  .key-term::before { content: "🔑"; font-size: 0.72rem; }
+
+  /* Objectives */
+  .objectives-list { list-style: none; padding: 0; }
+  .objectives-list li { padding: 6px 10px 6px 32px; background: #0a0f1e; border-left: 3px solid #2ac8b0; margin-bottom: 6px; border-radius: 0 6px 6px 0; position: relative; }
+  .objectives-list li::before { content: "\25B8"; position: absolute; left: 11px; color: #2ac8b0; font-weight: bold; }
+
+  /* Steps */
+  .step-list { list-style: none; padding: 0; counter-reset: step; }
+  .step-list li { counter-increment: step; padding: 4px 8px 4px 28px; position: relative; margin-bottom: 2px; }
+  .step-list li::before { content: counter(step) "."; position: absolute; left: 4px; color: #2ac8b0; font-weight: 700; }
+
+  /* Navigation bar */
+  .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 10px 20px; background: rgba(10,14,26,0.94); backdrop-filter: blur(10px); border-top: 1px solid #1a4a42; z-index: 100; }
+  .nav-bar button { background: #0a2a24; border: 1px solid #1a8a7a; color: #7ae8d4; padding: 7px 18px; border-radius: 6px; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: background 0.2s, border-color 0.2s; }
+  .nav-bar button:hover { background: #1a4a42; border-color: #2ac8b0; }
+  .nav-bar button:disabled { opacity: 0.35; cursor: default; }
+  .nav-bar .slide-counter { color: #5a9a8a; font-size: 0.85rem; min-width: 80px; text-align: center; }
+  .nav-bar .progress-dots { display: flex; gap: 3px; }
+  .nav-bar .dot { width: 6px; height: 6px; border-radius: 50%; background: #1a4a42; border: none; cursor: pointer; padding: 0; transition: background 0.2s; }
+  .nav-bar .dot.active { background: #2ac8b0; }
+
+  .kbd-hint { position: fixed; bottom: 56px; right: 16px; color: #1a4a42; font-size: 0.72rem; z-index: 90; }
+  .slide-number { position: absolute; bottom: 52px; right: 24px; color: #1a2a3a; font-size: 0.8rem; font-weight: 600; z-index: 1; }
+
+  /* Misc */
+  .flow-diagram { display: flex; align-items: center; justify-content: center; gap: 5px; margin: 5px 0; flex-wrap: wrap; }
+  .flow-step { background: #0a0f1e; border: 1px solid #1a8a7a; border-radius: 6px; padding: 4px 8px; font-size: 0.78rem; color: #d0e4ec; text-align: center; }
+  .flow-arrow { color: #2ac8b0; font-size: 1rem; font-weight: bold; }
+  .text-center { text-align: center; }
+  .text-small { font-size: 0.85rem; color: #5a7a7a; }
+  .comparison-good { color: #8bc34a; }
+  .comparison-bad { color: #e57373; }
+  .comparison-neutral { color: #ffb74d; }
+  .chip-group { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; background: #0a0f1e; border: 1px solid #1a4a42; border-radius: 20px; padding: 3px 10px; font-size: 0.8rem; color: #7ae8d4; }
+
+  .protocol-stack { display: flex; flex-direction: column; align-items: stretch; gap: 3px; max-width: 360px; margin: 6px auto; }
+  .stack-layer { padding: 8px 14px; border-radius: 6px; text-align: center; font-weight: 600; font-size: 0.9rem; border: 1px solid; transition: transform 0.2s; }
+  .stack-layer:hover { transform: scale(1.03); }
+  .layer-app { background: #1a2a3a; color: #7ae8d4; border-color: #2ac8b0; }
+  .layer-transport { background: #1a2a3a; color: #80e0ff; border-color: #4ac8f0; }
+  .layer-internet { background: #1a2a3a; color: #f0c060; border-color: #d4a030; }
+  .layer-link { background: #1a2a3a; color: #f08080; border-color: #e06060; }
+
+  .worked-example { background: linear-gradient(135deg, #0a1428, #0e1a2a); border: 1px solid #1a8a7a; border-radius: 10px; padding: 12px 16px; margin: 6px 0; box-shadow: 0 2px 12px rgba(0,0,0,0.2); }
+
+  .section-divider { display: flex; align-items: center; gap: 10px; margin: 4px 0; }
+  .section-divider::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, #1a8a7a, transparent); }
+
+  /* Animations */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .slide.active > * { animation: fadeIn 0.4s ease-out; }
+
+  /* Exam tip box */
+  .exam-tip { background: #1a0e0e; border: 1px solid #e06060; border-left: 4px solid #f08080; border-radius: 8px; padding: 10px 14px; margin: 8px 0; }
+  .exam-tip .tip-label { display: inline-block; background: #e06060; color: #fff; padding: 1px 10px; border-radius: 10px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+
+  /* Title banner */
+  .title-banner { text-align: center; padding: 12px 20px; background: linear-gradient(135deg, #0a2a24, #0c1830); border: 1px solid #1a8a7a; border-radius: 12px; margin-bottom: 10px; }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .slide { padding: 20px 18px; }
+    h1 { font-size: 1.6rem; }
+    h2 { font-size: 1.2rem; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .flex-row { flex-direction: column; }
+    .protocol-stack { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="presentation" id="presentation">
+
+<!-- ===================================================================== -->
+<!-- SLIDE 1 – TITLE                                                        -->
+<!-- ===================================================================== -->
+<div class="slide active" data-slide="1">
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; gap:6px;">
+    <div class="section-badge" style="font-size:0.9rem; margin-bottom:12px;">Cambridge International AS &amp; A Level – 9618</div>
+    <h1 style="font-size:2.6rem; margin-bottom:4px;">Communication &amp;</h1>
+    <h1 style="font-size:2.6rem; margin-bottom:8px; color:#5ce0c8;">Internet Technologies</h1>
+    <div style="width:80px; height:3px; background:#1a8a7a; border-radius:2px; margin-bottom:16px;"></div>
+    <div class="title-banner" style="max-width:500px;">
+      <p style="font-size:1rem; color:#5a9a8a; margin-bottom:6px;">📋 Learning Objectives</p>
+      <ul class="objectives-list" style="text-align:left; font-size:0.88rem;">
+        <li>Define protocols and explain why they are essential for communication</li>
+        <li>Describe the 4-layer TCP/IP protocol stack and the role of each layer</li>
+        <li>Compare common application layer protocols (HTTP, FTP, SMTP, POP3, IMAP, BitTorrent)</li>
+        <li>Distinguish between circuit switching and packet switching</li>
+        <li>Explain how routers forward packets across the internet</li>
+      </ul>
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:12px;">
+      <span class="tag" style="font-size:0.82rem; padding:4px 14px;">TCP/IP Suite</span>
+      <span class="tag" style="font-size:0.82rem; padding:4px 14px;">Application Protocols</span>
+      <span class="tag" style="font-size:0.82rem; padding:4px 14px;">Circuit vs Packet Switching</span>
+      <span class="tag" style="font-size:0.82rem; padding:4px 14px;">Routing</span>
+    </div>
+    <p style="color:#3a5a5a; font-size:0.82rem; margin-top:24px;">Press <span class="inline-code">→</span> or click the navigation to begin</p>
+  </div>
+  <div class="slide-number">1 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 2 – WHY DO WE NEED PROTOCOLS?                                    -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="2">
+  <div class="section-badge">Section 1.1</div>
+  <h2>Why Do We Need Protocols?</h2>
+  <div style="width:60px; height:3px; background:#1a8a7a; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>📖 Definition</h4>
+        <p>A <strong>protocol</strong> is a set of <strong>rules</strong> that govern how data is communicated between devices on a network.</p>
+      </div>
+
+      <div class="card mt-6">
+        <h4>🧠 Analogy — The Postal Service</h4>
+        <p>Imagine sending a letter without agreed rules:</p>
+        <ul style="font-size:0.9rem;">
+          <li>What <strong>language</strong> is the address written in?</li>
+          <li>Where does the <strong>stamp</strong> go?</li>
+          <li>Is the return address <strong>required</strong>?</li>
+          <li>How does the post office know where to <strong>route</strong> it?</li>
+        </ul>
+        <p style="margin-top:4px;">Protocols are the <strong>agreed rules</strong> that all participants follow — just like postal regulations ensure your letter arrives correctly.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="border-color:#e06060;">
+        <h4>⚠️ Problems WITHOUT a Protocol</h4>
+        <table>
+          <thead><tr><th>Problem</th><th>Consequence</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Data format mismatch</strong></td><td>Sender sends binary, receiver expects text — data is gibberish</td></tr>
+            <tr><td><strong>No error checking</strong></td><td>Corrupted data is accepted as valid — silent data corruption</td></tr>
+            <tr><td><strong>No agreed speed/timing</strong></td><td>Sender blasts data at 1 Gbps, receiver reads at 1 Kbps — data lost</td></tr>
+            <tr><td><strong>Can't detect start/end</strong></td><td>Receiver can't tell where one message ends and the next begins</td></tr>
+            <tr><td><strong>No security</strong></td><td>No encryption, authentication, or access control — anyone can read/intercept</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="key-term" style="margin-top:4px;">Protocol — A set of rules governing data communication between devices</div>
+    </div>
+  </div>
+
+  <div class="exam-tip mt-6">
+    <div class="tip-label">Exam Tip</div>
+    <p style="font-size:0.88rem;"><strong>Common question:</strong> "Explain why a protocol is necessary for communication between two computers." <strong>Structure your answer:</strong> (1) Define protocol — agreed set of rules. (2) Mention format — ensures both devices interpret data the same way. (3) Mention timing/flow control — prevents data loss from speed mismatch. (4) Error checking — detects/corrects corrupted data.</p>
+  </div>
+  <div class="slide-number">2 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 3 – THE CONCEPT OF A PROTOCOL STACK                               -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="3">
+  <div class="section-badge">Section 1.2</div>
+  <h2>The Concept of a Protocol Stack</h2>
+  <div style="width:60px; height:3px; background:#1a8a7a; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>❓ Why Layers?</h4>
+        <p>Rather than one giant, complex protocol, network communication is divided into <strong>layers</strong>. Each layer:</p>
+        <ul>
+          <li>Performs <strong>one specific job</strong> (separation of concerns)</li>
+          <li>Only communicates with the layer <strong>directly above</strong> or <strong>directly below</strong> it</li>
+          <li>Can be <strong>developed, updated, or replaced</strong> independently</li>
+        </ul>
+      </div>
+
+      <div class="card mt-6" style="border-color:#2ac8b0;">
+        <h4>✅ Benefits of Layering</h4>
+        <div class="grid-2" style="gap:6px;">
+          <div class="card" style="font-size:0.85rem; border-color:#1a4a42;">
+            <strong>Modularity</strong><br>
+            Each layer handles one task
+          </div>
+          <div class="card" style="font-size:0.85rem; border-color:#1a4a42;">
+            <strong>Easy troubleshooting</strong><br>
+            Isolate problems to one layer
+          </div>
+          <div class="card" style="font-size:0.85rem; border-color:#1a4a42;">
+            <strong>Interchangeability</strong><br>
+            Swap out technologies (e.g., Wi-Fi instead of Ethernet at Link layer)
+          </div>
+          <div class="card" style="font-size:0.85rem; border-color:#1a4a42;">
+            <strong>Standardisation</strong><br>
+            Different manufacturers can build compatible products
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="diagram-box" style="padding:16px;">
+        <svg viewBox="0 0 200 180" style="width:100%; max-width:200px;">
+          <rect x="30" y="10" width="140" height="30" rx="4" fill="#0a2a24" stroke="#2ac8b0" stroke-width="2"/>
+          <text x="44" y="30" fill="#7ae8d4" font-size="11" font-weight="600">Layer N (Top)</text>
+
+          <line x1="100" y1="42" x2="100" y2="50" stroke="#1a8a7a" stroke-width="1.5"/>
+          <text x="110" y="48" fill="#5a9a8a" font-size="7">↑↓</text>
+
+          <rect x="30" y="52" width="140" height="30" rx="4" fill="#0a2a24" stroke="#2ac8b0" stroke-width="2"/>
+          <text x="34" y="72" fill="#7ae8d4" font-size="11" font-weight="600">Layer N−1</text>
+
+          <line x1="100" y1="84" x2="100" y2="92" stroke="#1a8a7a" stroke-width="1.5"/>
+          <text x="110" y="90" fill="#5a9a8a" font-size="7">↑↓</text>
+
+          <rect x="30" y="94" width="140" height="30" rx="4" fill="#0a2a24" stroke="#2ac8b0" stroke-width="2"/>
+          <text x="34" y="114" fill="#7ae8d4" font-size="11" font-weight="600">Layer N−2</text>
+
+          <line x1="100" y1="126" x2="100" y2="134" stroke="#1a8a7a" stroke-width="1.5"/>
+          <text x="110" y="132" fill="#5a9a8a" font-size="7">↑↓</text>
+
+          <rect x="30" y="136" width="140" height="30" rx="4" fill="#0a2a24" stroke="#2ac8b0" stroke-width="2"/>
+          <text x="34" y="156" fill="#7ae8d4" font-size="11" font-weight="600">Layer N−3 (Bottom)</text>
+        </svg>
+        <div class="diagram-caption">Each layer communicates only with its immediate neighbours — each performs one specific job</div>
+      </div>
+
+      <div class="exam-tip mt-6">
+        <div class="tip-label">Exam Tip</div>
+        <p style="font-size:0.88rem;">If a question asks <strong>"Why are protocols organised into layers?"</strong>, mention: <strong>modularity</strong> (each layer has one job), <strong>independent development</strong> (layers can be updated separately), <strong>easier troubleshooting</strong> (isolate faults to a specific layer), and <strong>interoperability</strong> (different vendors can build compatible products).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="key-term" style="margin-top:4px;">Protocol Stack / Layering — Organising protocols into independent layers, each with a specific function</div>
+  <div class="slide-number">3 / 25</div>
+</div>
+
+<!-- SVG defs for arrow markers — defined once at the top-level before any SVG uses them -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden;" aria-hidden="true">
+  <defs>
+    <marker id="arr5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2ac8b0"/>
+    </marker>
+    <marker id="arr-gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f0c060"/>
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8bc34a"/>
+    </marker>
+    <marker id="arr-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f08080"/>
+    </marker>
+  </defs>
+</svg>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 4 – INTRODUCING TCP/IP SUITE                                     -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="4">
+  <div class="section-badge">Section 1.3</div>
+  <h2>Introducing the TCP/IP Protocol Suite</h2>
+  <div style="width:60px; height:3px; background:#1a8a7a; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>🌐 What is TCP/IP?</h4>
+        <p>The <strong>TCP/IP protocol suite</strong> is the set of communication protocols used to connect devices across the <strong>Internet</strong>. It consists of <strong>4 layers</strong>.</p>
+        <ul>
+          <li><strong>TCP</strong> = Transmission Control Protocol</li>
+          <li><strong>IP</strong> = Internet Protocol</li>
+          <li>Developed in the 1970s; the foundation of the modern internet</li>
+        </ul>
+      </div>
+
+      <div class="card mt-6" style="border-color:#f0a030;">
+        <h4>🧩 OSI Model — Extension Note</h4>
+        <p>There is also the <strong>OSI (Open Systems Interconnection)</strong> model with <strong>7 layers</strong>. TCP/IP combines some OSI layers:</p>
+        <table style="font-size:0.8rem;">
+          <thead><tr><th>TCP/IP (4 layers)</th><th>OSI (7 layers)</th></tr></thead>
+          <tbody>
+            <tr><td>Application</td><td>Application, Presentation, Session</td></tr>
+            <tr><td>Transport</td><td>Transport</td></tr>
+            <tr><td>Internet</td><td>Network</td></tr>
+            <tr><td>Link</td><td>Data Link, Physical</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:0.82rem; margin-top:4px;">You only need to know <strong>TCP/IP 4-layer model</strong> for the Cambridge 9618 syllabus.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="diagram-box" style="padding:16px 24px;">
+        <p style="font-size:0.85rem; color:#5a9a8a; margin-bottom:6px; font-weight:600;">The 4-Layer TCP/IP Stack</p>
+        <div class="protocol-stack">
+          <div class="stack-layer layer-app" style="padding:12px 20px;">
+            Application Layer
+          </div>
+          <div class="stack-layer layer-transport" style="padding:12px 20px;">
+            Transport Layer
+          </div>
+          <div class="stack-layer layer-internet" style="padding:12px 20px;">
+            Internet Layer
+          </div>
+          <div class="stack-layer layer-link" style="padding:12px 20px;">
+            Link Layer
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:8px;">
+          <span style="display:flex; align-items:center; gap:3px; font-size:0.7rem;"><span style="width:10px; height:10px; border-radius:2px; background:#2ac8b0; display:inline-block;"></span> Application</span>
+          <span style="display:flex; align-items:center; gap:3px; font-size:0.7rem;"><span style="width:10px; height:10px; border-radius:2px; background:#4ac8f0; display:inline-block;"></span> Transport</span>
+          <span style="display:flex; align-items:center; gap:3px; font-size:0.7rem;"><span style="width:10px; height:10px; border-radius:2px; background:#d4a030; display:inline-block;"></span> Internet</span>
+          <span style="display:flex; align-items:center; gap:3px; font-size:0.7rem;"><span style="width:10px; height:10px; border-radius:2px; background:#e06060; display:inline-block;"></span> Link</span>
+        </div>
+      </div>
+
+      <div class="key-term" style="margin-top:4px;">TCP/IP Suite — The 4-layer protocol stack that powers the Internet</div>
+    </div>
+  </div>
+  <div class="slide-number">4 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 5 – LAYER 1: APPLICATION LAYER                                   -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="5">
+  <div class="section-badge">TCP/IP Stack — Layer 4 (Top)</div>
+  <h2>Layer 1: Application Layer</h2>
+  <div style="width:60px; height:3px; background:#2ac8b0; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card" style="border-color:#2ac8b0;">
+        <h4>📌 Function</h4>
+        <p>The <strong>Application Layer</strong> is the <strong>topmost layer</strong> in the TCP/IP stack. It:</p>
+        <ul>
+          <li>Allows <strong>applications</strong> (browsers, email clients, FTP clients) to access network services</li>
+          <li><strong>Formats data</strong> so it is understandable by the user application</li>
+          <li>Provides the <strong>interface</strong> between the user's software and the network</li>
+          <li>Contains many <strong>high-level protocols</strong> (HTTP, FTP, SMTP, etc.)</li>
+        </ul>
+      </div>
+
+      <div class="card mt-6" style="border-color:#2ac8b0;">
+        <h4>🧪 Example: Web Browser Requesting a Webpage</h4>
+        <div class="flow-diagram">
+          <span class="flow-step" style="border-color:#2ac8b0;">Chrome</span>
+          <span class="flow-arrow" style="color:#2ac8b0;">HTTP Request</span>
+          <span class="flow-step" style="border-color:#2ac8b0;">Web Server</span>
+        </div>
+        <p style="font-size:0.85rem;">The browser (application) uses <strong>HTTP</strong> at the Application Layer to format and send the request for a webpage.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="border-color:#2ac8b0;">
+        <h4>📋 Protocols at the Application Layer</h4>
+        <table>
+          <thead><tr><th>Protocol</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><strong>HTTP</strong></td><td>Transferring web pages (HyperText Transfer Protocol)</td></tr>
+            <tr><td><strong>HTTPS</strong></td><td>Secure version of HTTP (with SSL/TLS encryption)</td></tr>
+            <tr><td><strong>FTP</strong></td><td>File transfer between client and server (File Transfer Protocol)</td></tr>
+            <tr><td><strong>SMTP</strong></td><td>Sending email messages (Simple Mail Transfer Protocol)</td></tr>
+            <tr><td><strong>POP3</strong></td><td>Receiving/retrieving email from a server (Post Office Protocol v3)</td></tr>
+            <tr><td><strong>IMAP</strong></td><td>Receiving email with multi-device sync (Internet Message Access Protocol)</td></tr>
+            <tr><td><strong>BitTorrent</strong></td><td>Peer-to-peer file sharing</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout info mt-6">
+        <strong>Remember:</strong> The Application Layer does <strong>NOT</strong> refer to the application itself (like Chrome). It refers to the <strong>protocols</strong> that applications use to communicate over the network.
+      </div>
+    </div>
+  </div>
+
+  <div class="key-term" style="margin-top:4px;">Application Layer — Provides network services to user applications; formats data for the user</div>
+  <div class="slide-number">5 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 6 – LAYER 2: TRANSPORT LAYER                                     -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="6">
+  <div class="section-badge">TCP/IP Stack — Layer 3</div>
+  <h2>Layer 2: Transport Layer</h2>
+  <div style="width:60px; height:3px; background:#4ac8f0; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card" style="border-color:#4ac8f0;">
+        <h4>📌 Function</h4>
+        <p>The <strong>Transport Layer</strong> is responsible for <strong>end-to-end delivery</strong> of data between two devices. It:</p>
+        <ul>
+          <li>Breaks data from the Application Layer into smaller <strong>segments</strong></li>
+          <li>Adds <strong>port numbers</strong> to identify which application the data belongs to</li>
+          <li>Provides <strong>flow control</strong> (regulates data speed)</li>
+          <li>Performs <strong>error checking</strong> (detects corrupted segments)</li>
+        </ul>
+      </div>
+
+      <div class="card mt-6" style="border-color:#f0a030;">
+        <h4>🔑 Port Numbers</h4>
+        <p>Each application is assigned a <strong>port number</strong> so the Transport Layer knows which application to deliver data to:</p>
+        <ul style="font-size:0.88rem;">
+          <li>HTTP → Port <strong>80</strong></li>
+          <li>HTTPS → Port <strong>443</strong></li>
+          <li>FTP → Port <strong>21</strong></li>
+          <li>SMTP → Port <strong>25</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="border-color:#4ac8f0;">
+        <h4>⚡ TCP vs UDP — Comparison</h4>
+        <table>
+          <thead><tr><th>Feature</th><th>TCP</th><th>UDP</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Full name</strong></td><td>Transmission Control Protocol</td><td>User Datagram Protocol</td></tr>
+            <tr><td><strong>Connection</strong></td><td>Connection-oriented (handshake first)</td><td>Connectionless (just sends)</td></tr>
+            <tr><td><strong>Reliability</strong></td><td class="comparison-good">Guaranteed delivery</td><td class="comparison-bad">No guarantee</td></tr>
+            <tr><td><strong>Ordering</strong></td><td>Data arrives in correct order</td><td>May arrive out of order</td></tr>
+            <tr><td><strong>Speed</strong></td><td>Slower (overhead)</td><td class="comparison-good">Fast</td></tr>
+            <tr><td><strong>Use cases</strong></td><td>Web browsing, email, file transfer</td><td>Streaming, VoIP, gaming</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="diagram-box" style="margin-top:6px;">
+        <svg viewBox="0 0 240 50" style="width:100%; max-width:240px;">
+          <text x="8" y="16" fill="#b8d8e8" font-size="9" font-weight="600">Transport Layer Adds:</text>
+          <rect x="8" y="22" width="80" height="20" rx="3" fill="#1a2a3a" stroke="#4ac8f0" stroke-width="1"/>
+          <text x="14" y="36" fill="#80e0ff" font-size="8" font-weight="600">Port # (e.g., 80)</text>
+          <rect x="94" y="22" width="80" height="20" rx="3" fill="#1a2a3a" stroke="#4ac8f0" stroke-width="1"/>
+          <text x="100" y="36" fill="#80e0ff" font-size="8" font-weight="600">Segment #</text>
+          <rect x="180" y="22" width="50" height="20" rx="3" fill="#1a2a3a" stroke="#4ac8f0" stroke-width="1"/>
+          <text x="186" y="36" fill="#80e0ff" font-size="8" font-weight="600">Checksum</text>
+        </svg>
+        <div class="diagram-caption">Port numbers, sequence numbers, and error-checking data are added by the Transport Layer</div>
+      </div>
+
+      <div class="key-term" style="margin-top:4px;">Transport Layer — Ensures reliable delivery; breaks data into segments; adds port numbers</div>
+    </div>
+  </div>
+  <div class="slide-number">6 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 7 – LAYER 3: INTERNET LAYER                                      -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="7">
+  <div class="section-badge">TCP/IP Stack — Layer 2</div>
+  <h2>Layer 3: Internet Layer</h2>
+  <div style="width:60px; height:3px; background:#d4a030; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card" style="border-color:#d4a030;">
+        <h4>📌 Function</h4>
+        <p>The <strong>Internet Layer</strong> (also called the Network Layer) is responsible for:</p>
+        <ul>
+          <li><strong>Logical addressing</strong> — adding source and destination <strong>IP addresses</strong></li>
+          <li><strong>Routing</strong> — determining the best path for data to travel across networks</li>
+          <li>Packaging data from the Transport Layer into <strong>packets</strong> (also called datagrams)</li>
+        </ul>
+      </div>
+
+      <div class="card mt-6" style="border-color:#d4a030;">
+        <h4>📮 IP Protocol</h4>
+        <p>The main protocol at this layer is <strong>IP (Internet Protocol)</strong>.</p>
+        <ul>
+          <li><strong>IPv4</strong>: 32-bit address (e.g., <span class="inline-code">192.168.1.1</span>) — ~4.3 billion addresses</li>
+          <li><strong>IPv6</strong>: 128-bit address (e.g., <span class="inline-code">2001:db8::1</span>) — huge address space</li>
+          <li>IP is <strong>connectionless</strong> — each packet is routed independently</li>
+          <li>IP is <strong>unreliable</strong> — it does NOT guarantee delivery (that's TCP's job!)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <div class="diagram-box" style="padding:16px;">
+        <svg viewBox="0 0 260 120" style="width:100%; max-width:260px;">
+          <text x="8" y="14" fill="#b8d8e8" font-size="9" font-weight="600">Internet Layer Adds IP Addresses:</text>
+
+          <!-- Packet diagram -->
+          <rect x="8" y="24" width="244" height="30" rx="4" fill="#0a0f1e" stroke="#d4a030" stroke-width="1.5"/>
+          <text x="14" y="44" fill="#f0c060" font-size="8" font-weight="600">| SRC: 192.168.1.5</text>
+          <text x="130" y="44" fill="#f0c060" font-size="8" font-weight="600">| DST: 93.184.216.34</text>
+
+          <!-- Routing diagram -->
+          <text x="8" y="74" fill="#b8d8e8" font-size="9" font-weight="600">Routing Across Networks:</text>
+
+          <rect x="8" y="82" width="50" height="24" rx="3" fill="#1a2a3a" stroke="#d4a030" stroke-width="1"/>
+          <text x="12" y="97" fill="#f0c060" font-size="6">Host A</text>
+          <text x="14" y="104" fill="#8a7a5a" font-size="5">192.168.1.5</text>
+
+          <line x1="62" y1="94" x2="88" y2="94" stroke="#f0c060" stroke-width="1.5" marker-end="url(#arr-gold)"/>
+
+          <rect x="92" y="82" width="50" height="24" rx="3" fill="#1a2a3a" stroke="#d4a030" stroke-width="1"/>
+          <text x="100" y="97" fill="#f0c060" font-size="6">Router</text>
+
+          <line x1="146" y1="94" x2="172" y2="94" stroke="#f0c060" stroke-width="1.5" marker-end="url(#arr-gold)"/>
+
+          <rect x="176" y="82" width="60" height="24" rx="3" fill="#1a2a3a" stroke="#d4a030" stroke-width="1"/>
+          <text x="180" y="97" fill="#f0c060" font-size="6">Web Server</text>
+        </svg>
+        <div class="diagram-caption">The Internet Layer adds source/destination IP addresses and routes packets across networks</div>
+      </div>
+
+      <div class="callout info mt-6">
+        <strong>Key insight:</strong> IP addresses identify a <strong>device on a network</strong>. Port numbers (Transport Layer) identify the <strong>application on that device</strong>. Both are needed for data to reach the right place.
+      </div>
+
+      <div class="key-term" style="margin-top:4px;">Internet Layer — Handles logical addressing (IP addresses) and routing of packets</div>
+    </div>
+  </div>
+  <div class="slide-number">7 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 8 – LAYER 4: LINK LAYER                                          -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="8">
+  <div class="section-badge">TCP/IP Stack — Layer 1 (Bottom)</div>
+  <h2>Layer 4: Link Layer</h2>
+  <div style="width:60px; height:3px; background:#e06060; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card" style="border-color:#e06060;">
+        <h4>📌 Function</h4>
+        <p>The <strong>Link Layer</strong> (also called the Network Interface or Data Link layer) is the <strong>bottom layer</strong> of the TCP/IP stack. It:</p>
+        <ul>
+          <li>Handles <strong>physical addressing</strong> using <strong>MAC addresses</strong></li>
+          <li>Controls transmission of data over the <strong>physical medium</strong> (cable, fibre, Wi-Fi)</li>
+          <li>Converts packets from the Internet Layer into <strong>frames</strong> for transmission</li>
+          <li>Deals with <strong>hardware protocols</strong> (Ethernet, Wi-Fi / 802.11)</li>
+        </ul>
+      </div>
+
+      <div class="card mt-6" style="border-color:#e06060;">
+        <h4>🔗 MAC Address vs IP Address</h4>
+        <table>
+          <thead><tr><th>Feature</th><th>MAC Address</th><th>IP Address</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Length</strong></td><td>48 bits (6 bytes)</td><td>32 bits (IPv4) or 128 bits (IPv6)</td></tr>
+            <tr><td><strong>Format</strong></td><td>Hex: <span class="inline-code">00:1A:2B:3C:4D:5E</span></td><td>Decimal: <span class="inline-code">192.168.1.1</span></td></tr>
+            <tr><td><strong>Layer</strong></td><td>Link Layer</td><td>Internet Layer</td></tr>
+            <tr><td><strong>Purpose</strong></td><td>Identifies a <strong>physical device</strong> on a local network</td><td>Identifies a <strong>logical location</strong> on the internet</td></tr>
+            <tr><td><strong>Changeable?</strong></td><td>Permanent (burned into NIC)</td><td>Can change (DHCP/static)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div>
+      <div class="diagram-box" style="padding:20px;">
+        <svg viewBox="0 0 220 100" style="width:100%; max-width:220px;">
+          <text x="8" y="14" fill="#b8d8e8" font-size="9" font-weight="600">Frame Structure (Link Layer):</text>
+
+          <rect x="8" y="22" width="60" height="24" rx="3" fill="#1a2a3a" stroke="#f08080" stroke-width="1"/>
+          <text x="10" y="38" fill="#f08080" font-size="7" font-weight="600">DST MAC</text>
+
+          <rect x="72" y="22" width="60" height="24" rx="3" fill="#1a2a3a" stroke="#f08080" stroke-width="1"/>
+          <text x="74" y="38" fill="#f08080" font-size="7" font-weight="600">SRC MAC</text>
+
+          <rect x="136" y="22" width="70" height="24" rx="3" fill="#1a2a3a" stroke="#f08080" stroke-width="1"/>
+          <text x="140" y="38" fill="#f08080" font-size="7" font-weight="600">Data (packet)</text>
+
+          <text x="8" y="72" fill="#8a7a7a" font-size="8">Physical Medium Examples:</text>
+          <text x="8" y="86" fill="#e06060" font-size="8">• Ethernet (Cat5/Cat6 copper cable)</text>
+          <text x="8" y="96" fill="#e06060" font-size="8">• Wi-Fi (IEEE 802.11 wireless)</text>
+        </svg>
+        <div class="diagram-caption">Link Layer wraps the packet in a <strong>frame</strong> with source/destination MAC addresses for local delivery</div>
+      </div>
+
+      <div class="card mt-6">
+        <h4>🌐 Hardware Protocols at this Layer</h4>
+        <ul>
+          <li><strong>Ethernet</strong> — wired networking standard for LANs</li>
+          <li><strong>Wi-Fi (IEEE 802.11)</strong> — wireless networking standard</li>
+          <li><strong>ARP (Address Resolution Protocol)</strong> — maps IP addresses to MAC addresses</li>
+        </ul>
+      </div>
+
+      <div class="key-term" style="margin-top:4px;">Link Layer — Handles physical addressing (MAC) and transmission over physical media</div>
+    </div>
+  </div>
+  <div class="slide-number">8 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 9 – DIAGRAM: SENDING A MESSAGE ACROSS THE INTERNET               -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="9">
+  <div class="section-badge">Process Overview</div>
+  <h2>Sending a Message Across the Internet</h2>
+  <div style="width:60px; height:3px; background:#1a8a7a; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="diagram-box" style="padding:16px 20px;">
+    <svg viewBox="0 0 700 230" style="width:100%; max-width:700px;">
+      <text x="8" y="16" fill="#b8d8e8" font-size="11" font-weight="600">Encapsulation at Host A → Transmission → De-encapsulation at Host B</text>
+
+      <!-- Left column: Host A -->
+      <rect x="8" y="30" width="160" height="160" rx="8" fill="#0a1420" stroke="#1a8a7a" stroke-width="1.5"/>
+      <text x="36" y="52" fill="#7ae8d4" font-size="10" font-weight="600">Host A (Sending)</text>
+
+      <!-- App Layer at A -->
+      <rect x="18" y="60" width="140" height="28" rx="3" fill="#1a2a3a" stroke="#2ac8b0" stroke-width="1.5"/>
+      <text x="24" y="78" fill="#7ae8d4" font-size="9" font-weight="600">Application</text>
+      <text x="100" y="78" fill="#5a9a8a" font-size="7">Data</text>
+
+      <!-- Transport at A -->
+      <rect x="18" y="92" width="140" height="28" rx="3" fill="#1a2a3a" stroke="#4ac8f0" stroke-width="1.5"/>
+      <text x="24" y="110" fill="#80e0ff" font-size="9" font-weight="600">Transport</text>
+      <text x="90" y="110" fill="#5a9a8a" font-size="7">+ Port #</text>
+
+      <!-- Internet at A -->
+      <rect x="18" y="124" width="140" height="28" rx="3" fill="#1a2a3a" stroke="#d4a030" stroke-width="1.5"/>
+      <text x="24" y="142" fill="#f0c060" font-size="9" font-weight="600">Internet</text>
+      <text x="82" y="142" fill="#5a9a8a" font-size="7">+ IP Addr</text>
+
+      <!-- Link at A -->
+      <rect x="18" y="156" width="140" height="28" rx="3" fill="#1a2a3a" stroke="#e06060" stroke-width="1.5"/>
+      <text x="24" y="174" fill="#f08080" font-size="9" font-weight="600">Link</text>
+      <text x="70" y="174" fill="#5a9a8a" font-size="7">+ MAC Addr</text>
+
+      <!-- Arrow across -->
+      <line x1="172" y1="110" x2="212" y2="110" stroke="#2ac8b0" stroke-width="2" marker-end="url(#arr5)"/>
+      <text x="178" y="104" fill="#2ac8b0" font-size="8" font-weight="600">Across Internet</text>
+
+      <!-- Right column: Host B -->
+      <rect x="216" y="30" width="160" height="160" rx="8" fill="#0a1420" stroke="#1a8a7a" stroke-width="1.5"/>
+      <text x="236" y="52" fill="#7ae8d4" font-size="10" font-weight="600">Host B (Receiving)</text>
+
+      <!-- Link at B -->
+      <rect x="226" y="60" width="140" height="28" rx="3" fill="#1a2a3a" stroke="#e06060" stroke-width="1.5"/>
+      <text x="232" y="78" fill="#f08080" font-size="9" font-weight="600">Link</text>
+      <text x="278" y="78" fill="#5a9a8a" font-size="7">- MAC Addr</text>
+
+      <!-- Internet at B -->
+      <rect x="226" y="92" width="140" height="28" rx="3" fill="#1a2a3a" stroke="#d4a030" stroke-width="1.5"/>
+      <text x="232" y="110" fill="#f0c060" font-size="9" font-weight="600">Internet</text>
+      <text x="290" y="110" fill="#5a9a8a" font-size="7">- IP Addr</text>
+
+      <!-- Transport at B -->
+      <rect x="226" y="124" width="140" height="28" rx="3" fill="#1a2a3a" stroke="#4ac8f0" stroke-width="1.5"/>
+      <text x="232" y="142" fill="#80e0ff" font-size="9" font-weight="600">Transport</text>
+      <text x="298" y="142" fill="#5a9a8a" font-size="7">- Port #</text>
+
+      <!-- App at B -->
+      <rect x="226" y="156" width="140" height="28" rx="3" fill="#1a2a3a" stroke="#2ac8b0" stroke-width="1.5"/>
+      <text x="232" y="174" fill="#7ae8d4" font-size="9" font-weight="600">Application</text>
+      <text x="308" y="174" fill="#5a9a8a" font-size="7">Data</text>
+
+      <!-- What is added -->
+      <text x="396" y="60" fill="#f0c060" font-size="9" font-weight="600">Adding / Removing Headers:</text>
+      <text x="396" y="80" fill="#7ae8d4" font-size="8">1. Application creates data</text>
+      <text x="396" y="96" fill="#80e0ff" font-size="8">2. Transport adds port # + seq #</text>
+      <text x="396" y="112" fill="#f0c060" font-size="8">3. Internet adds IP addresses</text>
+      <text x="396" y="128" fill="#f08080" font-size="8">4. Link adds MAC addresses</text>
+      <text x="396" y="148" fill="#5a9a8a" font-size="8">5. Sent as electrical/radio signals</text>
+      <text x="396" y="168" fill="#5ce0c8" font-size="8" font-weight="600">Each layer ADDS a header →</text>
+      <text x="396" y="184" fill="#5ce0c8" font-size="8" font-weight="600">→ receiver REMOVES it (de-encapsulation)</text>
+    </svg>
+    <div class="diagram-caption">At Host A, data travels DOWN the stack — each layer adds a header (encapsulation). Across the internet, it travels as signals. At Host B, data travels UP — each layer removes its header (de-encapsulation).</div>
+  </div>
+
+  <div class="callout info">
+    <strong>Encapsulation:</strong> Each layer wraps the data from the layer above with its own header information. <strong>De-encapsulation:</strong> The reverse process — each layer at the receiver strips off its corresponding header.
+  </div>
+
+  <div class="key-term" style="margin-top:4px;">Encapsulation — Adding headers at each layer when sending; De-encapsulation — Removing headers at each layer when receiving</div>
+  <div class="slide-number">9 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 10 – APPLICATION LAYER PROTOCOLS OVERVIEW TABLE                   -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="10">
+  <div class="section-badge">Section 1.4</div>
+  <h2>Common Application Layer Protocols</h2>
+  <div style="width:60px; height:3px; background:#1a8a7a; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="card">
+    <table>
+      <thead><tr><th>Protocol</th><th>Full Name</th><th>Purpose</th><th>Port</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>HTTP</strong></td>
+          <td>HyperText Transfer Protocol</td>
+          <td>Transferring web pages (request/response)</td>
+          <td><span class="inline-code">80</span></td>
+        </tr>
+        <tr>
+          <td><strong>HTTPS</strong></td>
+          <td>HyperText Transfer Protocol Secure</td>
+          <td>Secure web page transfer (SSL/TLS encrypted)</td>
+          <td><span class="inline-code">443</span></td>
+        </tr>
+        <tr>
+          <td><strong>FTP</strong></td>
+          <td>File Transfer Protocol</td>
+          <td>Uploading/downloading files between client &amp; server</td>
+          <td><span class="inline-code">21</span></td>
+        </tr>
+        <tr>
+          <td><strong>SMTP</strong></td>
+          <td>Simple Mail Transfer Protocol</td>
+          <td><strong>Sending</strong> email from client to server, and between servers</td>
+          <td><span class="inline-code">25</span></td>
+        </tr>
+        <tr>
+          <td><strong>POP3</strong></td>
+          <td>Post Office Protocol v3</td>
+          <td><strong>Receiving</strong> email — downloads to ONE device, often deletes from server</td>
+          <td><span class="inline-code">110</span></td>
+        </tr>
+        <tr>
+          <td><strong>IMAP</strong></td>
+          <td>Internet Message Access Protocol</td>
+          <td><strong>Receiving</strong> email — keeps on server, syncs across MULTIPLE devices</td>
+          <td><span class="inline-code">143</span></td>
+        </tr>
+        <tr>
+          <td><strong>BitTorrent</strong></td>
+          <td>BitTorrent Protocol</td>
+          <td>Peer-to-peer (P2P) file sharing — no central server</td>
+          <td>Dynamic</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="exam-tip mt-6">
+    <div class="tip-label">Exam Tip</div>
+    <p style="font-size:0.88rem;"><strong>Memorise these!</strong> Questions often ask you to <strong>name the protocol</strong> for a given scenario. For example: "Which protocol would be used to send an email?" → <strong>SMTP</strong>. "Which protocol synchronises emails across multiple devices?" → <strong>IMAP</strong>.</p>
+  </div>
+
+  <div class="slide-number">10 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 11 – HTTP (HyperText Transfer Protocol)                          -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="11">
+  <div class="section-badge">Application Protocol</div>
+  <h2>HTTP — HyperText Transfer Protocol</h2>
+  <div style="width:60px; height:3px; background:#1a8a7a; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card" style="border-color:#2ac8b0;">
+        <h4>📖 What is HTTP?</h4>
+        <p><strong>HTTP (HyperText Transfer Protocol)</strong> is the protocol used to <strong>transfer web pages</strong> from a web server to a web browser.</p>
+        <ul>
+          <li>Follows a <strong>client-server request/response model</strong></li>
+          <li>The <strong>client</strong> (web browser) sends an HTTP request</li>
+          <li>The <strong>server</strong> processes it and sends back an HTTP response</li>
+          <li>Default port: <strong>80</strong></li>
+          <li>Data is sent in <strong>plaintext</strong> (no encryption)</li>
+        </ul>
+      </div>
+
+      <div class="card mt-6">
+        <h4>🔄 Request/Response Model</h4>
+        <div class="flow-diagram">
+          <span class="flow-step" style="border-color:#2ac8b0;">Browser</span>
+          <span class="flow-arrow" style="color:#2ac8b0;">GET /index.html</span>
+          <span class="flow-step" style="border-color:#2ac8b0;">Server</span>
+        </div>
+        <div class="flow-diagram">
+          <span class="flow-step" style="border-color:#8bc34a;">Browser</span>
+          <span class="flow-arrow" style="color:#8bc34a;">200 OK + HTML</span>
+          <span class="flow-step" style="border-color:#8bc34a;">Server</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="border-color:#8bc34a;">
+        <h4>🔒 HTTPS — Secure Version</h4>
+        <p><strong>HTTPS (HyperText Transfer Protocol Secure)</strong> is HTTP with <strong>SSL/TLS encryption</strong>.</p>
+        <ul>
+          <li>Data is <strong>encrypted</strong> before sending — anyone intercepting sees only ciphertext</li>
+          <li>Uses <strong>digital certificates</strong> to verify the server's identity</li>
+          <li>Default port: <strong>443</strong></li>
+          <li>Identified by <span style="color:#8bc34a;">🔒</span> padlock in the browser address bar</li>
+          <li>Used for banking, e-commerce, logins, any sensitive data</li>
+        </ul>
+      </div>
+
+      <div class="diagram-box" style="margin-top:6px;">
+        <svg viewBox="0 0 260 60" style="width:100%; max-width:260px;">
+          <text x="8" y="14" fill="#b8d8e8" font-size="9" font-weight="600">HTTP vs HTTPS:</text>
+
+          <rect x="8" y="22" width="110" height="28" rx="3" fill="#1a2a3a" stroke="#e06060" stroke-width="1.5"/>
+          <text x="14" y="40" fill="#f08080" font-size="9" font-weight="600">HTTP — Plaintext</text>
+
+          <line x1="122" y1="36" x2="144" y2="36" stroke="#d4a030" stroke-width="1.5"/>
+          <polygon points="144,36 138,32 138,40" fill="#d4a030"/>
+
+          <rect x="148" y="22" width="100" height="28" rx="3" fill="#1a2a3a" stroke="#8bc34a" stroke-width="1.5"/>
+          <text x="154" y="40" fill="#8bc34a" font-size="9" font-weight="600">HTTPS — Encrypted 🔒</text>
+        </svg>
+        <div class="diagram-caption">HTTPS adds SSL/TLS encryption to protect data in transit</div>
+      </div>
+
+      <div class="callout warn mt-6">
+        <strong>⚠ Exam warning:</strong> HTTP sends data in <strong>plaintext</strong> — vulnerable to man-in-the-middle attacks. HTTPS encrypts with <strong>SSL/TLS</strong> — always specify which one and WHY in exam answers.
+      </div>
+    </div>
+  </div>
+
+  <div class="key-term" style="margin-top:4px;">HTTP — Protocol for transferring web pages using request/response model; Port 80 (HTTPS: Port 443)</div>
+  <div class="slide-number">11 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 12 – FTP (File Transfer Protocol)                                -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="12">
+  <div class="section-badge">Application Protocol</div>
+  <h2>FTP — File Transfer Protocol</h2>
+  <div style="width:60px; height:3px; background:#1a8a7a; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>📁 What is FTP?</h4>
+        <p><strong>FTP (File Transfer Protocol)</strong> is used to <strong>upload and download files</strong> between a client and a server over a network.</p>
+        <ul>
+          <li>Requires <strong>login credentials</strong> (username and password)</li>
+          <li>Can also allow <strong>anonymous access</strong> (e.g., public file downloads)</li>
+          <li>Default port: <strong>21</strong> (control connection)</li>
+          <li>Works well for <strong>large files</strong> and <strong>batch transfers</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="border-color:#d4a030;">
+        <h4>🔗 Two Separate Connections</h4>
+        <p>FTP uses <strong>two separate channels</strong> for communication:</p>
+        <table>
+          <thead><tr><th>Connection</th><th>Port</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Control Connection</strong></td><td><span class="inline-code">21</span></td><td>Sends commands (login, navigate, list files)</td></tr>
+            <tr><td><strong>Data Connection</strong></td><td><span class="inline-code">20</span></td><td>Transfers the actual file data</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="diagram-box" style="margin-top:6px;">
+        <svg viewBox="0 0 260 65" style="width:100%; max-width:260px;">
+          <rect x="8" y="8" width="80" height="40" rx="4" fill="#1a2a3a" stroke="#2ac8b0" stroke-width="1.5"/>
+          <text x="12" y="30" fill="#7ae8d4" font-size="9" font-weight="600">FTP Client</text>
+
+          <!-- Control -->
+          <line x1="92" y1="16" x2="160" y2="16" stroke="#d4a030" stroke-width="1.5"/>
+          <polygon points="160,16 152,12 152,20" fill="#d4a030"/>
+          <text x="100" y="12" fill="#d4a030" font-size="7">Control (port 21)</text>
+
+          <!-- Data -->
+          <line x1="92" y1="36" x2="160" y2="36" stroke="#8bc34a" stroke-width="1.5"/>
+          <polygon points="160,36 152,32 152,40" fill="#8bc34a"/>
+          <text x="100" y="44" fill="#8bc34a" font-size="7">Data (port 20)</text>
+
+          <rect x="164" y="8" width="80" height="40" rx="4" fill="#1a2a3a" stroke="#d4a030" stroke-width="1.5"/>
+          <text x="168" y="30" fill="#f0c060" font-size="9" font-weight="600">FTP Server</text>
+        </svg>
+        <div class="diagram-caption">FTP uses separate control and data connections — commands and files travel on different channels</div>
+      </div>
+
+      <div class="callout info mt-6">
+        <strong>Exam tip:</strong> FTP is <strong>not secure</strong> — credentials and data are sent in plaintext. <strong>SFTP (SSH File Transfer Protocol)</strong> or <strong>FTPS (FTP over SSL)</strong> are encrypted alternatives.
+      </div>
+    </div>
+  </div>
+
+  <div class="key-term" style="margin-top:4px;">FTP — File Transfer Protocol; uses separate control (port 21) and data (port 20) connections</div>
+  <div class="slide-number">12 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 13 – EMAIL PROTOCOLS: SMTP, POP3, IMAP                           -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="13">
+  <div class="section-badge">Application Protocols</div>
+  <h2>Email Protocols: SMTP, POP3, IMAP</h2>
+  <div style="width:60px; height:3px; background:#1a8a7a; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-3">
+    <div class="card" style="border-color:#2ac8b0;">
+      <h4 style="font-size:1rem;">📤 SMTP</h4>
+      <p><strong>Simple Mail Transfer Protocol</strong></p>
+      <ul style="font-size:0.88rem;">
+        <li>Used to <strong>SEND</strong> email from a client to a mail server</li>
+        <li>Also used to <strong>relay</strong> email between mail servers</li>
+        <li>Default port: <span class="inline-code">25</span></li>
+        <li>Cannot retrieve email from a server (send only)</li>
+      </ul>
+      <div class="flow-diagram" style="margin-top:4px;">
+        <span class="flow-step" style="font-size:0.7rem; border-color:#2ac8b0;">Client</span>
+        <span class="flow-arrow" style="color:#2ac8b0; font-size:0.8rem;">SMTP</span>
+        <span class="flow-step" style="font-size:0.7rem; border-color:#2ac8b0;">Server</span>
+      </div>
+    </div>
+
+    <div class="card" style="border-color:#d4a030;">
+      <h4 style="font-size:1rem;">📥 POP3</h4>
+      <p><strong>Post Office Protocol v3</strong></p>
+      <ul style="font-size:0.88rem;">
+        <li>Used to <strong>RETRIEVE</strong> email from a server</li>
+        <li><strong>Downloads</strong> emails to ONE device</li>
+        <li>Typically <strong>deletes</strong> emails from server after download (can leave a copy)</li>
+        <li>Default port: <span class="inline-code">110</span></li>
+        <li>Best for <strong>single-device</strong> access</li>
+      </ul>
+      <div class="flow-diagram" style="margin-top:4px;">
+        <span class="flow-step" style="font-size:0.7rem; border-color:#d4a030;">Server</span>
+        <span class="flow-arrow" style="color:#d4a030; font-size:0.8rem;">POP3</span>
+        <span class="flow-step" style="font-size:0.7rem; border-color:#d4a030;">Client</span>
+      </div>
+    </div>
+
+    <div class="card" style="border-color:#4ac8f0;">
+      <h4 style="font-size:1rem;">🔄 IMAP</h4>
+      <p><strong>Internet Message Access Protocol</strong></p>
+      <ul style="font-size:0.88rem;">
+        <li>Used to <strong>RETRIEVE</strong> email from a server</li>
+        <li><strong>Synchronises</strong> email across MULTIPLE devices</li>
+        <li><strong>Keeps</strong> emails on the server (manages folders server-side)</li>
+        <li>Default port: <span class="inline-code">143</span></li>
+        <li>Best for <strong>multi-device</strong> access (phone, laptop, tablet)</li>
+      </ul>
+      <div class="flow-diagram" style="margin-top:4px;">
+        <span class="flow-step" style="font-size:0.7rem; border-color:#4ac8f0;">Server</span>
+        <span class="flow-arrow" style="color:#4ac8f0; font-size:0.8rem;">IMAP</span>
+        <span class="flow-step" style="font-size:0.7rem; border-color:#4ac8f0;">Client</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-6">
+    <h4>📊 POP3 vs IMAP — Comparison Table</h4>
+    <table>
+      <thead><tr><th>Feature</th><th>POP3</th><th>IMAP</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Storage location</strong></td><td>Downloaded to local device</td><td>Kept on the server</td></tr>
+        <tr><td><strong>Multi-device access</strong></td><td class="comparison-bad">❌ Single device only</td><td class="comparison-good">✅ Syncs across all devices</td></tr>
+        <tr><td><strong>Offline access</strong></td><td class="comparison-good">✅ Full offline access</td><td class="comparison-bad">Only cached copies offline</td></tr>
+        <tr><td><strong>Server storage</strong></td><td class="comparison-good">✅ Frees server space</td><td class="comparison-bad">Uses server storage</td></tr>
+        <tr><td><strong>Best for</strong></td><td>Single device, limited server space</td><td>Multiple devices, need constant sync</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="exam-tip mt-6">
+    <div class="tip-label">Exam Tip</div>
+    <p style="font-size:0.88rem;"><strong>Common 4-mark question:</strong> "Compare POP3 and IMAP." Structure: (1) POP3 downloads to one device, IMAP syncs across multiple. (2) POP3 deletes from server, IMAP keeps on server. (3) POP3 gives full offline access, IMAP requires internet. (4) POP3 frees server space, IMAP uses server storage.</p>
+  </div>
+  <div class="slide-number">13 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 14 – BIT TORRENT PROTOCOL                                        -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="14">
+  <div class="section-badge">Application Protocol</div>
+  <h2>BitTorrent Protocol</h2>
+  <div style="width:60px; height:3px; background:#1a8a7a; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>🧲 What is BitTorrent?</h4>
+        <p><strong>BitTorrent</strong> is a <strong>peer-to-peer (P2P)</strong> file-sharing protocol. Unlike traditional download (client-server), BitTorrent has <strong>no central server</strong> storing the file.</p>
+        <ul>
+          <li>A file is <strong>split into many small pieces</strong></li>
+          <li>Pieces are <strong>distributed across many peers</strong></li>
+          <li>Users <strong>download pieces from each other</strong> simultaneously</li>
+          <li>Users also <strong>upload</strong> the pieces they already have to others</li>
+        </ul>
+      </div>
+
+      <div class="card mt-6">
+        <h4>👥 Key Terms</h4>
+        <div class="grid-2" style="gap:6px;">
+          <div class="card" style="font-size:0.85rem; border-color:#2ac8b0;">
+            <strong>Seeder</strong><br>
+            A peer that has the <strong>complete file</strong> and is uploading it to others
+          </div>
+          <div class="card" style="font-size:0.85rem; border-color:#d4a030;">
+            <strong>Leecher</strong><br>
+            A peer that is <strong>downloading</strong> (and usually uploading) pieces simultaneously
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-6" style="border-color:#8bc34a;">
+        <h4>✅ Benefits</h4>
+        <ul>
+          <li>Reduces load on a single server — <strong>no single point of failure</strong></li>
+          <li><strong>Faster for popular files</strong> — more seeders = faster download</li>
+          <li><strong>Scalable</strong> — more users means more upload bandwidth, not less</li>
+          <li><strong>Resilient</strong> — if one peer goes offline, others still have the pieces</li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <div class="diagram-box" style="padding:16px;">
+        <svg viewBox="0 0 280 170" style="width:100%; max-width:280px;">
+          <text x="8" y="14" fill="#b8d8e8" font-size="9" font-weight="600">BitTorrent P2P File Sharing:</text>
+          <text x="8" y="28" fill="#5a9a8a" font-size="7">File split into pieces [1][2][3][4] → distributed across peers</text>
+
+          <!-- Peer A -->
+          <rect x="8" y="40" width="70" height="36" rx="4" fill="#1a2a3a" stroke="#2ac8b0" stroke-width="1.5"/>
+          <text x="12" y="56" fill="#7ae8d4" font-size="8" font-weight="600">Peer A (Seeder)</text>
+          <text x="12" y="70" fill="#5a9a8a" font-size="7">Has: [1][2][3][4]</text>
+
+          <!-- Peer B -->
+          <rect x="8" y="86" width="70" height="36" rx="4" fill="#1a2a3a" stroke="#d4a030" stroke-width="1.5"/>
+          <text x="12" y="102" fill="#f0c060" font-size="8" font-weight="600">Peer B (Leecher)</text>
+          <text x="12" y="116" fill="#5a9a8a" font-size="7">Has: [1][3]</text>
+
+          <!-- Peer C -->
+          <rect x="8" y="132" width="70" height="36" rx="4" fill="#1a2a3a" stroke="#d4a030" stroke-width="1.5"/>
+          <text x="12" y="148" fill="#f0c060" font-size="8" font-weight="600">Peer C (Leecher)</text>
+          <text x="12" y="162" fill="#5a9a8a" font-size="7">Has: [2][4]</text>
+
+          <!-- Arrows showing exchange -->
+          <!-- A → B sends [4] -->
+          <line x1="82" y1="54" x2="170" y2="54" stroke="#8bc34a" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="90" y="50" fill="#8bc34a" font-size="7">Send [2]</text>
+
+          <!-- A → C sends [1] -->
+          <line x1="82" y1="60" x2="170" y2="138" stroke="#4ac8f0" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="88" y="106" fill="#4ac8f0" font-size="7">Send [1]</text>
+
+          <!-- B → C sends [3] -->
+          <line x1="82" y1="102" x2="170" y2="150" stroke="#f0a030" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="88" y="136" fill="#f0a030" font-size="7">Send [3]</text>
+
+          <!-- C → B sends [4] -->
+          <line x1="60" y1="168" x2="60" y2="126" stroke="#b080f0" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="36" y="146" fill="#b080f0" font-size="7">Send [4]</text>
+
+          <!-- Labels on right -->
+          <text x="178" y="56" fill="#8bc34a" font-size="7">[1][2][3][4] →</text>
+          <text x="178" y="68" fill="#5a9a8a" font-size="7">Seeder has all pieces</text>
+
+          <text x="178" y="104" fill="#8bc34a" font-size="7">← [1][2] downloading</text>
+          <text x="178" y="116" fill="#5a9a8a" font-size="7">Peers exchange pieces</text>
+
+          <text x="178" y="148" fill="#8bc34a" font-size="7">← [3][4] downloading</text>
+          <text x="178" y="160" fill="#5a9a8a" font-size="7">No central server needed!</text>
+        </svg>
+        <div class="diagram-caption" style="margin-top:2px;">Peers directly exchange pieces of the file. The more peers, the faster the download!</div>
+      </div>
+
+      <div class="callout warn mt-6">
+        <strong>⚠ Note:</strong> BitTorrent itself is legal technology. However, it can be used to share copyrighted material without permission, which is illegal in many jurisdictions.
+      </div>
+    </div>
+  </div>
+
+  <div class="key-term" style="margin-top:4px;">BitTorrent — P2P file-sharing protocol; file split into pieces; no central server; seeder/leecher model</div>
+  <div class="slide-number">14 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 15 – EXAM TIP SLIDE                                              -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="15">
+  <div class="section-badge">Exam Focus</div>
+  <h2>📝 Exam Tips — Protocols</h2>
+  <div style="width:60px; height:3px; background:#f08080; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-2">
+    <div>
+      <div class="exam-tip" style="border-left-color:#2ac8b0;">
+        <div class="tip-label">Common Question 1</div>
+        <p style="font-size:0.88rem;"><strong>"Explain why a protocol is necessary for communication between two computers." [3]</strong></p>
+        <p style="font-size:0.85rem; margin-top:4px;"><strong>Structure your answer (3 marks):</strong></p>
+        <ul style="font-size:0.85rem;">
+          <li><strong>Definition:</strong> A protocol is an agreed set of rules governing data communication</li>
+          <li><strong>Format agreement:</strong> Both devices must agree on how data is formatted/encoded so it is interpreted correctly</li>
+          <li><strong>Timing/flow control:</strong> Prevents data loss when devices operate at different speeds</li>
+        </ul>
+      </div>
+
+      <div class="exam-tip mt-6" style="border-left-color:#4ac8f0;">
+        <div class="tip-label">Common Question 2</div>
+        <p style="font-size:0.88rem;"><strong>"Describe the purpose of each layer in the TCP/IP protocol suite." [4]</strong></p>
+        <p style="font-size:0.85rem; margin-top:4px;"><strong>Structure your answer (1 mark per layer):</strong></p>
+        <ul style="font-size:0.85rem;">
+          <li><strong>Application:</strong> Provides network services to user applications; protocols like HTTP, FTP</li>
+          <li><strong>Transport:</strong> Breaks data into segments; adds port numbers; provides reliable delivery (TCP) or fast delivery (UDP)</li>
+          <li><strong>Internet:</strong> Adds IP addresses; routes packets across networks using routers</li>
+          <li><strong>Link:</strong> Adds MAC addresses; controls transmission over physical medium (Ethernet, Wi-Fi)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <div class="exam-tip" style="border-left-color:#d4a030;">
+        <div class="tip-label">Common Question 3</div>
+        <p style="font-size:0.88rem;"><strong>"Explain how encapsulation works when sending data over the internet." [4]</strong></p>
+        <p style="font-size:0.85rem; margin-top:4px;"><strong>Structure your answer:</strong></p>
+        <ul style="font-size:0.85rem;">
+          <li>Data moves <strong>down</strong> the stack at the sender</li>
+          <li>Each layer <strong>adds its own header</strong> (encapsulation)</li>
+          <li>At receiver, data moves <strong>up</strong> the stack</li>
+          <li>Each layer <strong>removes its corresponding header</strong> (de-encapsulation)</li>
+        </ul>
+      </div>
+
+      <div class="exam-tip mt-6" style="border-left-color:#e06060;">
+        <div class="tip-label">Common Question 4</div>
+        <p style="font-size:0.88rem;"><strong>"Distinguish between POP3 and IMAP." [4]</strong></p>
+        <p style="font-size:0.85rem; margin-top:4px;"><strong>Key differences:</strong></p>
+        <ul style="font-size:0.85rem;">
+          <li>POP3 <strong>downloads and deletes</strong> from server (single device)</li>
+          <li>IMAP <strong>keeps on server</strong> and syncs across multiple devices</li>
+          <li>POP3 better for <strong>offline access</strong>; IMAP needs internet</li>
+          <li>POP3 frees <strong>server storage</strong>; IMAP uses server storage</li>
+        </ul>
+      </div>
+
+      <div class="callout info mt-6">
+        <strong>💡 Golden rule:</strong> For any "explain" question, always include: <strong>definition + how it works + why it matters</strong>. For "compare" questions, always mention <strong>both sides</strong> explicitly.
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">15 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 16 – TWO WAYS TO SEND DATA ACROSS A NETWORK                      -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="16">
+  <div class="section-badge" style="background:linear-gradient(135deg, #2a2a0a, #4a3a1a); border-color:#d4a030;">Section 2 — Switching Methods</div>
+  <h2>Two Ways to Send Data Across a Network</h2>
+  <div style="width:60px; height:3px; background:#d4a030; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-2">
+    <div class="card" style="border-color:#d4a030;">
+      <h4>🔗 Circuit Switching</h4>
+      <p>A <strong>dedicated physical path</strong> (circuit) is established between sender and receiver for the <strong>entire duration</strong> of the communication.</p>
+      <ul>
+        <li>Classic example: <strong>Traditional telephone calls</strong></li>
+        <li>Path is reserved — no other traffic can use it</li>
+        <li>Data travels along this fixed path</li>
+      </ul>
+      <div class="flow-diagram" style="margin-top:4px;">
+        <span class="flow-step" style="border-color:#d4a030; font-size:0.7rem;">A</span>
+        <span class="flow-arrow" style="color:#d4a030;">=== dedicated line ===</span>
+        <span class="flow-step" style="border-color:#d4a030; font-size:0.7rem;">B</span>
+      </div>
+    </div>
+
+    <div class="card" style="border-color:#4ac8f0;">
+      <h4>📦 Packet Switching</h4>
+      <p>Data is <strong>broken into small packets</strong>, each sent <strong>independently</strong> across the network (possibly via different routes), and <strong>reassembled</strong> at the destination.</p>
+      <ul>
+        <li>Used by the <strong>Internet</strong></li>
+        <li>No dedicated path — packets share network resources</li>
+        <li>Each packet includes a <strong>destination address</strong></li>
+      </ul>
+      <div class="flow-diagram" style="margin-top:4px;">
+        <span class="flow-step" style="font-size:0.7rem; border-color:#4ac8f0;">A</span>
+        <span class="flow-arrow" style="color:#4ac8f0;">P1→⦿</span>
+        <span class="flow-arrow" style="color:#f08080;">P2→⦿</span>
+        <span class="flow-arrow" style="color:#8bc34a;">P3→⦿</span>
+        <span class="flow-step" style="font-size:0.7rem; border-color:#4ac8f0;">B</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="diagram-box" style="margin-top:8px;">
+    <svg viewBox="0 0 400 80" style="width:100%; max-width:400px;">
+      <text x="8" y="14" fill="#b8d8e8" font-size="10" font-weight="600">Circuit Switching vs Packet Switching — At a Glance</text>
+
+      <rect x="8" y="24" width="180" height="46" rx="4" fill="#1a1a0a" stroke="#d4a030" stroke-width="1.5"/>
+      <text x="14" y="42" fill="#f0c060" font-size="9" font-weight="600">Circuit Switching</text>
+      <text x="14" y="58" fill="#8a7a5a" font-size="8">Dedicated path, guaranteed bandwidth</text>
+
+      <line x1="190" y1="47" x2="210" y2="47" stroke="#2ac8b0" stroke-width="2"/>
+
+      <rect x="214" y="24" width="180" height="46" rx="4" fill="#0a1a2a" stroke="#4ac8f0" stroke-width="1.5"/>
+      <text x="220" y="42" fill="#80e0ff" font-size="9" font-weight="600">Packet Switching</text>
+      <text x="220" y="58" fill="#5a9a8a" font-size="8">Shared lines, packets routed independently</text>
+    </svg>
+  </div>
+
+  <div class="key-term" style="margin-top:4px;">Circuit Switching — Dedicated path for entire communication. Packet Switching — Data split into packets, sent independently</div>
+  <div class="slide-number">16 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 17 – CIRCUIT SWITCHING EXPLAINED                                 -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="17">
+  <div class="section-badge">Switching Method</div>
+  <h2>Circuit Switching Explained</h2>
+  <div style="width:60px; height:3px; background:#d4a030; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card" style="border-color:#d4a030;">
+        <h4>🔧 How It Works</h4>
+        <p><strong>Circuit switching</strong> establishes a dedicated physical communication path between sender and receiver for the <strong>entire duration</strong> of the call/transmission.</p>
+        <ol class="step-list" style="font-size:0.88rem;">
+          <li><strong>Setup phase:</strong> A connection request is sent across the network</li>
+          <li>Switches along the path <strong>reserve resources</strong> (bandwidth)</li>
+          <li>A <strong>dedicated circuit</strong> is established end-to-end</li>
+          <li><strong>Data transfer:</strong> Data flows continuously along the fixed path</li>
+          <li><strong>Teardown:</strong> Circuit is released when communication ends</li>
+        </ol>
+      </div>
+
+      <div class="card mt-6">
+        <h4>📞 Classic Example: Traditional Telephone Call</h4>
+        <p>When you dial a phone number:</p>
+        <ul style="font-size:0.88rem;">
+          <li>Phone network finds a path through exchanges</li>
+          <li>A <strong>physical circuit</strong> is created between you and the other person</li>
+          <li>The line is <strong>reserved</strong> — no one else can use it while you talk</li>
+          <li>When you hang up, the circuit is released</li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <div class="diagram-box" style="padding:16px;">
+        <svg viewBox="0 0 240 120" style="width:100%; max-width:240px;">
+          <text x="8" y="14" fill="#b8d8e8" font-size="9" font-weight="600">Circuit Switching — Fixed Path:</text>
+
+          <rect x="8" y="24" width="40" height="24" rx="3" fill="#1a2a3a" stroke="#d4a030" stroke-width="1.5"/>
+          <text x="12" y="40" fill="#f0c060" font-size="8" font-weight="600">Host A</text>
+
+          <rect x="62" y="24" width="40" height="24" rx="3" fill="#1a2a3a" stroke="#d4a030" stroke-width="1"/>
+          <text x="68" y="38" fill="#f0c060" font-size="7">Switch 1</text>
+
+          <rect x="116" y="24" width="40" height="24" rx="3" fill="#1a2a3a" stroke="#d4a030" stroke-width="1"/>
+          <text x="122" y="38" fill="#f0c060" font-size="7">Switch 2</text>
+
+          <rect x="170" y="24" width="50" height="24" rx="3" fill="#1a2a3a" stroke="#d4a030" stroke-width="1.5"/>
+          <text x="176" y="40" fill="#f0c060" font-size="8" font-weight="600">Host B</text>
+
+          <!-- Path lines -->
+          <line x1="48" y1="36" x2="62" y2="36" stroke="#d4a030" stroke-width="2.5"/>
+          <line x1="102" y1="36" x2="116" y2="36" stroke="#d4a030" stroke-width="2.5"/>
+          <line x1="156" y1="36" x2="170" y2="36" stroke="#d4a030" stroke-width="2.5"/>
+
+          <!-- Label -->
+          <rect x="48" y="60" width="176" height="44" rx="4" fill="#0a0f1e" stroke="#d4a030" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="54" y="78" fill="#8a7a5a" font-size="8">Dedicated path reserved</text>
+          <text x="54" y="92" fill="#8a7a5a" font-size="8">for the entire transmission</text>
+
+          <line x1="8" y1="70" x2="46" y2="70" stroke="#d4a030" stroke-width="1" stroke-dasharray="3,2"/>
+        </svg>
+        <div class="diagram-caption">A fixed, dedicated circuit is established through network switches before data transmission begins</div>
+      </div>
+
+      <div class="key-term" style="margin-top:4px;">Circuit Switching — Establishes a dedicated physical path for the entire communication session</div>
+    </div>
+  </div>
+  <div class="slide-number">17 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 18 – CIRCUIT SWITCHING: BENEFITS & DRAWBACKS                     -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="18">
+  <div class="section-badge">Switching Method</div>
+  <h2>Circuit Switching — Benefits &amp; Drawbacks</h2>
+  <div style="width:60px; height:3px; background:#d4a030; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-2">
+    <div class="card" style="border-color:#8bc34a;">
+      <h4 style="color:#8bc34a;">✅ Benefits</h4>
+      <table>
+        <thead><tr><th>Benefit</th><th>Explanation</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Guaranteed bandwidth</strong></td><td>The dedicated circuit ensures a fixed amount of bandwidth is available — no competition</td></tr>
+          <tr><td><strong>Low latency</strong></td><td>Once the circuit is set up, there is minimal delay — data flows continuously</td></tr>
+          <tr><td><strong>Data arrives in order</strong></td><td>All data follows the same path — no need for sequence numbers or reassembly</td></tr>
+          <tr><td><strong>Good for real-time applications</strong></td><td>Ideal for <strong>voice calls</strong> and <strong>live video</strong> where consistent timing is essential</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="border-color:#e06060;">
+      <h4 style="color:#e57373;">❌ Drawbacks</h4>
+      <table>
+        <thead><tr><th>Drawback</th><th>Explanation</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Inefficient — bandwidth wasted</strong></td><td>If no data is being sent, the reserved line sits <strong>idle</strong> but no one else can use it</td></tr>
+          <tr><td><strong>Setup time</strong></td><td>Time is needed to establish the circuit before any data can be sent</td></tr>
+          <tr><td><strong>Single point of failure</strong></td><td>If any link in the circuit fails, the <strong>entire call is dropped</strong></td></tr>
+          <tr><td><strong>Not scalable</strong></td><td>Requires dedicated resources per connection — doesn't scale well for internet-sized traffic</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card mt-6" style="border-color:#f0a030;">
+    <h4>📍 Where Circuit Switching Is Used</h4>
+    <p><strong>Traditional telephone networks (PSTN)</strong> — before VoIP, all phone calls used circuit switching. Modern phone networks have largely moved to packet switching (VoIP).</p>
+  </div>
+
+  <div class="exam-tip mt-6">
+    <div class="tip-label">Exam Tip</div>
+    <p style="font-size:0.88rem;">When comparing circuit and packet switching, remember: circuit switching = <strong>dedicated resource → guaranteed quality but inefficient</strong>. Packet switching = <strong>shared resource → efficient but variable quality</strong>.</p>
+  </div>
+  <div class="slide-number">18 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 19 – PACKET SWITCHING EXPLAINED                                  -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="19">
+  <div class="section-badge">Switching Method</div>
+  <h2>Packet Switching Explained</h2>
+  <div style="width:60px; height:3px; background:#4ac8f0; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card" style="border-color:#4ac8f0;">
+        <h4>📦 How It Works</h4>
+        <p><strong>Packet switching</strong> breaks data into small <strong>packets</strong> and sends each one independently across the network.</p>
+        <ol class="step-list" style="font-size:0.88rem;">
+          <li>Original data/message is <strong>divided into packets</strong></li>
+          <li>Each packet contains a <strong>header + payload</strong></li>
+          <li>Packets are sent <strong>independently</strong> — possibly via different routes</li>
+          <li>At destination, packets are <strong>reassembled</strong> into the original message</li>
+        </ol>
+      </div>
+
+      <div class="card mt-6">
+        <h4>📝 Packet Structure</h4>
+        <div class="diagram-box" style="padding:8px;">
+          <svg viewBox="0 0 280 40" style="width:100%; max-width:280px;">
+            <rect x="4" y="8" width="70" height="24" rx="2" fill="#1a2a3a" stroke="#f0a030" stroke-width="1"/>
+            <text x="10" y="24" fill="#f0c060" font-size="8" font-weight="600">Header</text>
+            <rect x="78" y="8" width="130" height="24" rx="2" fill="#1a2a3a" stroke="#4ac8f0" stroke-width="1"/>
+            <text x="84" y="24" fill="#80e0ff" font-size="8" font-weight="600">Payload (data chunk)</text>
+            <rect x="212" y="8" width="60" height="24" rx="2" fill="#1a2a3a" stroke="#e06060" stroke-width="1"/>
+            <text x="218" y="24" fill="#f08080" font-size="8" font-weight="600">Trailer</text>
+            <!-- Header details -->
+            <text x="4" y="38" fill="#5a7a7a" font-size="6">Header: SRC IP + DST IP + Seq #</text>
+            <text x="4" y="46" fill="#5a7a7a" font-size="6">Trailer: Error check (CRC/checksum)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="diagram-box" style="padding:16px;">
+        <svg viewBox="0 0 280 130" style="width:100%; max-width:280px;">
+          <text x="8" y="14" fill="#b8d8e8" font-size="9" font-weight="600">Packet Switching — Multiple Routes:</text>
+
+          <rect x="4" y="24" width="50" height="24" rx="3" fill="#1a2a3a" stroke="#4ac8f0" stroke-width="1.5"/>
+          <text x="8" y="40" fill="#80e0ff" font-size="8" font-weight="600">Sender</text>
+
+          <!-- Router 1 -->
+          <rect x="100" y="14" width="36" height="20" rx="3" fill="#1a2a3a" stroke="#f0a030" stroke-width="1"/>
+          <text x="104" y="28" fill="#f0c060" font-size="7">R1</text>
+
+          <!-- Router 2 -->
+          <rect x="100" y="52" width="36" height="20" rx="3" fill="#1a2a3a" stroke="#f0a030" stroke-width="1"/>
+          <text x="104" y="66" fill="#f0c060" font-size="7">R2</text>
+
+          <!-- Router 3 -->
+          <rect x="188" y="28" width="36" height="20" rx="3" fill="#1a2a3a" stroke="#f0a030" stroke-width="1"/>
+          <text x="192" y="42" fill="#f0c060" font-size="7">R3</text>
+
+          <rect x="240" y="24" width="50" height="24" rx="3" fill="#1a2a3a" stroke="#8bc34a" stroke-width="1.5"/>
+          <text x="248" y="40" fill="#8bc34a" font-size="8" font-weight="600">Receiver</text>
+
+          <!-- Packet 1: Sender → R1 → R3 → Receiver -->
+          <line x1="54" y1="28" x2="100" y2="28" stroke="#8bc34a" stroke-width="1.5"/>
+          <text x="64" y="24" fill="#8bc34a" font-size="7">P1</text>
+          <line x1="136" y1="28" x2="188" y2="36" stroke="#8bc34a" stroke-width="1.5"/>
+          <line x1="224" y1="36" x2="240" y2="36" stroke="#8bc34a" stroke-width="1.5"/>
+
+          <!-- Packet 2: Sender → R2 → R3 → Receiver -->
+          <line x1="54" y1="32" x2="100" y2="60" stroke="#f08080" stroke-width="1.5"/>
+          <text x="64" y="44" fill="#f08080" font-size="7">P2</text>
+          <line x1="136" y1="60" x2="188" y2="40" stroke="#f08080" stroke-width="1.5"/>
+
+          <!-- Packet 3: Sender → R2 → Receiver (direct) -->
+          <line x1="54" y1="36" x2="100" y2="60" stroke="#d4a030" stroke-width="1.5"/>
+          <text x="64" y="56" fill="#d4a030" font-size="7">P3</text>
+
+          <text x="10" y="100" fill="#8bc34a" font-size="7">P1: Sender → R1 → R3 → Receiver</text>
+          <text x="10" y="112" fill="#f08080" font-size="7">P2: Sender → R2 → R3 → Receiver</text>
+          <text x="10" y="124" fill="#d4a030" font-size="7">P3: Sender → R2 → ?</text>
+        </svg>
+        <div class="diagram-caption">Each packet may take a different route through the network depending on congestion!</div>
+      </div>
+
+      <div class="key-term" style="margin-top:4px;">Packet Switching — Data split into packets, each sent independently with its own routing info</div>
+    </div>
+  </div>
+  <div class="slide-number">19 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 20 – PACKET SWITCHING: BENEFITS & DRAWBACKS                      -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="20">
+  <div class="section-badge">Switching Method</div>
+  <h2>Packet Switching — Benefits &amp; Drawbacks</h2>
+  <div style="width:60px; height:3px; background:#4ac8f0; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-2">
+    <div class="card" style="border-color:#8bc34a;">
+      <h4 style="color:#8bc34a;">✅ Benefits</h4>
+      <table>
+        <thead><tr><th>Benefit</th><th>Explanation</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Efficient bandwidth use</strong></td><td>No dedicated line — multiple users share the same network links; bandwidth is used only when data is actually being sent</td></tr>
+          <tr><td><strong>Resilient / fault-tolerant</strong></td><td>If one router or link fails, packets can be <strong>rerouted</strong> around the problem automatically</td></tr>
+          <tr><td><strong>Scalable</strong></td><td>Easily scales to large networks like the Internet — adding more users doesn't require new dedicated lines</td></tr>
+          <tr><td><strong>Multiple users share lines</strong></td><td>Many users can transmit simultaneously over the same physical infrastructure</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="border-color:#e06060;">
+      <h4 style="color:#e57373;">❌ Drawbacks</h4>
+      <table>
+        <thead><tr><th>Drawback</th><th>Explanation</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Packets may arrive out of order</strong></td><td>Different routes mean packets can arrive in the wrong order — need <strong>reassembly using sequence numbers</strong></td></tr>
+          <tr><td><strong>Variable delay (jitter)</strong></td><td>Network congestion causes unpredictable delays — <strong>not ideal for real-time</strong> applications like live voice/video without buffering</td></tr>
+          <tr><td><strong>Overhead from headers</strong></td><td>Each packet carries header data (source/dest IP, seq #, etc.) — this is <strong>overhead</strong> that doesn't carry user data</td></tr>
+          <tr><td><strong>Packet loss requires retransmission</strong></td><td>If packets are lost (congestion, errors), they must be <strong>retransmitted</strong> — adds delay</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card mt-6" style="border-color:#4ac8f0;">
+    <h4>📍 Where Packet Switching Is Used</h4>
+    <p>The <strong>Internet</strong> is entirely packet-switched. It is used for: <strong>web browsing</strong> (HTTP), <strong>email</strong> (SMTP/POP3/IMAP), <strong>file transfer</strong> (FTP), <strong>streaming</strong> (Netflix, YouTube), <strong>VoIP</strong> (Skype, Zoom), and <strong>online gaming</strong>.</p>
+  </div>
+  <div class="slide-number">20 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 21 – THE ROLE OF THE ROUTER                                      -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="21">
+  <div class="section-badge">Networking Hardware</div>
+  <h2>The Role of the Router</h2>
+  <div style="width:60px; height:3px; background:#f0a030; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card" style="border-color:#f0a030;">
+        <h4>📌 What Does a Router Do?</h4>
+        <p>A <strong>router</strong> is a networking device that <strong>forwards data packets</strong> between computer networks. Its key functions:</p>
+        <ul>
+          <li>Examines the <strong>destination IP address</strong> in each packet's header</li>
+          <li>Determines the <strong>best next path/hop</strong> to forward the packet</li>
+          <li>Connects different networks together (e.g., your home LAN to the Internet)</li>
+        </ul>
+      </div>
+
+      <div class="card mt-6">
+        <h4>🗺️ Routing Tables</h4>
+        <p>Routers use <strong>routing tables</strong> to make forwarding decisions. A routing table contains:</p>
+        <table style="font-size:0.82rem;">
+          <thead><tr><th>Destination Network</th><th>Next Hop</th><th>Metric (Cost)</th></tr></thead>
+          <tbody>
+            <tr><td>192.168.1.0/24</td><td>Directly connected</td><td>0</td></tr>
+            <tr><td>10.0.0.0/16</td><td>10.0.0.1</td><td>1</td></tr>
+            <tr><td>0.0.0.0/0</td><td>203.0.113.1</td><td>10</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:0.82rem; margin-top:4px;">The router chooses the <strong>best route</strong> (lowest metric/cost) for each packet.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="border-color:#f0a030;">
+        <h4>🔄 Different Routes for Different Packets</h4>
+        <p>Packets from the <strong>same message</strong> can be routed differently depending on <strong>network conditions</strong>:</p>
+        <ul>
+          <li>If Route A is congested, the next packet may take Route B</li>
+          <li>This is why packets may <strong>arrive out of order</strong></li>
+          <li>This <strong>dynamic routing</strong> makes the network <strong>resilient and efficient</strong></li>
+        </ul>
+      </div>
+
+      <div class="diagram-box" style="margin-top:6px;">
+        <svg viewBox="0 0 260 90" style="width:100%; max-width:260px;">
+          <text x="8" y="14" fill="#b8d8e8" font-size="9" font-weight="600">Router Forwards Packets:</text>
+
+          <rect x="8" y="24" width="50" height="24" rx="3" fill="#1a2a3a" stroke="#4ac8f0" stroke-width="1"/>
+          <text x="12" y="40" fill="#80e0ff" font-size="7">Host A</text>
+
+          <line x1="62" y1="36" x2="88" y2="36" stroke="#f0a030" stroke-width="1.5"/>
+          <polygon points="88,36 80,32 80,40" fill="#f0a030"/>
+
+          <!-- Router -->
+          <rect x="92" y="24" width="56" height="24" rx="4" fill="#1a2a3a" stroke="#f0a030" stroke-width="2"/>
+          <text x="98" y="40" fill="#f0c060" font-size="8" font-weight="600">Router</text>
+          <text x="102" y="48" fill="#8a6a3a" font-size="5">Routing Table</text>
+
+          <line x1="152" y1="36" x2="180" y2="36" stroke="#f0a030" stroke-width="1.5"/>
+          <polygon points="180,36 172,32 172,40" fill="#f0a030"/>
+
+          <rect x="184" y="24" width="60" height="24" rx="3" fill="#1a2a3a" stroke="#8bc34a" stroke-width="1"/>
+          <text x="190" y="40" fill="#8bc34a" font-size="7">Web Server</text>
+
+          <text x="8" y="72" fill="#5a7a7a" font-size="8">Router checks DST IP → looks up routing table → forwards to next hop</text>
+        </svg>
+        <div class="diagram-caption">Routers use routing tables to determine the best next hop for each packet</div>
+      </div>
+
+      <div class="callout info mt-6">
+        <strong>Remember:</strong> A <strong>switch</strong> forwards data within a single network (using MAC addresses). A <strong>router</strong> forwards data <strong>between</strong> different networks (using IP addresses).
+      </div>
+    </div>
+  </div>
+
+  <div class="key-term" style="margin-top:4px;">Router — Device that forwards packets between networks using IP addresses and routing tables</div>
+  <div class="slide-number">21 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 22 – DIAGRAM: PACKET SWITCHING IN ACTION                         -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="22">
+  <div class="section-badge">Process Overview</div>
+  <h2>Packet Switching in Action Across the Internet</h2>
+  <div style="width:60px; height:3px; background:#4ac8f0; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="diagram-box" style="padding:16px 20px;">
+    <svg viewBox="0 0 680 210" style="width:100%; max-width:680px;">
+      <text x="8" y="16" fill="#b8d8e8" font-size="10" font-weight="600">Step-by-Step: Breaking, Routing, and Reassembling a Message</text>
+
+      <!-- Step 1: Message split -->
+      <text x="8" y="40" fill="#5a9a8a" font-size="9" font-weight="600">Step 1: Message split into packets</text>
+      <rect x="8" y="48" width="70" height="28" rx="3" fill="#1a2a3a" stroke="#4ac8f0" stroke-width="1.5"/>
+      <text x="10" y="66" fill="#80e0ff" font-size="7">Hello World</text>
+
+      <line x1="82" y1="62" x2="100" y2="50" stroke="#8bc34a" stroke-width="1.5"/>
+      <polygon points="100,50 92,48 96,56" fill="#8bc34a"/>
+
+      <rect x="104" y="40" width="50" height="20" rx="2" fill="#0a2a1a" stroke="#8bc34a" stroke-width="1"/>
+      <text x="108" y="54" fill="#8bc34a" font-size="7">Pkt 1: "Hel"</text>
+
+      <line x1="82" y1="62" x2="100" y2="70" stroke="#f08080" stroke-width="1.5"/>
+      <polygon points="100,70 92,68 96,76" fill="#f08080"/>
+
+      <rect x="104" y="60" width="50" height="20" rx="2" fill="#1a0a0a" stroke="#f08080" stroke-width="1"/>
+      <text x="108" y="74" fill="#f08080" font-size="7">Pkt 2: "lo W"</text>
+
+      <line x1="82" y1="62" x2="100" y2="88" stroke="#f0a030" stroke-width="1.5"/>
+      <polygon points="100,88 92,86 96,94" fill="#f0a030"/>
+
+      <rect x="104" y="78" width="50" height="20" rx="2" fill="#1a1a0a" stroke="#f0a030" stroke-width="1"/>
+      <text x="108" y="92" fill="#f0c060" font-size="7">Pkt 3: "rld"</text>
+
+      <!-- Step 2: Different routes -->
+      <text x="170" y="40" fill="#5a9a8a" font-size="9" font-weight="600">Step 2: Each packet takes a different route</text>
+
+      <!-- Packet 1 path: Sender → R1 → R3 → Receiver -->
+      <circle cx="180" cy="60" r="4" fill="#8bc34a"/>
+      <text x="170" y="58" fill="#8bc34a" font-size="7">P1</text>
+      <line x1="185" y1="60" x2="230" y2="70" stroke="#8bc34a" stroke-width="1.5"/>
+      <rect x="232" y="64" width="24" height="14" rx="3" fill="#1a2a3a" stroke="#f0a030" stroke-width="0.8"/>
+      <text x="234" y="74" fill="#f0c060" font-size="6">R1</text>
+      <line x1="258" y1="70" x2="300" y2="80" stroke="#8bc34a" stroke-width="1.5"/>
+      <rect x="302" y="74" width="24" height="14" rx="3" fill="#1a2a3a" stroke="#f0a030" stroke-width="0.8"/>
+      <text x="304" y="84" fill="#f0c060" font-size="6">R3</text>
+      <line x1="328" y1="80" x2="370" y2="70" stroke="#8bc34a" stroke-width="1.5"/>
+
+      <!-- Packet 2 path: Sender → R2 → R4 → Receiver -->
+      <circle cx="180" cy="80" r="4" fill="#f08080"/>
+      <text x="170" y="78" fill="#f08080" font-size="7">P2</text>
+      <line x1="185" y1="80" x2="230" y2="94" stroke="#f08080" stroke-width="1.5"/>
+      <rect x="232" y="88" width="24" height="14" rx="3" fill="#1a2a3a" stroke="#f0a030" stroke-width="0.8"/>
+      <text x="234" y="98" fill="#f0c060" font-size="6">R2</text>
+      <line x1="258" y1="94" x2="300" y2="106" stroke="#f08080" stroke-width="1.5"/>
+      <rect x="302" y="100" width="24" height="14" rx="3" fill="#1a2a3a" stroke="#f0a030" stroke-width="0.8"/>
+      <text x="304" y="110" fill="#f0c060" font-size="6">R4</text>
+      <line x1="328" y1="106" x2="370" y2="90" stroke="#f08080" stroke-width="1.5"/>
+
+      <!-- Packet 3 path: Sender → R2 → R5 → Receiver -->
+      <circle cx="180" cy="100" r="4" fill="#f0a030"/>
+      <text x="170" y="98" fill="#f0a030" font-size="7">P3</text>
+      <line x1="185" y1="100" x2="230" y2="108" stroke="#f0a030" stroke-width="1.5"/>
+      <line x1="258" y1="108" x2="300" y2="120" stroke="#f0a030" stroke-width="1.5"/>
+      <rect x="302" y="114" width="24" height="14" rx="3" fill="#1a2a3a" stroke="#f0a030" stroke-width="0.8"/>
+      <text x="304" y="124" fill="#f0c060" font-size="6">R5</text>
+      <line x1="328" y1="120" x2="370" y2="100" stroke="#f0a030" stroke-width="1.5"/>
+
+      <!-- Step 3: Arrive out of order -->
+      <text x="380" y="40" fill="#5a9a8a" font-size="9" font-weight="600">Step 3: Arrive out of order at dest</text>
+
+      <rect x="380" y="48" width="120" height="80" rx="6" fill="#0a1420" stroke="#8bc34a" stroke-width="1.5"/>
+      <text x="384" y="66" fill="#7ae8d4" font-size="8" font-weight="600">Receiver Buffer:</text>
+      <text x="384" y="82" fill="#f08080" font-size="8">P2 arrived first</text>
+      <text x="384" y="96" fill="#8bc34a" font-size="8">P1 arrived second</text>
+      <text x="384" y="110" fill="#f0a030" font-size="8">P3 arrived third</text>
+      <text x="384" y="124" fill="#5a7a7a" font-size="7">Order received: P2, P1, P3</text>
+
+      <!-- Step 4: Reassemble -->
+      <text x="520" y="40" fill="#5a9a8a" font-size="9" font-weight="600">Step 4: Reassemble using seq #</text>
+      <rect x="520" y="48" width="140" height="80" rx="6" fill="#0a1420" stroke="#f0a030" stroke-width="1.5"/>
+      <text x="524" y="66" fill="#7ae8d4" font-size="8" font-weight="600">Reorder by Sequence Number:</text>
+      <text x="524" y="84" fill="#8bc34a" font-size="8">P1 (seq 1): "Hel"</text>
+      <text x="524" y="98" fill="#f08080" font-size="8">P2 (seq 2): "lo W"</text>
+      <text x="524" y="112" fill="#f0a030" font-size="8">P3 (seq 3): "rld"</text>
+
+      <!-- Arrow to original message -->
+      <line x1="580" y1="132" x2="580" y2="150" stroke="#2ac8b0" stroke-width="1.5" marker-end="url(#arr5)"/>
+
+      <rect x="530" y="154" width="100" height="24" rx="4" fill="#1a3a2a" stroke="#2ac8b0" stroke-width="2"/>
+      <text x="536" y="170" fill="#7ae8d4" font-size="10" font-weight="600">"Hello World" ✅</text>
+    </svg>
+    <div class="diagram-caption">The original message is split into packets, each travels independently, may arrive out of order, and is reassembled using sequence numbers in the header</div>
+  </div>
+
+  <div class="callout info">
+    <strong>Key point:</strong> Sequence numbers in the packet header are <strong>essential</strong> — they allow the receiver to reorder packets that arrived out of order and to detect if any packets are missing.
+  </div>
+  <div class="slide-number">22 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 23 – CIRCUIT VS PACKET SWITCHING COMPARISON TABLE                -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="23">
+  <div class="section-badge">Comparison</div>
+  <h2>Circuit Switching vs Packet Switching</h2>
+  <div style="width:60px; height:3px; background:#d4a030; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="card">
+    <table>
+      <thead><tr><th>Feature</th><th>Circuit Switching</th><th>Packet Switching</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Connection type</strong></td>
+          <td><span class="comparison-neutral">Dedicated circuit</span></td>
+          <td><span class="comparison-neutral">Connectionless</span></td>
+        </tr>
+        <tr>
+          <td><strong>Bandwidth use</strong></td>
+          <td class="comparison-bad">Wasted when idle (reserved but unused)</td>
+          <td class="comparison-good">Efficient — shared between users</td>
+        </tr>
+        <tr>
+          <td><strong>Reliability</strong></td>
+          <td class="comparison-bad">If a link fails, call drops entirely</td>
+          <td class="comparison-good">Resilient — packets reroute around failures</td>
+        </tr>
+        <tr>
+          <td><strong>Delay / Latency</strong></td>
+          <td class="comparison-good">Low and consistent (good for real-time)</td>
+          <td class="comparison-bad">Variable (jitter) — depends on congestion</td>
+        </tr>
+        <tr>
+          <td><strong>Data ordering</strong></td>
+          <td class="comparison-good">In order (same path)</td>
+          <td class="comparison-bad">May arrive out of order — needs reassembly</td>
+        </tr>
+        <tr>
+          <td><strong>Setup time</strong></td>
+          <td class="comparison-bad">Required before sending data</td>
+          <td class="comparison-good">No setup — send immediately</td>
+        </tr>
+        <tr>
+          <td><strong>Cost efficiency</strong></td>
+          <td class="comparison-bad">Expensive — dedicated resources per call</td>
+          <td class="comparison-good">Cheaper — infrastructure is shared</td>
+        </tr>
+        <tr>
+          <td><strong>Scalability</strong></td>
+          <td class="comparison-bad">Poor — doesn't scale to internet size</td>
+          <td class="comparison-good">Excellent — scales to global internet</td>
+        </tr>
+        <tr>
+          <td><strong>Best use case</strong></td>
+          <td>Traditional telephone calls (PSTN)</td>
+          <td>Internet, web browsing, email, streaming, VoIP</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="exam-tip mt-6">
+    <div class="tip-label">Exam Tip</div>
+    <p style="font-size:0.88rem;"><strong>Typical 4-mark question:</strong> "Compare circuit switching and packet switching, stating one benefit and one drawback of each." <strong>Structure:</strong> (1) Circuit — benefit: guaranteed bandwidth / low latency. Drawback: inefficient use of bandwidth when idle. (2) Packet — benefit: efficient use of bandwidth / resilient. Drawback: packets may arrive out of order / variable delay.</p>
+  </div>
+  <div class="slide-number">23 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 24 – SUMMARY SLIDE                                               -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="24">
+  <div class="section-badge">Revision Summary</div>
+  <h2>📌 Topic Summary — Key Takeaways</h2>
+  <div style="width:60px; height:3px; background:#1a8a7a; border-radius:2px; margin-bottom:8px;"></div>
+
+  <div class="grid-2">
+    <div>
+      <div class="card" style="border-color:#2ac8b0;">
+        <h4>📋 Protocols &amp; TCP/IP Stack</h4>
+        <ul>
+          <li>A <strong>protocol</strong> is a set of rules governing data communication</li>
+          <li>Protocols are organised into <strong>layers</strong> — separation of concerns</li>
+          <li>The <strong>TCP/IP suite</strong> has 4 layers: <strong>Application, Transport, Internet, Link</strong></li>
+          <li>Each layer <strong>encapsulates</strong> data by adding headers when sending; <strong>de-encapsulates</strong> when receiving</li>
+          <li><strong>Application</strong>: provides network services to apps (HTTP, FTP, SMTP, etc.)</li>
+          <li><strong>Transport</strong>: segments data + port numbers + TCP (reliable) vs UDP (fast)</li>
+          <li><strong>Internet</strong>: IP addresses + routing packets across networks</li>
+          <li><strong>Link</strong>: MAC addresses + physical transmission (Ethernet, Wi-Fi)</li>
+        </ul>
+      </div>
+
+      <div class="card mt-6" style="border-color:#4ac8f0;">
+        <h4>📨 Common Protocols</h4>
+        <ul>
+          <li><strong>HTTP</strong> (port 80) — transfers web pages; <strong>HTTPS</strong> (port 443) — secure version</li>
+          <li><strong>FTP</strong> (port 21) — file transfer; separate control &amp; data connections</li>
+          <li><strong>SMTP</strong> (port 25) — send email; <strong>POP3</strong> (110) — download to one device; <strong>IMAP</strong> (143) — sync across devices</li>
+          <li><strong>BitTorrent</strong> — P2P file sharing; file split into pieces; seeder/leecher model</li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" style="border-color:#d4a030;">
+        <h4>🔗 Circuit Switching</h4>
+        <ul>
+          <li>Dedicated physical path for <strong>entire</strong> communication</li>
+          <li>✅ Guaranteed bandwidth, low latency, in-order delivery</li>
+          <li>❌ Inefficient (idle line wasted), setup time, not scalable</li>
+          <li>Used in <strong>traditional telephone networks</strong></li>
+        </ul>
+      </div>
+
+      <div class="card mt-6" style="border-color:#4ac8f0;">
+        <h4>📦 Packet Switching</h4>
+        <ul>
+          <li>Data split into <strong>packets</strong>, each sent independently</li>
+          <li>✅ Efficient bandwidth, resilient (reroutes around failure), scalable</li>
+          <li>❌ Out-of-order arrival, variable delay (jitter), header overhead</li>
+          <li>Used by the <strong>Internet</strong></li>
+        </ul>
+      </div>
+
+      <div class="card mt-6" style="border-color:#f0a030;">
+        <h4>🔄 Router's Role</h4>
+        <ul>
+          <li>Examines <strong>destination IP address</strong> in each packet</li>
+          <li>Uses <strong>routing tables</strong> to find the best next hop</li>
+          <li>Forwards packets <strong>between different networks</strong></li>
+          <li>Different packets from the same message may take <strong>different routes</strong></li>
+        </ul>
+      </div>
+
+      <div class="callout info mt-6">
+        <strong>💡 Exam-ready checklist:</strong> Can you define a protocol? List the 4 TCP/IP layers with their functions? Explain encapsulation? Compare circuit vs packet switching? Name common protocols and their ports? Describe a router's role?
+      </div>
+    </div>
+  </div>
+  <div class="slide-number">24 / 25</div>
+</div>
+
+<!-- ===================================================================== -->
+<!-- SLIDE 25 – PRACTICE QUESTIONS SLIDE                                    -->
+<!-- ===================================================================== -->
+<div class="slide" data-slide="25">
+  <div class="section-badge">Exam Preparation</div>
+  <h2>📝 Practice Questions</h2>
+  <div style="width:60px; height:3px; background:#f08080; border-radius:2px; margin-bottom:8px;"></div>
+
+  <p style="margin-bottom:8px;">Try these past-paper style questions. Time yourself — aim for <strong>1 minute per mark</strong>.</p>
+
+  <div class="grid-2">
+    <div class="worked-example" style="border-color:#2ac8b0;">
+      <h4 style="color:#7ae8d4;">Question 1 [3 marks]</h4>
+      <p style="font-size:0.9rem;">Explain why a <strong>protocol</strong> is essential for communication between two computers.</p>
+      <div style="margin-top:6px; padding:6px 10px; background:#0a0f1e; border-radius:6px; border:1px solid #1a4a42;">
+        <p style="font-size:0.82rem; color:#5a9a8a;"><strong>Hint:</strong> Think about format, timing, error checking, and start/end detection.</p>
+      </div>
+    </div>
+
+    <div class="worked-example" style="border-color:#4ac8f0;">
+      <h4 style="color:#80e0ff;">Question 2 [4 marks]</h4>
+      <p style="font-size:0.9rem;">Describe the <strong>purpose of each layer</strong> in the TCP/IP protocol suite.</p>
+      <div style="margin-top:6px; padding:6px 10px; background:#0a0f1e; border-radius:6px; border:1px solid #1a4a42;">
+        <p style="font-size:0.82rem; color:#5a9a8a;"><strong>Hint:</strong> One mark per layer — Application, Transport, Internet, Link.</p>
+      </div>
+    </div>
+
+    <div class="worked-example" style="border-color:#d4a030;">
+      <h4 style="color:#f0c060;">Question 3 [6 marks]</h4>
+      <p style="font-size:0.9rem;">Explain how <strong>packet switching</strong> is used to send a message across the internet.</p>
+      <div style="margin-top:6px; padding:6px 10px; background:#0a0f1e; border-radius:6px; border:1px solid #1a4a42;">
+        <p style="font-size:0.82rem; color:#5a9a8a;"><strong>Hint:</strong> Break into chunks — message split into packets, header structure, independent routing, role of routers, reassembly with sequence numbers.</p>
+      </div>
+    </div>
+
+    <div class="worked-example" style="border-color:#e06060;">
+      <h4 style="color:#f08080;">Question 4 [4 marks]</h4>
+      <p style="font-size:0.9rem;">Compare <strong>circuit switching</strong> and <strong>packet switching</strong>, stating <strong>one benefit and one drawback</strong> of each.</p>
+      <div style="margin-top:6px; padding:6px 10px; background:#0a0f1e; border-radius:6px; border:1px solid #1a4a42;">
+        <p style="font-size:0.82rem; color:#5a9a8a;"><strong>Hint:</strong> Use a table in your answer — mention bandwidth, delay, reliability, and scalability.</p>
+      </div>
+    </div>
+  </div>        <div class="worked-example mt-8" style="border-color:#f0a030; text-align:center;">
+    <h4 style="color:#f0c060;">🏆 Bonus: Quick-Fire Recall <span style="font-size:0.75rem; color:#5a9a8a;">(try to answer before reading!)</span></h4>
+    <div class="grid-2" style="gap:10px; margin-top:6px;">
+      <div class="card question-card-click" data-answer="443" style="font-size:0.82rem; border-color:#8bc34a; cursor:pointer;" onclick="this.querySelector('.answer').style.display='inline'; this.querySelector('.hint').style.display='none'">
+        <strong>What port does HTTPS use?</strong><br>
+        <span class="answer" style="display:none; color:#8bc34a; font-weight:600;">443</span>
+        <span class="hint" style="color:#5a9a8a; font-size:0.78rem;">Click to reveal answer</span>
+      </div>
+      <div class="card question-card-click" data-answer="IMAP" style="font-size:0.82rem; border-color:#8bc34a; cursor:pointer;" onclick="this.querySelector('.answer').style.display='inline'; this.querySelector('.hint').style.display='none'">
+        <strong>Which protocol syncs email across devices?</strong><br>
+        <span class="answer" style="display:none; color:#8bc34a; font-weight:600;">IMAP</span>
+        <span class="hint" style="color:#5a9a8a; font-size:0.78rem;">Click to reveal answer</span>
+      </div>
+      <div class="card question-card-click" data-answer="4 layers" style="font-size:0.82rem; border-color:#8bc34a; cursor:pointer;" onclick="this.querySelector('.answer').style.display='inline'; this.querySelector('.hint').style.display='none'">
+        <strong>How many layers in TCP/IP?</strong><br>
+        <span class="answer" style="display:none; color:#8bc34a; font-weight:600;">4 layers</span>
+        <span class="hint" style="color:#5a9a8a; font-size:0.78rem;">Click to reveal answer</span>
+      </div>
+      <div class="card question-card-click" data-answer="Destination IP and routing table" style="font-size:0.82rem; border-color:#8bc34a; cursor:pointer;" onclick="this.querySelector('.answer').style.display='inline'; this.querySelector('.hint').style.display='none'">
+        <strong>What does a router use to forward packets?</strong><br>
+        <span class="answer" style="display:none; color:#8bc34a; font-weight:600;">Destination IP and routing table</span>
+        <span class="hint" style="color:#5a9a8a; font-size:0.78rem;">Click to reveal answer</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout exam mt-6">
+    <strong>💡 Final exam advice:</strong> For theory questions, always <strong>define key terms first</strong>, then <strong>explain the process</strong>, then give <strong>examples</strong>. Use the mark scheme to guide detail — 1 mark = 1 valid point. Good luck! 🍀
+  </div>
+  <div class="slide-number">25 / 25</div>
+</div>
+
+</div><!-- end .presentation -->
+
+<!-- ===== NAVIGATION BAR ===== -->
+<div class="nav-bar">
+  <button id="prevBtn" disabled>← Prev</button>
+  <div class="progress-dots" id="progressDots"></div>
+  <span class="slide-counter" id="slideCounter">1 / 25</span>
+  <button id="nextBtn">Next →</button>
+</div>
+<div class="kbd-hint">← → keys to navigate</div>
+
+<script>
+  (function() {
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let currentSlide = 0;
+
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const slideCounter = document.getElementById('slideCounter');
+    const progressDots = document.getElementById('progressDots');
+
+    // Create dots
+    for (let i = 0; i < totalSlides; i++) {
+      const dot = document.createElement('button');
+      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      dot.dataset.index = i;
+      dot.addEventListener('click', function() { goToSlide(parseInt(this.dataset.index)); });
+      progressDots.appendChild(dot);
+    }
+
+    function goToSlide(index) {
+      if (index < 0 || index >= totalSlides) return;
+      slides[currentSlide].classList.remove('active');
+      currentSlide = index;
+      slides[currentSlide].classList.add('active');
+      updateUI();
+    }
+
+    function updateUI() {
+      prevBtn.disabled = currentSlide === 0;
+      nextBtn.disabled = currentSlide === totalSlides - 1;
+      slideCounter.textContent = (currentSlide + 1) + ' / ' + totalSlides;
+      document.querySelectorAll('.dot').forEach(function(dot, i) {
+        dot.classList.toggle('active', i === currentSlide);
+      });
+    }
+
+    prevBtn.addEventListener('click', function() { goToSlide(currentSlide - 1); });
+    nextBtn.addEventListener('click', function() { goToSlide(currentSlide + 1); });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        goToSlide(currentSlide + 1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        goToSlide(currentSlide - 1);
+      }
+    });
+
+
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,3150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topic 15: Hardware and Virtual Machines — Cambridge 9618</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #080c18;
+    color: #e0e8f0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+  .presentation { position: relative; width: 100vw; height: 100vh; }
+  .slide {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none;
+    flex-direction: column;
+    padding: 36px 50px;
+    background: linear-gradient(135deg, #0a0e1e 0%, #101838 50%, #0a0e1e 100%);
+    overflow-y: auto;
+  }
+  .slide.active { display: flex; }
+  .slide::-webkit-scrollbar { width: 6px; }
+  .slide::-webkit-scrollbar-track { background: #0a0e1e; }
+  .slide::-webkit-scrollbar-thumb { background: #1a5a6a; border-radius: 3px; }
+
+  h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: #f0f6ff;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #b8d4ff;
+    margin-bottom: 6px;
+    border-bottom: 2px solid #1a7a6a;
+    padding-bottom: 4px;
+  }
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #8bb8ff;
+    margin-bottom: 5px;
+  }
+  h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #5ae0c0;
+    margin-bottom: 4px;
+  }
+  p, li {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #d0dcec;
+    margin-bottom: 4px;
+  }
+  ul { padding-left: 20px; margin-bottom: 6px; }
+  li { margin-bottom: 2px; }
+  strong { color: #e8f0ff; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0;
+    font-size: 0.88rem;
+  }
+  th {
+    background: #0e2840;
+    color: #5ae0c0;
+    font-weight: 600;
+    padding: 7px 10px;
+    text-align: left;
+    border: 1px solid #1a5a6a;
+  }
+  td {
+    padding: 6px 10px;
+    border: 1px solid #1a3a4a;
+    color: #c8d8ec;
+  }
+  tr:nth-child(even) td { background: #0a0e1e; }
+  tr:nth-child(odd) td { background: #0e1428; }
+
+  .code-block {
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    background: #080c18;
+    border: 1px solid #1a5a6a;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: #d4e4ff;
+    overflow-x: auto;
+    margin: 6px 0;
+    white-space: pre;
+  }
+  .inline-code {
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+    background: #080c18;
+    color: #5ae0c0;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    border: 1px solid #1a5a6a;
+  }
+
+  .flex-row { display: flex; flex-direction: row; gap: 16px; }
+  .flex-col { display: flex; flex-direction: column; gap: 6px; }
+  .flex-1 { flex: 1; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
+  .mt-6 { margin-top: 6px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-10 { margin-top: 10px; }
+  .mt-12 { margin-top: 12px; }
+  .mb-6 { margin-bottom: 6px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-10 { margin-bottom: 10px; }
+  .text-center { text-align: center; }
+
+  .card {
+    background: #0a0e1e;
+    border: 1px solid #1a5a6a;
+    border-radius: 10px;
+    padding: 10px 12px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: #2ac8a0; }
+  .card h4 { color: #5ae0c0; margin-bottom: 3px; }
+
+  .diagram-box {
+    background: #080c18;
+    border: 1px solid #1a5a6a;
+    border-radius: 10px;
+    padding: 12px;
+    margin: 8px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .diagram-box svg { max-width: 100%; height: auto; }
+  .diagram-caption {
+    margin-top: 5px;
+    font-size: 0.78rem;
+    color: #7ab8a8;
+    font-style: italic;
+    text-align: center;
+  }
+
+  .callout {
+    background: #0a0e1e;
+    border-left: 4px solid #f78c6c;
+    padding: 8px 12px;
+    border-radius: 0 6px 6px 0;
+    margin: 5px 0;
+    font-size: 0.9rem;
+  }
+  .callout.info { border-left-color: #2ac8a0; }
+  .callout.warn { border-left-color: #f78c6c; }
+  .callout.success { border-left-color: #8bc34a; }
+
+  .section-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #0a2840, #1a5a6a);
+    color: #5ae0c0;
+    padding: 3px 14px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border: 1px solid #2a9a8a;
+  }
+
+  .objectives-list { list-style: none; padding: 0; }
+  .objectives-list li {
+    padding: 6px 10px 6px 30px;
+    background: #080c18;
+    border-left: 3px solid #2ac8a0;
+    margin-bottom: 6px;
+    border-radius: 0 6px 6px 0;
+    position: relative;
+  }
+  .objectives-list li::before {
+    content: "▸";
+    position: absolute;
+    left: 10px;
+    color: #2ac8a0;
+    font-weight: bold;
+  }
+
+  .worked-example {
+    background: linear-gradient(135deg, #0c1a20, #0e2828);
+    border: 1px solid #2a9a8a;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 6px 0;
+  }
+  .worked-example h4 { color: #f78c6c; margin-bottom: 5px; }
+
+  .key-term-box {
+    background: linear-gradient(135deg, #1a0a2e, #2a0a4a);
+    border: 1px solid #6a3aaa;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin: 6px 0;
+  }
+  .key-term-box h4 { color: #b080f0; }
+  .key-term-box h4::before { content: "🔑 "; }
+
+  .exam-tip-box {
+    background: linear-gradient(135deg, #1a1a0a, #2a2a0a);
+    border: 1px solid #c8a020;
+    border-radius: 10px;
+    padding: 8px 14px;
+    margin: 6px 0;
+  }
+  .exam-tip-box h4 { color: #f0c040; }
+  .exam-tip-box h4::before { content: "💡 "; }
+
+  .common-mistake-box {
+    background: linear-gradient(135deg, #2a0a0a, #3a1a0a);
+    border: 1px solid #c04040;
+    border-radius: 10px;
+    padding: 8px 14px;
+    margin: 6px 0;
+  }
+  .common-mistake-box h4 { color: #e06060; }
+  .common-mistake-box h4::before { content: "⚠️ "; }
+
+  .nav-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 8px 20px;
+    background: rgba(8,12,24,0.94);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid #1a3a4a;
+    z-index: 100;
+  }
+  .nav-bar button {
+    background: #0e2840;
+    border: 1px solid #1a5a6a;
+    color: #5ae0c0;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .nav-bar button:hover { background: #1a5a6a; }
+  .nav-bar button:disabled { opacity: 0.35; cursor: default; }
+  .nav-bar .slide-counter {
+    color: #7ab8a8;
+    font-size: 0.82rem;
+    min-width: 80px;
+    text-align: center;
+  }
+  .nav-bar .progress-dots { display: flex; gap: 3px; flex-wrap: wrap; max-width: 400px; justify-content: center; }
+  .nav-bar .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #1a3a4a;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.2s;
+  }
+  .nav-bar .dot.active { background: #2ac8a0; }
+  .nav-bar .dot:hover { background: #3aaa7a; }
+
+  .slide-number {
+    position: absolute;
+    bottom: 48px;
+    right: 20px;
+    color: #1a2a3a;
+    font-size: 0.78rem;
+    font-weight: 600;
+    z-index: 1;
+  }
+
+  .kbd-hint {
+    position: fixed;
+    bottom: 52px;
+    right: 16px;
+    color: #2a5a5a;
+    font-size: 0.7rem;
+    z-index: 90;
+  }
+
+  .chip-group { display: flex; gap: 6px; flex-wrap: wrap; margin: 5px 0; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: #080c18; border: 1px solid #1a5a6a;
+    border-radius: 20px; padding: 3px 10px;
+    font-size: 0.78rem; color: #5ae0c0;
+  }
+
+  .tag {
+    display: inline-block;
+    background: #0e2840;
+    color: #5ae0c0;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    border: 1px solid #1a5a6a;
+    margin-right: 3px;
+  }
+
+  @media (max-width: 900px) {
+    .slide { padding: 20px 18px; }
+    h1 { font-size: 1.6rem; }
+    h2 { font-size: 1.2rem; }
+    h3 { font-size: 1rem; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .flex-row { flex-direction: column; }
+    .nav-bar .progress-dots { max-width: 200px; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .slide.active > * { animation: fadeIn 0.35s ease-out; }
+</style>
+</head>
+<body>
+<div class="presentation" id="presentation">
+
+<!-- ================================================================== -->
+<!-- SLIDES WILL BE INSERTED HERE BY JAVASCRIPT                         -->
+<!-- ================================================================== -->
+
+<script>
+const slides = [];
+function addSlide(html) { slides.push(html); }
+function renderSlides() {
+  const container = document.getElementById('presentation');
+  slides.forEach((html, i) => {
+    const div = document.createElement('div');
+    div.className = 'slide' + (i === 0 ? ' active' : '');
+    div.dataset.slide = i + 1;
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+  renderDots();
+  updateNav();
+}
+function renderDots() {
+  const dots = document.getElementById('progressDots');
+  dots.innerHTML = '';
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'dot' + (i === currentSlide ? ' active' : '');
+    dot.onclick = () => goToSlide(i);
+    dots.appendChild(dot);
+  });
+}
+let currentSlide = 0;
+function changeSlide(dir) {
+  const next = currentSlide + dir;
+  if (next < 0 || next >= slides.length) return;
+  goToSlide(next);
+}
+function goToSlide(idx) {
+  const all = document.querySelectorAll('.slide');
+  all.forEach(s => s.classList.remove('active'));
+  all[idx].classList.add('active');
+  currentSlide = idx;
+  document.getElementById('slideCounter').textContent = (idx + 1) + ' / ' + slides.length;
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === slides.length - 1;
+  renderDots();
+  all[idx].scrollTop = 0;
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+});
+function updateNav() {
+  document.getElementById('slideCounter').textContent = '1 / ' + slides.length;
+  document.getElementById('prevBtn').disabled = true;
+  if (slides.length <= 1) document.getElementById('nextBtn').disabled = true;
+}
+
+// ==================================================================
+// SLIDE 1 – TITLE SLIDE
+// ==================================================================
+addSlide(`
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+    <div class="section-badge" style="margin-bottom:14px;">Cambridge International AS &amp; A Level — 9618</div>
+    <h1 style="font-size:3rem; margin-bottom:6px;">Topic 15</h1>
+    <h1 style="font-size:2.6rem; margin-bottom:8px; color:#5ae0c0;">Hardware and Virtual Machines</h1>
+    <div style="width:80px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:18px;"></div>
+    <p style="font-size:1.1rem; color:#7ab8a8; margin-bottom:16px;">Cambridge International AS &amp; A Level Computer Science 9618</p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:700px;">
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">RISC vs CISC</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Pipelining</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Parallel Processing</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Virtual Machines</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Boolean Algebra</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Karnaugh Maps</span>
+    </div>
+    <div style="margin-top:24px; text-align:left; max-width:650px;">
+      <h4 style="color:#b8d4ff; margin-bottom:8px;">Learning Objectives:</h4>
+      <ul>
+        <li>Compare RISC and CISC processors</li>
+        <li>Explain pipelining and registers in RISC processors</li>
+        <li>Understand interrupt handling in RISC and CISC</li>
+        <li>Describe SISD, SIMD, MISD and MIMD architectures</li>
+        <li>Explain massively parallel computers</li>
+        <li>Explain virtual machines, their roles, benefits and limitations</li>
+        <li>Produce truth tables for logic circuits, half adders and full adders</li>
+        <li>Understand SR and JK flip-flops</li>
+        <li>Use Boolean algebra and De Morgan’s laws</li>
+        <li>Simplify expressions using Karnaugh maps</li>
+      </ul>
+    </div>
+    <p style="color:#3a6a6a; font-size:0.82rem; margin-top:20px;">Press <span class="inline-code">→</span> or click navigation to begin</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 2 – BIG PICTURE OVERVIEW
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Topic 15 Overview</div>
+  <h2>Big Picture of Topic 15</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:10px;"></div>
+  <p style="margin-bottom:10px;">This topic combines <strong>hardware architecture</strong> with <strong>digital logic design</strong> — two closely connected areas of computer science.</p>
+  <div class="grid-2" style="margin-top:8px;">
+    <div class="card">
+      <h4>15.1 Hardware and Virtual Machines</h4>
+      <ul>
+        <li>RISC vs CISC processor design</li>
+        <li>Instruction sets and pipelining</li>
+        <li>Register organisation</li>
+        <li>Interrupt handling</li>
+        <li>Parallel processing (Flynn’s taxonomy)</li>
+        <li>Massively parallel computers</li>
+        <li>Virtual machines and hypervisors</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>15.2 Boolean Algebra and Logic Circuits</h4>
+      <ul>
+        <li>Truth tables for logic circuits</li>
+        <li>Half adders and full adders</li>
+        <li>SR and JK flip-flops</li>
+        <li>Boolean algebra laws</li>
+        <li>De Morgan’s laws</li>
+        <li>Karnaugh map simplification</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout info mt-6">
+    <strong>Teacher note:</strong> This presentation covers approximately 90–120 minutes of teaching or a comprehensive revision session. Sections 15.1 and 15.2 can be taught separately if needed.
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 3 – WHAT IS AN INSTRUCTION SET?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Processors</div>
+  <h2>What Is an Instruction Set?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p>An <strong>instruction set</strong> is the complete collection of machine-code instructions that a processor can understand and execute.</p>
+        <p style="margin-top:6px;">Examples of instructions:</p>
+        <ul>
+          <li><span class="inline-code">LOAD</span> — copy data from memory to a register</li>
+          <li><span class="inline-code">STORE</span> — copy data from a register to memory</li>
+          <li><span class="inline-code">ADD</span> — add two values</li>
+          <li><span class="inline-code">COMPARE</span> — compare two values</li>
+          <li><span class="inline-code">JUMP</span> — branch to a different instruction</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Instruction set:</strong> The set of all machine-code instructions a processor can execute. Different processor families (ARM, x86, RISC-V) have different instruction sets.</p>
+      </div>
+      <div class="card" style="margin-top:6px;">
+        <h4>Two Main Design Philosophies</h4>
+        <ul>
+          <li><strong>RISC</strong> (Reduced Instruction Set Computer) — many simple instructions</li>
+          <li><strong>CISC</strong> (Complex Instruction Set Computer) — fewer, more powerful instructions</li>
+        </ul>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Analogy:</strong> RISC is like using many simple Lego bricks to build anything. CISC is like having specialised pre-built pieces that do complex tasks in one step.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 4 – RISC PROCESSOR: MAIN FEATURES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Processors</div>
+  <h2>RISC Processor — Main Features</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Key Features of RISC</h4>
+        <ul>
+          <li><strong>Small</strong> instruction set (typically 50–100 instructions)</li>
+          <li><strong>Simple</strong>, single-cycle instructions</li>
+          <li><strong>Fixed-length</strong> instructions</li>
+          <li>Most instructions complete in <strong>one clock cycle</strong></li>
+          <li><strong>Load/store architecture</strong> — only LOAD and STORE access memory</li>
+          <li><strong>Many general-purpose registers</strong> (typically 32 or more)</li>
+          <li>Easier to <strong>pipeline</strong> because instructions are uniform</li>
+          <li>Simpler control unit (less hardware complexity)</li>
+        </ul>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Load/store architecture:</strong> Memory is accessed mainly by separate LOAD and STORE instructions. Arithmetic/logic operations work only on registers, not directly on memory.</p>
+      </div>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>Example RISC Instructions</h4>
+        <div class="code-block">
+LOAD R1, X     <span style="color:#546e7a;">// Load value at memory address X into R1</span>
+LOAD R2, Y     <span style="color:#546e7a;">// Load value at memory address Y into R2</span>
+ADD  R3, R1, R2 <span style="color:#546e7a;">// R3 = R1 + R2</span>
+STORE R3, Z    <span style="color:#546e7a;">// Store result to memory address Z</span>
+        </div>
+        <p style="font-size:0.88rem; margin-top:4px;">Each instruction does <strong>one simple operation</strong>. Multiple steps are needed for complex tasks, but each step is fast and predictable.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Examples of RISC Processors</h4>
+        <ul>
+          <li><strong>ARM</strong> — used in most smartphones and tablets</li>
+          <li><strong>RISC-V</strong> — open-source RISC architecture</li>
+          <li><strong>MIPS</strong> — used in some embedded systems</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 5 – CISC PROCESSOR: MAIN FEATURES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Processors</div>
+  <h2>CISC Processor — Main Features</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Key Features of CISC</h4>
+        <ul>
+          <li><strong>Large</strong> instruction set (hundreds of instructions)</li>
+          <li><strong>Complex</strong> instructions that perform multi-step tasks</li>
+          <li><strong>Variable-length</strong> instructions</li>
+          <li>Instructions may take <strong>several clock cycles</strong></li>
+          <li>Many instructions can access memory directly</li>
+          <li><strong>Fewer registers</strong> compared with RISC</li>
+          <li>More complex <strong>decoding hardware</strong> needed</li>
+          <li>Harder to pipeline effectively</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>Example CISC Instruction</h4>
+        <div class="code-block">
+MULT [addr1], [addr2]  <span style="color:#546e7a;">// Multiply values at two memory addresses</span>
+        </div>
+        <p style="font-size:0.88rem; margin-top:4px;">A single CISC instruction can load values from memory, perform the operation, and store the result back — all in <strong>one instruction</strong>. This reduces the number of instructions needed, but each instruction is more complex and may take multiple clock cycles.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Examples of CISC Processors</h4>
+        <ul>
+          <li><strong>x86</strong> — Intel and AMD desktop/laptop processors</li>
+          <li><strong>x86-64</strong> — 64-bit extension of x86</li>
+        </ul>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Key idea:</strong> CISC aims to reduce the <em>number of instructions</em> in a program. However, each instruction may need more clock cycles and more complex decoding.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 6 – RISC VS CISC COMPARISON TABLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Processors</div>
+  <h2>RISC vs CISC — Comparison</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th style="width:25%;">Feature</th><th style="width:37.5%;">RISC</th><th style="width:37.5%;">CISC</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Instruction set size</strong></td><td>Small / simple</td><td>Large / complex</td></tr>
+      <tr><td><strong>Instruction length</strong></td><td>Fixed</td><td>Variable</td></tr>
+      <tr><td><strong>Clock cycles per instruction</strong></td><td>Often one cycle</td><td>Often multiple cycles</td></tr>
+      <tr><td><strong>Number of registers</strong></td><td>Many (32+)</td><td>Fewer</td></tr>
+      <tr><td><strong>Memory access</strong></td><td>Load/store only</td><td>Many instructions may access memory</td></tr>
+      <tr><td><strong>Pipelining</strong></td><td>Easier</td><td>Harder</td></tr>
+      <tr><td><strong>Decoding hardware</strong></td><td>Simpler</td><td>More complex</td></tr>
+      <tr><td><strong>Code size</strong></td><td>Often larger</td><td>Often smaller</td></tr>
+      <tr><td><strong>Examples</strong></td><td>ARM, RISC-V, MIPS</td><td>x86/x64 family</td></tr>
+    </tbody>
+  </table>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>Do <strong>not</strong> write “RISC is always faster”. Instead, explain <em>why</em> RISC can be faster for some tasks: simple fixed-length instructions make <strong>pipelining</strong> easier, leading to higher instruction throughput per clock cycle.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 7 – WHY REGISTERS MATTER IN RISC
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Processors</div>
+  <h2>Why Registers Matter in RISC</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Role of Registers</h4>
+        <ul>
+          <li>Registers are <strong>small, fast storage locations</strong> inside the CPU</li>
+          <li>RISC processors use <strong>many general-purpose registers</strong> (32 or more)</li>
+          <li>Operations are often <strong>register-to-register</strong></li>
+          <li>This <strong>reduces slow memory access</strong> (memory is much slower than registers)</li>
+          <li>Register use supports <strong>efficient pipelining</strong></li>
+          <li>Compiler can keep frequently used variables in registers</li>
+        </ul>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Register:</strong> A small, high-speed storage location inside the CPU used to hold data temporarily during processing. Much faster to access than RAM.</p>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 330 180" style="width:100%; max-width:330px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="10" font-weight="600">Register → ALU → Register</text>
+          <rect x="20" y="30" width="80" height="40" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="28" y="54" fill="#5ae0c0" font-size="11" font-weight="600">Register</text>
+          <text x="35" y="66" fill="#b8d4ff" font-size="8">R1 = 15</text>
+          <rect x="120" y="30" width="80" height="40" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="128" y="54" fill="#5ae0c0" font-size="11" font-weight="600">Register</text>
+          <text x="135" y="66" fill="#b8d4ff" font-size="8">R2 = 7</text>
+          <rect x="85" y="100" width="100" height="40" rx="4" fill="#1a0a2e" stroke="#b080f0" stroke-width="1.5"/>
+          <text x="100" y="124" fill="#b080f0" font-size="11" font-weight="600">ALU</text>
+          <text x="100" y="136" fill="#b8d4ff" font-size="9">R1 + R2 = 22</text>
+          <line x1="60" y1="70" x2="115" y2="100" stroke="#4a7ac8" stroke-width="1.5"/>
+          <line x1="160" y1="70" x2="135" y2="100" stroke="#4a7ac8" stroke-width="1.5"/>
+          <line x1="135" y1="140" x2="220" y2="40" stroke="#f78c6c" stroke-width="1.5"/>
+          <rect x="220" y="24" width="80" height="40" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="228" y="48" fill="#5ae0c0" font-size="11" font-weight="600">Register</text>
+          <text x="235" y="60" fill="#b8d4ff" font-size="8">R3 = 22</text>
+          <text x="60" y="88" fill="#4a7ac8" font-size="8">R1</text>
+          <text x="162" y="88" fill="#4a7ac8" font-size="8">R2</text>
+          <text x="215" y="42" fill="#f78c6c" font-size="8">Result</text>
+        </svg>
+        <div class="diagram-caption">Data flows: Register → ALU → Register. No direct memory access needed for arithmetic.</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 8 – PIPELINING IN RISC PROCESSORS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Processors</div>
+  <h2>Pipelining in RISC Processors</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is Pipelining?</h4>
+        <p><strong>Pipelining</strong> is the process of overlapping the execution stages of several instructions to improve <strong>throughput</strong>.</p>
+        <p style="margin-top:6px;">Analogy: A car factory assembly line — different cars are at different stages of assembly at the same time.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>5-Stage Pipeline (Classic RISC)</h4>
+        <ol>
+          <li><strong>Fetch</strong> — get instruction from memory</li>
+          <li><strong>Decode</strong> — interpret the instruction</li>
+          <li><strong>Execute</strong> — perform the operation</li>
+          <li><strong>Memory</strong> — access data memory if needed</li>
+          <li><strong>Write back</strong> — store result in register</li>
+        </ol>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 360 160" style="width:100%; max-width:360px;">
+          <text x="8" y="12" fill="#b8d4ff" font-size="9" font-weight="600">Pipeline Stages Over Time</text>
+          <text x="8" y="28" fill="#7ab8a8" font-size="7">Cycle:</text>
+          <text x="44" y="28" fill="#5ae0c0" font-size="8" font-weight="600">1</text>
+          <text x="92" y="28" fill="#5ae0c0" font-size="8" font-weight="600">2</text>
+          <text x="140" y="28" fill="#5ae0c0" font-size="8" font-weight="600">3</text>
+          <text x="188" y="28" fill="#5ae0c0" font-size="8" font-weight="600">4</text>
+          <text x="236" y="28" fill="#5ae0c0" font-size="8" font-weight="600">5</text>
+          <text x="290" y="28" fill="#5ae0c0" font-size="8" font-weight="600">6</text>
+
+          <rect x="34" y="34" width="50" height="16" rx="3" fill="#0e2840" stroke="#4a7ac8" stroke-width="1"/>
+          <text x="36" y="45" fill="#4a7ac8" font-size="7">F(1)</text>
+          <rect x="82" y="34" width="50" height="16" rx="3" fill="#0e2840" stroke="#4a7ac8" stroke-width="1"/>
+          <text x="84" y="45" fill="#4a7ac8" font-size="7">D(1)</text>
+          <rect x="82" y="56" width="50" height="16" rx="3" fill="#1a2840" stroke="#7ab8ff" stroke-width="1"/>
+          <text x="84" y="67" fill="#7ab8ff" font-size="7">F(2)</text>
+          <rect x="130" y="34" width="50" height="16" rx="3" fill="#0e2840" stroke="#4a7ac8" stroke-width="1"/>
+          <text x="132" y="45" fill="#4a7ac8" font-size="7">E(1)</text>
+          <rect x="130" y="56" width="50" height="16" rx="3" fill="#1a2840" stroke="#7ab8ff" stroke-width="1"/>
+          <text x="132" y="67" fill="#7ab8ff" font-size="7">D(2)</text>
+          <rect x="130" y="78" width="50" height="16" rx="3" fill="#2a1828" stroke="#c080f0" stroke-width="1"/>
+          <text x="132" y="89" fill="#c080f0" font-size="7">F(3)</text>
+          <rect x="178" y="34" width="50" height="16" rx="3" fill="#0e2840" stroke="#4a7ac8" stroke-width="1"/>
+          <text x="180" y="45" fill="#4a7ac8" font-size="7">M(1)</text>
+          <rect x="178" y="56" width="50" height="16" rx="3" fill="#1a2840" stroke="#7ab8ff" stroke-width="1"/>
+          <text x="180" y="67" fill="#7ab8ff" font-size="7">E(2)</text>
+          <rect x="178" y="78" width="50" height="16" rx="3" fill="#2a1828" stroke="#c080f0" stroke-width="1"/>
+          <text x="180" y="89" fill="#c080f0" font-size="7">D(3)</text>
+          <rect x="178" y="100" width="50" height="16" rx="3" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+          <text x="180" y="111" fill="#80c8a0" font-size="7">F(4)</text>
+          <rect x="226" y="34" width="50" height="16" rx="3" fill="#0e2840" stroke="#4a7ac8" stroke-width="1"/>
+          <text x="228" y="45" fill="#4a7ac8" font-size="7">W(1)</text>
+          <rect x="226" y="56" width="50" height="16" rx="3" fill="#1a2840" stroke="#7ab8ff" stroke-width="1"/>
+          <text x="228" y="67" fill="#7ab8ff" font-size="7">M(2)</text>
+          <rect x="226" y="78" width="50" height="16" rx="3" fill="#2a1828" stroke="#c080f0" stroke-width="1"/>
+          <text x="228" y="89" fill="#c080f0" font-size="7">E(3)</text>
+          <rect x="226" y="100" width="50" height="16" rx="3" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+          <text x="228" y="111" fill="#80c8a0" font-size="7">D(4)</text>
+          <text x="8" y="48" fill="#4a7ac8" font-size="7">Inst 1:</text>
+          <text x="8" y="70" fill="#7ab8ff" font-size="7">Inst 2:</text>
+          <text x="8" y="92" fill="#c080f0" font-size="7">Inst 3:</text>
+          <text x="8" y="114" fill="#80c8a0" font-size="7">Inst 4:</text>
+          <text x="8" y="140" fill="#5ae0c0" font-size="7">F=Fetch  D=Decode  E=Execute  M=Memory  W=Write Back</text>
+        </svg>
+        <div class="diagram-caption">After the first instruction, one instruction completes every cycle</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 9 – IMPORTANCE OF PIPELINING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Processors</div>
+  <h2>Importance of Pipelining</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Why Pipelining Matters</h4>
+        <ul>
+          <li>Without pipelining: CPU completes <strong>one instruction fully</strong> before starting the next</li>
+          <li>With pipelining: <strong>several instructions</strong> are in progress at once</li>
+          <li>This increases <strong>instruction throughput</strong> (instructions per clock cycle)</li>
+          <li>RISC is well-suited because instructions are simple and fixed-length</li>
+        </ul>
+      </div>
+      <div class="diagram-box mt-6">
+        <svg viewBox="0 0 340 90" style="width:100%; max-width:340px;">
+          <text x="8" y="12" fill="#b8d4ff" font-size="9" font-weight="600">Without Pipelining</text>
+          <rect x="8" y="18" width="72" height="20" rx="3" fill="#3a1a1a" stroke="#e06060" stroke-width="1"/>
+          <text x="12" y="32" fill="#e06060" font-size="7">Fetch</text>
+          <rect x="82" y="18" width="72" height="20" rx="3" fill="#3a1a1a" stroke="#e06060" stroke-width="1"/>
+          <text x="86" y="32" fill="#e06060" font-size="7">Decode</text>
+          <rect x="156" y="18" width="72" height="20" rx="3" fill="#3a1a1a" stroke="#e06060" stroke-width="1"/>
+          <text x="160" y="32" fill="#e06060" font-size="7">Execute</text>
+          <text x="8" y="58" fill="#5ae0c0" font-size="9" font-weight="600">With Pipelining</text>
+          <rect x="8" y="64" width="36" height="20" rx="3" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+          <text x="10" y="78" fill="#2ac8a0" font-size="6">F1</text>
+          <rect x="46" y="64" width="36" height="20" rx="3" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+          <text x="48" y="78" fill="#2ac8a0" font-size="6">D1</text>
+          <rect x="46" y="64" width="36" height="20" rx="3" fill="#1a2840" stroke="#4a7ac8" stroke-width="1"/>
+          <text x="48" y="78" fill="#4a7ac8" font-size="6">F2</text>
+        </svg>
+        <div class="diagram-caption">Pipelining overlaps stages, increasing throughput</div>
+      </div>
+    </div>
+    <div>
+      <div class="exam-tip-box">
+        <h4>Exam Tip</h4>
+        <p>Pipelining does <strong>not</strong> reduce the time needed for a single instruction. It <strong>increases the number of instructions completed per unit time</strong> (throughput). This is a common exam distinction.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Key Formula</h4>
+        <p><strong>Throughput</strong> = number of instructions completed per clock cycle.</p>
+        <p style="margin-top:4px;">In a 5-stage pipeline, after the first instruction, one instruction completes <strong>every cycle</strong> (ideally).</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 10 – PIPELINE PROBLEMS / HAZARDS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Processors</div>
+  <h2>Pipeline Hazards</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <p>Pipeline hazards are situations that prevent the next instruction from executing in the next clock cycle.</p>
+  <div class="grid-3" style="margin-top:8px;">
+    <div class="card">
+      <h4>Data Hazard</h4>
+      <p>An instruction needs data that has not yet been produced by a previous instruction.</p>
+      <p style="margin-top:4px; font-size:0.85rem;"><strong>Example:</strong></p>
+      <div class="code-block" style="font-size:0.75rem;">
+ADD R1, R2, R3  <span style="color:#546e7a;">// R1 = R2 + R3</span>
+SUB R4, R1, R5  <span style="color:#546e7a;">// Needs R1 (not ready)</span>
+      </div>
+    </div>
+    <div class="card">
+      <h4>Control Hazard</h4>
+      <p>A branch or jump changes the flow of instructions. The pipeline may have already fetched the wrong next instruction.</p>
+      <p style="margin-top:4px; font-size:0.85rem;"><strong>Example:</strong></p>
+      <div class="code-block" style="font-size:0.75rem;">
+JUMP label
+LOAD R1, X  <span style="color:#546e7a;">// May not be executed</span>
+      </div>
+    </div>
+    <div class="card">
+      <h4>Structural Hazard</h4>
+      <p>Two instructions try to use the same hardware resource at the same time (e.g., memory access conflict).</p>
+      <p style="margin-top:4px; font-size:0.85rem;"><strong>Example:</strong></p>
+      <div class="code-block" style="font-size:0.75rem;">
+LOAD R1, X     <span style="color:#546e7a;">// Need memory</span>
+FETCH next     <span style="color:#546e7a;">// Also needs memory</span>
+      </div>
+    </div>
+  </div>
+  <div class="diagram-box mt-6">
+    <svg viewBox="0 0 340 50" style="width:100%; max-width:340px;">
+      <text x="8" y="12" fill="#b8d4ff" font-size="8" font-weight="600">Pipeline Stall (Bubble):</text>
+      <rect x="8" y="18" width="32" height="16" rx="3" fill="#0e2840" stroke="#4a7ac8" stroke-width="1"/>
+      <text x="10" y="29" fill="#4a7ac8" font-size="6">F1</text>
+      <rect x="42" y="18" width="32" height="16" rx="3" fill="#0e2840" stroke="#4a7ac8" stroke-width="1"/>
+      <text x="44" y="29" fill="#4a7ac8" font-size="6">D1</text>
+      <rect x="76" y="18" width="32" height="16" rx="3" fill="#3a1a1a" stroke="#e06060" stroke-width="1"/>
+      <text x="78" y="29" fill="#e06060" font-size="6">STALL</text>
+      <rect x="110" y="18" width="32" height="16" rx="3" fill="#0e2840" stroke="#4a7ac8" stroke-width="1"/>
+      <text x="112" y="29" fill="#4a7ac8" font-size="6">E1</text>
+      <text x="8" y="48" fill="#7ab8a8" font-size="7">A bubble (stall) inserted when a hazard is detected</text>
+    </svg>
+    <div class="diagram-caption">A stall “bubble” inserted to resolve a hazard</div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 11 – INTERRUPT HANDLING: BASIC CONCEPT
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Processors</div>
+  <h2>Interrupt Handling — Basic Concept</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is an Interrupt?</h4>
+        <p>An <strong>interrupt</strong> is a signal that causes the processor to temporarily stop its current task and run an <strong>interrupt service routine</strong> (ISR).</p>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>Interrupt Handling Steps</h4>
+        <ol class="step-list" style="padding-left:0;">
+          <li style="padding-left:28px;">Interrupt signal is <strong>received</strong> by the processor</li>
+          <li style="padding-left:28px;">Current state is <strong>saved</strong> (registers, program counter, etc.)</li>
+          <li style="padding-left:28px;">Processor jumps to the <strong>interrupt service routine</strong> (ISR)</li>
+          <li style="padding-left:28px;">ISR is <strong>executed</strong> to handle the interrupt</li>
+          <li style="padding-left:28px;">Saved state is <strong>restored</strong></li>
+          <li style="padding-left:28px;">Original program <strong>resumes</strong> from where it was stopped</li>
+        </ol>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 320 160" style="width:100%; max-width:320px;">
+          <rect x="20" y="10" width="280" height="28" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="30" y="28" fill="#5ae0c0" font-size="9" font-weight="600">Main Program Executing</text>
+          <line x1="160" y1="38" x2="160" y2="50" stroke="#f78c6c" stroke-width="1.5"/>
+          <text x="170" y="46" fill="#f78c6c" font-size="8">Interrupt!</text>
+          <rect x="20" y="50" width="200" height="58" rx="4" fill="#2a1a0a" stroke="#f78c6c" stroke-width="1.5"/>
+          <text x="30" y="66" fill="#f78c6c" font-size="9" font-weight="600">Interrupt Service Routine</text>
+          <text x="30" y="80" fill="#d0dcec" font-size="8">1. Save current state</text>
+          <text x="30" y="92" fill="#d0dcec" font-size="8">2. Handle the interrupt</text>
+          <text x="30" y="104" fill="#d0dcec" font-size="8">3. Restore saved state</text>
+          <line x1="160" y1="108" x2="160" y2="118" stroke="#8bc34a" stroke-width="1.5"/>
+          <text x="170" y="116" fill="#8bc34a" font-size="8">Return</text>
+          <rect x="20" y="120" width="280" height="28" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="30" y="138" fill="#5ae0c0" font-size="9" font-weight="600">Main Program Resumes</text>
+        </svg>
+        <div class="diagram-caption">Main program → interrupt → ISR → return to main program</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 12 – INTERRUPT HANDLING IN RISC AND CISC
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Processors</div>
+  <h2>Interrupt Handling — RISC vs CISC</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>RISC Interrupt Handling</h4>
+      <ul>
+        <li><strong>Simple instructions</strong> make it easier to identify safe interrupt points</li>
+        <li><strong>Fixed instruction length</strong> makes state saving more predictable</li>
+        <li><strong>Many registers</strong> allow faster context saving</li>
+        <li>Pipeline may need to be <strong>flushed or stalled</strong> on interrupt</li>
+        <li>State saving is helped by regular, uniform register use</li>
+        <li>Often faster interrupt response times</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>CISC Interrupt Handling</h4>
+      <ul>
+        <li><strong>Complex instructions</strong> may take many cycles to complete</li>
+        <li><strong>Variable instruction length</strong> makes interrupt points harder to manage</li>
+        <li>Interrupt may need to wait until a complex instruction <strong>finishes</strong></li>
+        <li>More complex decoding state makes context saving <strong>more complicated</strong></li>
+        <li>More <strong>hardware logic</strong> needed to manage interrupt handling</li>
+      </ul>
+    </div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>Avoid saying CISC “cannot handle interrupts”. <strong>Both</strong> RISC and CISC processors handle interrupts; the difference is mainly in <strong>complexity and predictability</strong>. RISC tends to have simpler, more predictable interrupt handling.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 13 – WHAT IS PARALLEL PROCESSING?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Parallel Processing</div>
+  <h2>What Is Parallel Processing?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Parallel processing</strong> uses more than one processor or core to work on tasks at the same time.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Why Use Parallel Processing?</h4>
+        <ul>
+          <li>Improve <strong>performance</strong> and speed</li>
+          <li>Solve <strong>large problems</strong> faster</li>
+          <li>Handle <strong>many tasks/users</strong> simultaneously</li>
+          <li>Support <strong>scientific simulations</strong>, graphics and data processing</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 300 140" style="width:100%; max-width:300px;">
+          <rect x="10" y="10" width="60" height="40" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="16" y="34" fill="#5ae0c0" font-size="10" font-weight="600">Big Task</text>
+          <line x1="70" y1="30" x2="100" y2="20" stroke="#4a7ac8" stroke-width="1.5"/>
+          <line x1="70" y1="30" x2="100" y2="40" stroke="#4a7ac8" stroke-width="1.5"/>
+          <line x1="70" y1="30" x2="100" y2="60" stroke="#4a7ac8" stroke-width="1.5"/>
+          <line x1="70" y1="30" x2="100" y2="80" stroke="#4a7ac8" stroke-width="1.5"/>
+          <rect x="100" y="8" width="60" height="24" rx="3" fill="#1a2840" stroke="#7ab8ff" stroke-width="1"/>
+          <text x="104" y="24" fill="#7ab8ff" font-size="7">Subtask 1</text>
+          <rect x="100" y="36" width="60" height="24" rx="3" fill="#2a1828" stroke="#c080f0" stroke-width="1"/>
+          <text x="104" y="52" fill="#c080f0" font-size="7">Subtask 2</text>
+          <rect x="100" y="64" width="60" height="24" rx="3" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+          <text x="104" y="80" fill="#80c8a0" font-size="7">Subtask 3</text>
+          <rect x="100" y="92" width="60" height="24" rx="3" fill="#2a2a18" stroke="#c8a040" stroke-width="1"/>
+          <text x="104" y="108" fill="#c8a040" font-size="7">Subtask 4</text>
+          <text x="175" y="30" fill="#b8d4ff" font-size="7">Core 1</text>
+          <text x="175" y="52" fill="#b8d4ff" font-size="7">Core 2</text>
+          <text x="175" y="80" fill="#b8d4ff" font-size="7">Core 3</text>
+          <text x="175" y="108" fill="#b8d4ff" font-size="7">Core 4</text>
+        </svg>
+        <div class="diagram-caption">One large task split into smaller subtasks processed simultaneously</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 14 – FLYNN’S TAXONOMY OVERVIEW
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Parallel Processing</div>
+  <h2>Flynn’s Taxonomy Overview</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="card">
+    <h4>What Is Flynn’s Taxonomy?</h4>
+    <p><strong>Flynn’s taxonomy</strong> classifies computer architectures by the number of <strong>instruction streams</strong> and <strong>data streams</strong> they process simultaneously.</p>
+  </div>
+  <div class="diagram-box mt-6">
+    <svg viewBox="0 0 500 200" style="width:100%; max-width:500px;">
+      <text x="8" y="14" fill="#b8d4ff" font-size="10" font-weight="600">Flynn’s Taxonomy  —  2 × 2 Grid</text>
+      <text x="160" y="40" fill="#5ae0c0" font-size="11" font-weight="600">Single Instruction</text>
+      <text x="350" y="40" fill="#f78c6c" font-size="11" font-weight="600">Multiple Instructions</text>
+      <text x="8" y="80" fill="#5ae0c0" font-size="11" font-weight="600">Single Data</text>
+      <rect x="160" y="52" width="140" height="56" rx="6" fill="#0e2840" stroke="#2ac8a0" stroke-width="2"/>
+      <text x="185" y="72" fill="#2ac8a0" font-size="14" font-weight="700">SISD</text>
+      <text x="175" y="96" fill="#b8d4ff" font-size="8">Single-core sequential</text>
+      <rect x="340" y="52" width="150" height="56" rx="6" fill="#2a1a0a" stroke="#f78c6c" stroke-width="2"/>
+      <text x="365" y="72" fill="#f78c6c" font-size="14" font-weight="700">MISD</text>
+      <text x="355" y="96" fill="#b8d4ff" font-size="8">Fault-tolerant systems</text>
+      <text x="8" y="162" fill="#f78c6c" font-size="11" font-weight="600">Multiple Data</text>
+      <rect x="160" y="130" width="140" height="56" rx="6" fill="#1a2820" stroke="#80c8a0" stroke-width="2"/>
+      <text x="185" y="150" fill="#80c8a0" font-size="14" font-weight="700">SIMD</text>
+      <text x="170" y="174" fill="#b8d4ff" font-size="8">GPU / vector processing</text>
+      <rect x="340" y="130" width="150" height="56" rx="6" fill="#2a2a18" stroke="#c8a040" stroke-width="2"/>
+      <text x="365" y="150" fill="#c8a040" font-size="14" font-weight="700">MIMD</text>
+      <text x="355" y="174" fill="#b8d4ff" font-size="8">Multicore / distributed</text>
+    </svg>
+    <div class="diagram-caption">Four categories: classified by instruction streams and data streams</div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 15 – SISD: SINGLE INSTRUCTION, SINGLE DATA
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Parallel Processing</div>
+  <h2>SISD — Single Instruction, Single Data</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>SISD</strong> (Single Instruction, Single Data): One processor executes one instruction stream on one data stream.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Characteristics</h4>
+        <ul>
+          <li>Traditional <strong>single-core</strong> computer model</li>
+          <li><strong>Sequential processing</strong> — one instruction at a time</li>
+          <li>Simple design</li>
+          <li><strong>No parallelism</strong> — limited performance</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Example</h4>
+        <p>A simple single-core CPU running one instruction stream (e.g., early personal computers).</p>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 250 100" style="width:100%; max-width:250px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="10">SISD Architecture</text>
+          <rect x="8" y="24" width="70" height="26" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="12" y="41" fill="#5ae0c0" font-size="9" font-weight="600">Instruction</text>
+          <text x="12" y="50" fill="#b8d4ff" font-size="7">Stream</text>
+          <text x="86" y="46" fill="#b8d4ff" font-size="16">→</text>
+          <rect x="110" y="24" width="70" height="26" rx="4" fill="#0e2840" stroke="#4a7ac8" stroke-width="1.5"/>
+          <text x="114" y="41" fill="#4a7ac8" font-size="9" font-weight="600">Processor</text>
+          <text x="86" y="76" fill="#b8d4ff" font-size="16">→</text>
+          <rect x="8" y="62" width="70" height="26" rx="4" fill="#1a2820" stroke="#80c8a0" stroke-width="1.5"/>
+          <text x="12" y="79" fill="#80c8a0" font-size="9" font-weight="600">Data</text>
+          <text x="12" y="88" fill="#b8d4ff" font-size="7">Stream</text>
+          <rect x="110" y="62" width="70" height="26" rx="4" fill="#1a2820" stroke="#80c8a0" stroke-width="1.5"/>
+          <text x="114" y="79" fill="#80c8a0" font-size="9" font-weight="600">Result</text>
+          <text x="114" y="88" fill="#b8d4ff" font-size="7">Output</text>
+        </svg>
+        <div class="diagram-caption">One instruction stream, one data stream</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 16 – SIMD: SINGLE INSTRUCTION, MULTIPLE DATA
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Parallel Processing</div>
+  <h2>SIMD — Single Instruction, Multiple Data</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>SIMD</strong> (Single Instruction, Multiple Data): One instruction is applied to many data items at the same time.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Characteristics</h4>
+        <ul>
+          <li>Good for <strong>repetitive operations</strong> on large datasets</li>
+          <li>Used in <strong>graphics</strong>, image processing, vector processing</li>
+          <li>Same operation on <strong>multiple pieces of data</strong></li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Example</h4>
+        <p>Adding brightness to every pixel in an image: the same “ADD 10” instruction is applied to thousands of pixel values simultaneously.</p>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 280 160" style="width:100%; max-width:280px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="10" font-weight="600">SIMD: One Instruction, Many Data</text>
+          <rect x="8" y="24" width="100" height="24" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="14" y="40" fill="#5ae0c0" font-size="11" font-weight="600">Instruction: ADD 10</text>
+          <line x1="108" y1="36" x2="130" y2="36" stroke="#4a7ac8" stroke-width="1.5"/>
+          <text x="130" y="32" fill="#4a7ac8" font-size="8">Data 1</text>
+          <text x="130" y="44" fill="#4a7ac8" font-size="8">Data 2</text>
+          <text x="130" y="56" fill="#4a7ac8" font-size="8">Data 3</text>
+          <text x="130" y="68" fill="#4a7ac8" font-size="8">Data 4</text>
+          <rect x="180" y="22" width="40" height="16" rx="3" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+          <text x="186" y="33" fill="#80c8a0" font-size="7">+10</text>
+          <rect x="180" y="40" width="40" height="16" rx="3" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+          <text x="186" y="51" fill="#80c8a0" font-size="7">+10</text>
+          <rect x="180" y="58" width="40" height="16" rx="3" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+          <text x="186" y="69" fill="#80c8a0" font-size="7">+10</text>
+          <rect x="180" y="76" width="40" height="16" rx="3" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+          <text x="186" y="87" fill="#80c8a0" font-size="7">+10</text>
+          <text x="232" y="36" fill="#f78c6c" font-size="8">P1</text>
+          <text x="232" y="54" fill="#f78c6c" font-size="8">P2</text>
+          <text x="232" y="72" fill="#f78c6c" font-size="8">P3</text>
+          <text x="232" y="90" fill="#f78c6c" font-size="8">P4</text>
+        </svg>
+        <div class="diagram-caption">Same instruction applied to multiple data items in parallel</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 17 – MISD: MULTIPLE INSTRUCTION, SINGLE DATA
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Parallel Processing</div>
+  <h2>MISD — Multiple Instruction, Single Data</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>MISD</strong> (Multiple Instruction, Single Data): Multiple instruction streams operate on the same data stream.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Characteristics</h4>
+        <ul>
+          <li><strong>Rare</strong> in practice</li>
+          <li>Can be used in specialist <strong>fault-tolerant</strong> systems</li>
+          <li>Same data may be processed in different ways for <strong>checking/redundancy</strong></li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Example</h4>
+        <p>Safety-critical systems where several processors check the same input using different algorithms to verify correctness.</p>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 280 160" style="width:100%; max-width:280px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="10" font-weight="600">MISD Architecture</text>
+          <rect x="8" y="24" width="80" height="24" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="14" y="40" fill="#5ae0c0" font-size="8" font-weight="600">Data Stream</text>
+          <line x1="88" y1="36" x2="110" y2="26" stroke="#4a7ac8" stroke-width="1.5"/>
+          <line x1="88" y1="36" x2="110" y2="46" stroke="#4a7ac8" stroke-width="1.5"/>
+          <line x1="88" y1="36" x2="110" y2="66" stroke="#4a7ac8" stroke-width="1.5"/>
+          <rect x="110" y="16" width="60" height="20" rx="3" fill="#1a2840" stroke="#7ab8ff" stroke-width="1"/>
+          <text x="114" y="30" fill="#7ab8ff" font-size="7">Inst 1</text>
+          <rect x="110" y="36" width="60" height="20" rx="3" fill="#2a1828" stroke="#c080f0" stroke-width="1"/>
+          <text x="114" y="50" fill="#c080f0" font-size="7">Inst 2</text>
+          <rect x="110" y="56" width="60" height="20" rx="3" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+          <text x="114" y="70" fill="#80c8a0" font-size="7">Inst 3</text>
+          <rect x="180" y="20" width="36" height="52" rx="3" fill="#2a1a0a" stroke="#f78c6c" stroke-width="1"/>
+          <text x="184" y="46" fill="#f78c6c" font-size="11" font-weight="600">Compare</text>
+        </svg>
+        <div class="diagram-caption">Multiple instructions process the same data, results compared for consistency</div>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>MISD is <strong>uncommon</strong>. Do not confuse it with MIMD. If asked for examples, mention fault-tolerant or safety-critical systems.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 18 – MIMD: MULTIPLE INSTRUCTION, MULTIPLE DATA
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Parallel Processing</div>
+  <h2>MIMD — Multiple Instruction, Multiple Data</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>MIMD</strong> (Multiple Instruction, Multiple Data): Multiple processors execute different instruction streams on different data streams.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Characteristics</h4>
+        <ul>
+          <li><strong>Common</strong> in modern multicore and distributed systems</li>
+          <li>Different processors can work <strong>independently</strong></li>
+          <li>Supports <strong>multitasking</strong> and large-scale parallel processing</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Examples</h4>
+        <ul>
+          <li>Multicore CPUs (each core runs different programs)</li>
+          <li>Distributed servers</li>
+          <li>Supercomputers</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 320 160" style="width:100%; max-width:320px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="10" font-weight="600">MIMD Architecture</text>
+          <rect x="8" y="24" width="130" height="22" rx="3" fill="#1a2840" stroke="#7ab8ff" stroke-width="1"/>
+          <text x="12" y="39" fill="#7ab8ff" font-size="8" font-weight="600">Processor 1: Program A</text>
+          <text x="148" y="39" fill="#b8d4ff" font-size="8">→ Data A</text>
+          <rect x="8" y="52" width="130" height="22" rx="3" fill="#2a1828" stroke="#c080f0" stroke-width="1"/>
+          <text x="12" y="67" fill="#c080f0" font-size="8" font-weight="600">Processor 2: Program B</text>
+          <text x="148" y="67" fill="#b8d4ff" font-size="8">→ Data B</text>
+          <rect x="8" y="80" width="130" height="22" rx="3" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+          <text x="12" y="95" fill="#80c8a0" font-size="8" font-weight="600">Processor 3: Program C</text>
+          <text x="148" y="95" fill="#b8d4ff" font-size="8">→ Data C</text>
+          <rect x="8" y="108" width="130" height="22" rx="3" fill="#2a2a18" stroke="#c8a040" stroke-width="1"/>
+          <text x="12" y="123" fill="#c8a040" font-size="8" font-weight="600">Processor 4: Program D</text>
+          <text x="148" y="123" fill="#b8d4ff" font-size="8">→ Data D</text>
+        </svg>
+        <div class="diagram-caption">Different programs, different data — fully parallel</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 19 – FLYNN’S TAXONOMY COMPARISON TABLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Parallel Processing</div>
+  <h2>Flynn’s Taxonomy — Comparison Table</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Architecture</th><th>Instruction Streams</th><th>Data Streams</th><th>Example</th><th>Key Point</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>SISD</strong></td>
+        <td>Single</td>
+        <td>Single</td>
+        <td>Single-core CPU</td>
+        <td>No parallelism</td>
+      </tr>
+      <tr>
+        <td><strong>SIMD</strong></td>
+        <td>Single</td>
+        <td>Multiple</td>
+        <td>GPU / vector processing</td>
+        <td>Same task on many data items</td>
+      </tr>
+      <tr>
+        <td><strong>MISD</strong></td>
+        <td>Multiple</td>
+        <td>Single</td>
+        <td>Fault-tolerant systems</td>
+        <td>Rare</td>
+      </tr>
+      <tr>
+        <td><strong>MIMD</strong></td>
+        <td>Multiple</td>
+        <td>Multiple</td>
+        <td>Multicore / distributed</td>
+        <td>Common parallel model</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>You may be asked to <strong>name the four categories</strong> in Flynn’s taxonomy and give an example of each. Remember: SISD and MIMD are most common; MISD is the least common.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 20 – MASSIVELY PARALLEL COMPUTERS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Parallel Processing</div>
+  <h2>Massively Parallel Computers</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p>A <strong>massively parallel computer</strong> uses a very large number of processors working together at the same time to solve a problem.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Key Characteristics</h4>
+        <ul>
+          <li><strong>Thousands</strong> or more processors/cores</li>
+          <li>Tasks divided into many <strong>smaller parts</strong></li>
+          <li>Processors communicate through a <strong>network/interconnection</strong> system</li>
+          <li>Often uses <strong>distributed memory</strong> or <strong>shared memory</strong></li>
+          <li>Requires software designed for <strong>parallel execution</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 300 140" style="width:100%; max-width:300px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="10" font-weight="600">Massive Parallelism</text>
+          <rect x="8" y="24" width="100" height="24" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="14" y="40" fill="#5ae0c0" font-size="10" font-weight="600">Large Problem</text>
+          <line x1="108" y1="36" x2="130" y2="36" stroke="#4a7ac8" stroke-width="1.5"/>
+          <rect x="130" y="22" width="30" height="16" rx="2" fill="#0e2840" stroke="#4a7ac8" stroke-width="1"/>
+          <text x="134" y="33" fill="#b8d4ff" font-size="7">P1</text>
+          <rect x="162" y="22" width="30" height="16" rx="2" fill="#0e2840" stroke="#4a7ac8" stroke-width="1"/>
+          <text x="166" y="33" fill="#b8d4ff" font-size="7">P2</text>
+          <rect x="194" y="22" width="30" height="16" rx="2" fill="#0e2840" stroke="#4a7ac8" stroke-width="1"/>
+          <text x="198" y="33" fill="#b8d4ff" font-size="7">P3</text>
+          <text x="228" y="33" fill="#6a8aaa" font-size="7">...</text>
+          <rect x="240" y="22" width="30" height="16" rx="2" fill="#0e2840" stroke="#4a7ac8" stroke-width="1"/>
+          <text x="244" y="33" fill="#b8d4ff" font-size="7">PN</text>
+          <line x1="145" y1="38" x2="145" y2="60" stroke="#4a7ac8" stroke-width="1"/>
+          <line x1="177" y1="38" x2="177" y2="60" stroke="#4a7ac8" stroke-width="1"/>
+          <line x1="209" y1="38" x2="209" y2="60" stroke="#4a7ac8" stroke-width="1"/>
+          <line x1="255" y1="38" x2="255" y2="60" stroke="#4a7ac8" stroke-width="1"/>
+          <rect x="100" y="60" width="200" height="30" rx="4" fill="#1a2840" stroke="#7ab8ff" stroke-width="1.5"/>
+          <text x="108" y="80" fill="#7ab8ff" font-size="9" font-weight="600">Interconnection Network</text>
+          <line x1="145" y1="90" x2="145" y2="110" stroke="#4a7ac8" stroke-width="1"/>
+          <line x1="177" y1="90" x2="177" y2="110" stroke="#4a7ac8" stroke-width="1"/>
+          <line x1="209" y1="90" x2="209" y2="110" stroke="#4a7ac8" stroke-width="1"/>
+          <line x1="255" y1="90" x2="255" y2="110" stroke="#4a7ac8" stroke-width="1"/>
+          <rect x="130" y="110" width="30" height="16" rx="2" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+          <text x="134" y="121" fill="#80c8a0" font-size="7">Mem</text>
+          <rect x="162" y="110" width="30" height="16" rx="2" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+          <text x="166" y="121" fill="#80c8a0" font-size="7">Mem</text>
+          <rect x="194" y="110" width="30" height="16" rx="2" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+          <text x="198" y="121" fill="#80c8a0" font-size="7">Mem</text>
+          <rect x="240" y="110" width="30" height="16" rx="2" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+          <text x="244" y="121" fill="#80c8a0" font-size="7">Mem</text>
+        </svg>
+        <div class="diagram-caption">Many processors connected via a network, each with local memory</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 21 – USES OF MASSIVELY PARALLEL COMPUTERS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Parallel Processing</div>
+  <h2>Uses of Massively Parallel Computers</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-3">
+    <div class="card">
+      <h4>🌤 Weather Forecasting</h4>
+      <p>Simulating atmospheric models requires enormous calculations on vast datasets. Parallel computers divide the globe into regions processed simultaneously.</p>
+    </div>
+    <div class="card">
+      <h4>🌍 Climate Modelling</h4>
+      <p>Long-term climate simulations process data over decades and centuries of modelled time.</p>
+    </div>
+    <div class="card">
+      <h4>🔬 Scientific Simulation</h4>
+      <p>Molecular modelling, physics simulations, and drug discovery use parallel computing to simulate complex systems.</p>
+    </div>
+    <div class="card">
+      <h4>🔐 Cryptography</h4>
+      <p>Breaking encryption keys and cryptographic research benefit from massive parallel processing power.</p>
+    </div>
+    <div class="card">
+      <h4>🤖 AI &amp; Machine Learning</h4>
+      <p>Training large neural networks requires processing vast amounts of data across many processors/GPUs.</p>
+    </div>
+    <div class="card">
+      <h4>📊 Big Data Analysis</h4>
+      <p>Processing large datasets for business intelligence, research, and analytics.</p>
+    </div>
+  </div>
+  <div class="diagram-box mt-6">
+    <svg viewBox="0 0 340 40" style="width:100%; max-width:340px;">
+      <rect x="8" y="8" width="40" height="24" rx="3" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+      <text x="10" y="24" fill="#5ae0c0" font-size="8" font-weight="600">Problem</text>
+      <text x="52" y="24" fill="#b8d4ff" font-size="14">→</text>
+      <rect x="72" y="8" width="80" height="24" rx="3" fill="#2a1a0a" stroke="#f78c6c" stroke-width="1"/>
+      <text x="74" y="24" fill="#f78c6c" font-size="8" font-weight="600">Split into tasks</text>
+      <text x="156" y="24" fill="#b8d4ff" font-size="14">→</text>
+      <rect x="176" y="8" width="80" height="24" rx="3" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+      <text x="178" y="24" fill="#80c8a0" font-size="8" font-weight="600">Parallel processing</text>
+      <text x="260" y="24" fill="#b8d4ff" font-size="14">→</text>
+      <rect x="280" y="8" width="50" height="24" rx="3" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+      <text x="282" y="24" fill="#5ae0c0" font-size="8" font-weight="600">Result</text>
+    </svg>
+    <div class="diagram-caption">Workflow: large problem → split into tasks → parallel processing → result</div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 22 – BENEFITS AND CHALLENGES OF MASSIVE PARALLELISM
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Parallel Processing</div>
+  <h2>Benefits and Challenges of Massive Parallelism</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>✅ Benefits</h4>
+      <ul>
+        <li>Very high <strong>processing power</strong></li>
+        <li>Large problems solved <strong>faster</strong></li>
+        <li>Can process <strong>huge datasets</strong></li>
+        <li><strong>Scalable</strong> by adding more processors</li>
+        <li>Enables research and simulation that would be impossible otherwise</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>❌ Challenges</h4>
+      <ul>
+        <li>Difficult to <strong>program</strong> effectively</li>
+        <li><strong>Communication overhead</strong> between processors</li>
+        <li>Some tasks cannot be easily <strong>parallelised</strong></li>
+        <li><strong>Synchronisation</strong> problems</li>
+        <li>Expensive hardware and high <strong>energy use</strong></li>
+      </ul>
+    </div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>Parallel processing <strong>only helps</strong> if the task can be divided into independent or partly independent subtasks. This is called <strong>Amdahl’s Law</strong> — the speedup from parallelism is limited by the sequential portion of a task.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 23 – WHAT IS A VIRTUAL MACHINE?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Virtual Machines</div>
+  <h2>What Is a Virtual Machine?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p>A <strong>virtual machine (VM)</strong> is a software-based emulation of a physical computer. It runs on a <strong>host machine</strong> and behaves like a separate computer.</p>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Terms</h4>
+        <ul>
+          <li><strong>Host machine:</strong> The physical computer that runs the VM software</li>
+          <li><strong>Guest machine:</strong> The virtual computer running inside the host</li>
+          <li><strong>Hypervisor:</strong> Software that creates, runs, and manages virtual machines</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 300 180" style="width:100%; max-width:300px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="10" font-weight="600">Virtual Machine Stack</text>
+          <rect x="30" y="22" width="240" height="28" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="38" y="40" fill="#5ae0c0" font-size="10" font-weight="600">Physical Hardware</text>
+          <text x="38" y="52" fill="#b8d4ff" font-size="7">(CPU, RAM, Storage, Network)</text>
+          <line x1="150" y1="50" x2="150" y2="60" stroke="#4a7ac8" stroke-width="1.5"/>
+          <rect x="30" y="60" width="240" height="26" rx="4" fill="#1a2840" stroke="#7ab8ff" stroke-width="1.5"/>
+          <text x="130" y="78" fill="#7ab8ff" font-size="10" font-weight="600">Hypervisor</text>
+          <line x1="60" y1="86" x2="60" y2="100" stroke="#4a7ac8" stroke-width="1"/>
+          <line x1="150" y1="86" x2="150" y2="100" stroke="#4a7ac8" stroke-width="1"/>
+          <line x1="240" y1="86" x2="240" y2="100" stroke="#4a7ac8" stroke-width="1"/>
+          <rect x="20" y="100" width="80" height="40" rx="4" fill="#1a2820" stroke="#80c8a0" stroke-width="1.5"/>
+          <text x="28" y="118" fill="#80c8a0" font-size="9" font-weight="600">VM 1</text>
+          <text x="28" y="132" fill="#b8d4ff" font-size="7">Guest OS: Linux</text>
+          <rect x="110" y="100" width="80" height="40" rx="4" fill="#2a1828" stroke="#c080f0" stroke-width="1.5"/>
+          <text x="118" y="118" fill="#c080f0" font-size="9" font-weight="600">VM 2</text>
+          <text x="118" y="132" fill="#b8d4ff" font-size="7">Guest OS: Windows</text>
+          <rect x="200" y="100" width="80" height="40" rx="4" fill="#2a2a18" stroke="#c8a040" stroke-width="1.5"/>
+          <text x="208" y="118" fill="#c8a040" font-size="9" font-weight="600">VM 3</text>
+          <text x="208" y="132" fill="#b8d4ff" font-size="7">Guest OS: macOS</text>
+        </svg>
+        <div class="diagram-caption">Physical hardware → Hypervisor → Multiple VMs, each running its own OS</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 24 – HOW VIRTUAL MACHINES WORK
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Virtual Machines</div>
+  <h2>How Virtual Machines Work</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="worked-example">
+        <h4>Key Steps in VM Operation</h4>
+        <ol class="step-list" style="padding-left:0;">
+          <li style="padding-left:28px;">The <strong>hypervisor</strong> sits between physical hardware and virtual machines</li>
+          <li style="padding-left:28px;">It <strong>allocates</strong> CPU time, memory, storage and network resources to each VM</li>
+          <li style="padding-left:28px;">Each VM can run its <strong>own operating system</strong></li>
+          <li style="padding-left:28px;">VMs are <strong>isolated</strong> from each other for security and stability</li>
+          <li style="padding-left:28px;">Multiple VMs can run on <strong>one physical computer</strong></li>
+          <li style="padding-left:28px;">Resources can be <strong>dynamically adjusted</strong> as needed</li>
+        </ol>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Types of Hypervisors</h4>
+        <table>
+          <thead>
+            <tr><th>Type</th><th>Description</th><th>Example</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Type 1</strong></td>
+              <td>Runs directly on hardware (bare-metal)</td>
+              <td>VMware ESXi, Microsoft Hyper-V</td>
+            </tr>
+            <tr>
+              <td><strong>Type 2</strong></td>
+              <td>Runs on top of a host OS</td>
+              <td>VirtualBox, VMware Workstation</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="diagram-box mt-6">
+        <svg viewBox="0 0 280 70" style="width:100%; max-width:280px;">
+          <rect x="8" y="8" width="80" height="50" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="14" y="28" fill="#5ae0c0" font-size="11" font-weight="600">1 Server</text>
+          <text x="14" y="46" fill="#b8d4ff" font-size="8">Physical machine</text>
+          <text x="92" y="36" fill="#b8d4ff" font-size="14">→</text>
+          <rect x="112" y="8" width="80" height="50" rx="4" fill="#1a2840" stroke="#7ab8ff" stroke-width="1.5"/>
+          <text x="118" y="28" fill="#7ab8ff" font-size="11" font-weight="600">Hypervisor</text>
+          <text x="118" y="46" fill="#b8d4ff" font-size="8">Manages resources</text>
+          <text x="196" y="36" fill="#b8d4ff" font-size="14">→</text>
+          <rect x="216" y="8" width="60" height="50" rx="4" fill="#1a2820" stroke="#80c8a0" stroke-width="1.5"/>
+          <text x="222" y="28" fill="#80c8a0" font-size="11" font-weight="600">4 VMs</text>
+          <text x="222" y="46" fill="#b8d4ff" font-size="8">Virtual servers</text>
+        </svg>
+        <div class="diagram-caption">One physical server can host multiple virtual servers</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 25 – ROLES / USES OF VIRTUAL MACHINES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Virtual Machines</div>
+  <h2>Roles and Uses of Virtual Machines</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-3">
+    <div class="card">
+      <h4>🖥 Running Different OSs</h4>
+      <p>Run Windows on a Mac, or Linux on a Windows machine, all from the same physical hardware.</p>
+    </div>
+    <div class="card">
+      <h4>🏢 Server Consolidation</h4>
+      <p>Replace many under-utilised physical servers with VMs running on fewer machines, saving space and energy.</p>
+    </div>
+    <div class="card">
+      <h4>🧪 Software Testing</h4>
+      <p>Test software in isolated environments without affecting the host system or other applications.</p>
+    </div>
+    <div class="card">
+      <h4>🔬 Malware Analysis</h4>
+      <p>Cybersecurity sandboxes use VMs to safely analyse malicious code in an isolated environment.</p>
+    </div>
+    <div class="card">
+      <h4>☁ Cloud Computing</h4>
+      <p>AWS, Azure, and Google Cloud provide virtual machines as a service — customers rent computing power.</p>
+    </div>
+    <div class="card">
+      <h4>📚 Training &amp; Education</h4>
+      <p>Students can access pre-configured VMs for labs and coursework without needing dedicated hardware.</p>
+    </div>
+    <div class="card">
+      <h4>📦 Legacy Software</h4>
+      <p>Run older operating systems and applications that are incompatible with current hardware.</p>
+    </div>
+    <div class="card">
+      <h4>💾 Disaster Recovery</h4>
+      <p>Snapshots and clones allow quick restoration after system failure.</p>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 26 – BENEFITS OF VIRTUAL MACHINES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Virtual Machines</div>
+  <h2>Benefits of Virtual Machines</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>✅ Key Benefits</h4>
+      <ul>
+        <li><strong>Better hardware utilisation</strong> — one server can do the work of several</li>
+        <li><strong>Reduced hardware costs</strong> — fewer physical machines needed</li>
+        <li><strong>Isolation</strong> between systems — problems in one VM don’t affect others</li>
+        <li><strong>Easier backup and restore</strong> using <strong>snapshots</strong></li>
+        <li><strong>Easier testing</strong> without damaging the host system</li>
+        <li>Can run <strong>multiple operating systems</strong> on one machine</li>
+        <li><strong>Flexible deployment</strong> and scalability</li>
+        <li><strong>Quick provisioning</strong> — create or clone a VM in minutes</li>
+      </ul>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Snapshot:</strong> A saved state of a virtual machine at a specific point in time. Snapshots allow quick recovery if something goes wrong.</p>
+      </div>
+      <div class="diagram-box mt-6">
+        <svg viewBox="0 0 280 80" style="width:100%; max-width:280px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Without VMs:</text>
+          <rect x="8" y="22" width="60" height="20" rx="3" fill="#3a1a1a" stroke="#e06060" stroke-width="1"/>
+          <text x="14" y="36" fill="#e06060" font-size="7">Server 1</text>
+          <rect x="76" y="22" width="60" height="20" rx="3" fill="#3a1a1a" stroke="#e06060" stroke-width="1"/>
+          <text x="82" y="36" fill="#e06060" font-size="7">Server 2</text>
+          <rect x="144" y="22" width="60" height="20" rx="3" fill="#3a1a1a" stroke="#e06060" stroke-width="1"/>
+          <text x="150" y="36" fill="#e06060" font-size="7">Server 3</text>
+          <text x="8" y="62" fill="#5ae0c0" font-size="9" font-weight="600">With VMs:</text>
+          <rect x="8" y="68" width="120" height="20" rx="3" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+          <text x="14" y="82" fill="#2ac8a0" font-size="7">1 Physical Server</text>
+          <text x="132" y="82" fill="#b8d4ff" font-size="7">→ 3 VMs</text>
+        </svg>
+        <div class="diagram-caption">Server consolidation reduces hardware footprint</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 27 – LIMITATIONS OF VIRTUAL MACHINES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Virtual Machines</div>
+  <h2>Limitations of Virtual Machines</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>❌ Key Limitations</h4>
+      <ul>
+        <li><strong>Performance overhead</strong> — VMs are slower than physical hardware due to virtualisation layer</li>
+        <li><strong>Resource contention</strong> — one busy VM can affect others sharing the same hardware</li>
+        <li>Requires <strong>sufficient RAM, CPU and storage</strong> to run multiple VMs</li>
+        <li><strong>More complex management</strong> than physical servers</li>
+        <li><strong>Security risk</strong> if the hypervisor is compromised (all VMs affected)</li>
+        <li><strong>Licensing costs</strong> may apply for hypervisor software and guest OS licenses</li>
+        <li>Not ideal for <strong>real-time</strong> or <strong>high-performance</strong> workloads requiring direct hardware access</li>
+      </ul>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 280 90" style="width:100%; max-width:280px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Performance Comparison:</text>
+          <rect x="8" y="22" width="200" height="16" rx="3" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+          <rect x="8" y="22" width="190" height="16" rx="3" fill="#1a2840" stroke="#7ab8ff" stroke-width="1"/>
+          <rect x="8" y="22" width="170" height="16" rx="3" fill="#2a1a0a" stroke="#e06060" stroke-width="1"/>
+          <text x="212" y="33" fill="#5ae0c0" font-size="7">Physical</text>
+          <rect x="8" y="44" width="200" height="16" rx="3" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+          <rect x="8" y="44" width="160" height="16" rx="3" fill="#1a2840" stroke="#f78c6c" stroke-width="1"/>
+          <text x="212" y="55" fill="#f78c6c" font-size="7">Virtual</text>
+          <text x="8" y="78" fill="#7ab8a8" font-size="7">Virtual machines have some performance overhead</text>
+        </svg>
+        <div class="diagram-caption">VMs typically have 10–20% performance overhead</div>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>When asked for “benefits and limitations”, always give <strong>balanced</strong> points. Do not only describe benefits. Examiners expect you to recognise both sides.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 28 – VIRTUAL MACHINES EXAM COMPARISON
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.1 Virtual Machines</div>
+  <h2>Physical Machine vs Virtual Machine</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Physical Machine</th><th>Virtual Machine</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Hardware</strong></td><td>Dedicated hardware</td><td>Shared physical hardware</td></tr>
+      <tr><td><strong>Operating System</strong></td><td>Usually one main OS</td><td>Many guest OSs possible</td></tr>
+      <tr><td><strong>Isolation</strong></td><td>Physical separation</td><td>Software isolation</td></tr>
+      <tr><td><strong>Performance</strong></td><td>Usually highest</td><td>Some overhead</td></tr>
+      <tr><td><strong>Flexibility</strong></td><td>Less flexible</td><td>Easy to create/delete/move</td></tr>
+      <tr><td><strong>Backup</strong></td><td>Traditional backup methods</td><td>Snapshots/cloning possible</td></tr>
+      <tr><td><strong>Cost per workload</strong></td><td>Higher (dedicated hardware)</td><td>Lower (shared resources)</td></tr>
+      <tr><td><strong>Provisioning time</strong></td><td>Days or weeks</td><td>Minutes or seconds</td></tr>
+    </tbody>
+  </table>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>Comparison questions are common. Structure your answer by <strong>feature</strong> — state each feature then compare both sides. Use technical terms like <strong>hypervisor</strong>, <strong>snapshot</strong>, <strong>isolation</strong>.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 29 – INTRODUCTION TO BOOLEAN ALGEBRA
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Boolean Algebra</div>
+  <h2>Introduction to Boolean Algebra</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is Boolean Algebra?</h4>
+        <p><strong>Boolean algebra</strong> is a form of algebra where variables have <strong>only two values</strong>: 0 (false) or 1 (true).</p>
+        <p style="margin-top:6px;">It is used to <strong>describe</strong> and <strong>simplify</strong> logic circuits.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Basic Operations</h4>
+        <ul>
+          <li><strong>NOT</strong> — inverts the input (0→1, 1→0)</li>
+          <li><strong>AND</strong> — outputs 1 only if all inputs are 1</li>
+          <li><strong>OR</strong> — outputs 1 if at least one input is 1</li>
+          <li><strong>XOR</strong> — outputs 1 if inputs are different</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Boolean variable:</strong> A variable that can take only two possible values — 0 (false) or 1 (true). Named after mathematician George Boole.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Note:</strong> Boolean algebra is the mathematical foundation of all digital electronics. Every logic circuit corresponds to a Boolean expression, and vice versa.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 30 – BASIC BOOLEAN OPERATORS AND SYMBOLS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Boolean Algebra</div>
+  <h2>Basic Boolean Operators and Symbols</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Operation</th><th>Symbol</th><th>Meaning</th><th>Logic Gate</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>NOT</strong></td><td>A' or ¬A or A̅</td><td>Inverts input — 1 if A = 0</td><td>NOT gate (triangle with circle)</td></tr>
+      <tr><td><strong>AND</strong></td><td>A · B or AB</td><td>1 if A = 1 AND B = 1</td><td>AND gate (D-shape)</td></tr>
+      <tr><td><strong>OR</strong></td><td>A + B</td><td>1 if A = 1 OR B = 1</td><td>OR gate (shield shape)</td></tr>
+      <tr><td><strong>XOR</strong></td><td>A ⊕ B</td><td>1 if A ≠ B (inputs differ)</td><td>XOR gate (OR with extra curve)</td></tr>
+      <tr><td><strong>NAND</strong></td><td>(A · B)'</td><td>1 if NOT both 1 — opposite of AND</td><td>AND with bubble</td></tr>
+      <tr><td><strong>NOR</strong></td><td>(A + B)'</td><td>1 if NOT either 1 — opposite of OR</td><td>OR with bubble</td></tr>
+    </tbody>
+  </table>
+  <div class="diagram-box mt-6">
+    <svg viewBox="0 0 500 60" style="width:100%; max-width:500px;">
+      <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Gate Symbols:</text>
+      <text x="8" y="40" fill="#5ae0c0" font-size="8">NOT</text>
+      <polygon points="50,30 70,22 70,38" fill="none" stroke="#2ac8a0" stroke-width="1.5"/>
+      <circle cx="70" cy="30" r="3" fill="none" stroke="#2ac8a0" stroke-width="1.5"/>
+      <text x="100" y="40" fill="#5ae0c0" font-size="8">AND</text>
+      <rect x="120" y="22" width="30" height="16" rx="2" fill="none" stroke="#2ac8a0" stroke-width="1.5"/>
+      <circle cx="150" cy="30" r="0"/>
+      <text x="180" y="40" fill="#5ae0c0" font-size="8">OR</text>
+      <path d="M200 38 Q210 30 200 22 L230 22 Q240 30 230 38 Z" fill="none" stroke="#2ac8a0" stroke-width="1.5"/>
+      <text x="260" y="40" fill="#5ae0c0" font-size="8">XOR</text>
+      <path d="M280 38 Q290 30 280 22" fill="none" stroke="#6a8aaa" stroke-width="1.5"/>
+      <path d="M290 38 Q300 30 290 22 L310 22 Q320 30 310 38 Z" fill="none" stroke="#2ac8a0" stroke-width="1.5"/>
+    </svg>
+    <div class="diagram-caption">Standard logic gate symbols used in circuit diagrams</div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 31 – TRUTH TABLES FOR LOGIC CIRCUITS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Boolean Algebra</div>
+  <h2>Truth Tables for Logic Circuits</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is a Truth Table?</h4>
+        <p>A <strong>truth table</strong> lists every possible input combination and the corresponding output(s) of a logic circuit.</p>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>Steps to Derive a Truth Table</h4>
+        <ol class="step-list" style="padding-left:0;">
+          <li style="padding-left:28px;"><strong>Count the inputs</strong> — each input is a column</li>
+          <li style="padding-left:28px;"><strong>Number of rows</strong> = 2<sup>n</sup>, where n = number of inputs</li>
+          <li style="padding-left:28px;">List all binary combinations from 0 to 2<sup>n</sup> − 1</li>
+          <li style="padding-left:28px;">Work through gates from <strong>inputs to output</strong></li>
+          <li style="padding-left:28px;">Add <strong>intermediate columns</strong> if needed</li>
+        </ol>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Example: Number of Rows</h4>
+        <p>For <strong>3 inputs</strong> (A, B, C):</p>
+        <p style="text-align:center; font-size:1.4rem; margin:8px 0;">2<sup>3</sup> = <strong>8 rows</strong></p>
+        <p>For <strong>4 inputs</strong> (A, B, C, D):</p>
+        <p style="text-align:center; font-size:1.4rem; margin:8px 0;">2<sup>4</sup> = <strong>16 rows</strong></p>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>Always check you have the <strong>correct number of rows</strong>. Missing rows is a common mistake. List inputs in <strong>binary counting order</strong> (000, 001, 010, 011…).</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 33 – LOGIC GATES WITH MORE THAN TWO INPUTS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Boolean Algebra</div>
+  <h2>Logic Gates with More Than Two Inputs</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Multi-Input Gates</h4>
+        <ul>
+          <li>AND, OR, NAND and NOR gates can have <strong>more than two inputs</strong></li>
+          <li>The same logic rules <strong>extend</strong> to all inputs</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Three-Input AND Gate</h4>
+        <p><span class="inline-code">X = A · B · C</span></p>
+        <p>Output is <strong>1 only if all inputs are 1</strong></p>
+        <table>
+          <tr><th>A</th><th>B</th><th>C</th><th>X</th></tr>
+          <tr><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+          <tr><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+          <tr><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+          <tr><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+          <tr><td>1</td><td>1</td><td>0</td><td>0</td></tr>
+          <tr><td>1</td><td>1</td><td>1</td><td><strong>1</strong></td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Three-Input OR Gate</h4>
+        <p><span class="inline-code">Y = A + B + C</span></p>
+        <p>Output is <strong>1 if at least one input is 1</strong></p>
+        <table>
+          <tr><th>A</th><th>B</th><th>C</th><th>Y</th></tr>
+          <tr><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+          <tr><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+          <tr><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+          <tr><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+          <tr><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+          <tr><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+          <tr><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+        </table>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>For multi-input gates, apply the <strong>same rule</strong> to all inputs. The AND still requires ALL inputs to be 1; the OR still requires ANY input to be 1.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 34 – WHAT IS A HALF ADDER?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Adders</div>
+  <h2>What Is a Half Adder?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p>A <strong>half adder</strong> is a combinational logic circuit that adds <strong>two single binary bits</strong>.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Inputs and Outputs</h4>
+        <table>
+          <tr><th>Inputs</th><th>Outputs</th></tr>
+          <tr><td>A, B (two bits)</td><td>Sum (S), Carry (C)</td></tr>
+        </table>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Half adder:</strong> A logic circuit that adds two bits and produces a sum and a carry output. It does not accept a carry input.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Boolean Expressions</h4>
+        <p><span class="inline-code">S = A ⊕ B</span> (Sum = A XOR B)</p>
+        <p><span class="inline-code">C = A · B</span> (Carry = A AND B)</p>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 250 160" style="width:100%; max-width:250px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="10" font-weight="600">Half Adder Circuit</text>
+          <text x="8" y="32" fill="#f78c6c" font-size="11" font-weight="600">A</text>
+          <text x="8" y="72" fill="#f78c6c" font-size="11" font-weight="600">B</text>
+          <path d="M30 26 Q40 18 30 10 L60 10 Q70 18 60 26 Z" fill="none" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="32" y="20" fill="#2ac8a0" font-size="6">XOR</text>
+          <path d="M30 66 Q40 58 30 50 L60 50 Q70 58 60 66 Z" fill="none" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="32" y="60" fill="#2ac8a0" font-size="6">XOR</text>
+          <text x="8" y="104" fill="#b8d4ff" font-size="9" font-weight="600">Or drawn with separate gates:</text>
+          <rect x="8" y="112" width="50" height="16" rx="2" fill="none" stroke="#4a7ac8" stroke-width="1"/>
+          <text x="10" y="123" fill="#4a7ac8" font-size="6">XOR</text>
+          <text x="62" y="124" fill="#f78c6c" font-size="8">→ S</text>
+          <rect x="8" y="136" width="40" height="16" rx="2" fill="none" stroke="#80c8a0" stroke-width="1"/>
+          <text x="10" y="147" fill="#80c8a0" font-size="6">AND</text>
+          <text x="52" y="148" fill="#f78c6c" font-size="8">→ C</text>
+        </svg>
+        <div class="diagram-caption">A and B enter XOR gate → Sum; A and B enter AND gate → Carry</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 35 – HALF ADDER TRUTH TABLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Adders</div>
+  <h2>Half Adder Truth Table</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <table>
+        <thead>
+          <tr><th>A</th><th>B</th><th>Carry (C)</th><th>Sum (S)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr><td>0</td><td>1</td><td>0</td><td>1</td></tr>
+          <tr><td>1</td><td>0</td><td>0</td><td>1</td></tr>
+          <tr><td>1</td><td>1</td><td><strong>1</strong></td><td><strong>0</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>Binary Addition Examples</h4>
+        <div class="code-block" style="font-size:0.85rem;">
+0 + 0 = 0  (Sum = 0, Carry = 0)
+0 + 1 = 1  (Sum = 1, Carry = 0)
+1 + 0 = 1  (Sum = 1, Carry = 0)
+1 + 1 = 10 (Sum = 0, Carry = 1)
+        </div>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Explanation:</strong> 1 + 1 in binary gives the value 2 (binary 10), so Sum = 0 and Carry = 1. The half adder correctly implements binary addition for a single bit position.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 36 – WHAT IS A FULL ADDER?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Adders</div>
+  <h2>What Is a Full Adder?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p>A <strong>full adder</strong> is a combinational logic circuit that adds <strong>three single-bit inputs</strong>.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Inputs and Outputs</h4>
+        <table>
+          <tr><th>Inputs</th><th>Outputs</th></tr>
+          <tr><td>A, B, Cin (carry-in)</td><td>Sum (S), Cout (carry-out)</td></tr>
+        </table>
+      </div>
+      <div class="card mt-6">
+        <h4>Boolean Expressions</h4>
+        <p><span class="inline-code">S = A ⊕ B ⊕ Cin</span></p>
+        <p><span class="inline-code">Cout = AB + ACin + BCin</span></p>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Full adder:</strong> A logic circuit that adds three bits (A, B and carry-in) and produces a sum and a carry-out. Multiple full adders are cascaded to add multi-bit binary numbers.</p>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 300 140" style="width:100%; max-width:300px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="10" font-weight="600">Full Adder: Two Half Adders + OR</text>
+          <rect x="8" y="24" width="80" height="40" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="22" y="46" fill="#5ae0c0" font-size="9" font-weight="600">Half Adder 1</text>
+          <text x="14" y="58" fill="#b8d4ff" font-size="7">A, B → S1, C1</text>
+          <rect x="120" y="24" width="80" height="40" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="134" y="46" fill="#5ae0c0" font-size="9" font-weight="600">Half Adder 2</text>
+          <text x="126" y="58" fill="#b8d4ff" font-size="7">S1, Cin → S, C2</text>
+          <rect x="60" y="88" width="60" height="24" rx="3" fill="#1a2840" stroke="#7ab8ff" stroke-width="1.5"/>
+          <text x="68" y="104" fill="#7ab8ff" font-size="9" font-weight="600">OR Gate</text>
+          <text x="126" y="104" fill="#f78c6c" font-size="8">C1 + C2 → Cout</text>
+        </svg>
+        <div class="diagram-caption">A full adder can be built from two half adders and an OR gate</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 37 – FULL ADDER TRUTH TABLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Adders</div>
+  <h2>Full Adder Truth Table</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>A</th><th>B</th><th>Cin</th><th>Cout</th><th>S (Sum)</th><th>Binary Result</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0 + 0 + 0 = 00</td></tr>
+      <tr><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0 + 0 + 1 = 01</td></tr>
+      <tr><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0 + 1 + 0 = 01</td></tr>
+      <tr><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0 + 1 + 1 = 10</td></tr>
+      <tr><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1 + 0 + 0 = 01</td></tr>
+      <tr><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1 + 0 + 1 = 10</td></tr>
+      <tr><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1 + 1 + 0 = 10</td></tr>
+      <tr><td>1</td><td>1</td><td>1</td><td><strong>1</strong></td><td><strong>1</strong></td><td>1 + 1 + 1 = 11</td></tr>
+    </tbody>
+  </table>
+  <div class="callout info mt-6">
+    <strong>Exam tip:</strong> The full adder is the building block for <strong>multi-bit binary adders</strong>. To add two 8-bit numbers, connect 8 full adders in series — the carry-out of each bit feeds the carry-in of the next.<br>
+    <strong>Note:</strong> Cout = AB + ACin + BCin. Check each row against this expression.
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 38 – HALF ADDER VS FULL ADDER
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Adders</div>
+  <h2>Half Adder vs Full Adder — Comparison</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Half Adder</th><th>Full Adder</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Inputs</strong></td><td>A, B</td><td>A, B, Cin</td></tr>
+      <tr><td><strong>Outputs</strong></td><td>Sum, Carry</td><td>Sum, Cout</td></tr>
+      <tr><td><strong>Handles carry-in?</strong></td><td>No</td><td>Yes</td></tr>
+      <tr><td><strong>Used for</strong></td><td>Least significant bit (LSB)</td><td>Higher-order bits</td></tr>
+      <tr><td><strong>Main gates</strong></td><td>XOR and AND</td><td>XOR, AND, OR combination</td></tr>
+      <tr><td><strong>Boolean expressions</strong></td><td>S = A⊕B, C = AB</td><td>S = A⊕B⊕Cin, Cout = AB+ACin+BCin</td></tr>
+      <tr><td><strong>Can build multi-bit adder?</strong></td><td>No (no carry handling)</td><td>Yes (multiple connected in series)</td></tr>
+    </tbody>
+  </table>
+`);
+
+// ==================================================================
+// SLIDE 39 – WHAT IS A FLIP-FLOP?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Flip-Flops</div>
+  <h2>What Is a Flip-Flop?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p>A <strong>flip-flop</strong> is a <strong>sequential logic circuit</strong> that can store <strong>one bit</strong> of data.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Key Properties</h4>
+        <ul>
+          <li>Unlike combinational logic, output depends on <strong>current inputs AND previous state</strong></li>
+          <li>Flip-flops are used as <strong>data storage elements</strong></li>
+          <li>Used in <strong>registers</strong>, memory, and counters</li>
+        </ul>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>State:</strong> The current stored value of a circuit (0 or 1). Flip-flops have memory because they maintain their state until changed.</p>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 250 120" style="width:100%; max-width:250px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="10" font-weight="600">Flip-Flop as Storage</text>
+          <rect x="40" y="24" width="120" height="40" rx="8" fill="#0e2840" stroke="#2ac8a0" stroke-width="2"/>
+          <text x="60" y="48" fill="#5ae0c0" font-size="14" font-weight="700">Flip-Flop</text>
+          <text x="8" y="34" fill="#b8d4ff" font-size="7">Data</text>
+          <text x="8" y="54" fill="#b8d4ff" font-size="7">Input</text>
+          <text x="172" y="42" fill="#f78c6c" font-size="8">→ Stored</text>
+          <text x="172" y="54" fill="#f78c6c" font-size="8">→ Bit (Q)</text>
+          <text x="8" y="90" fill="#b8d4ff" font-size="9">8 Flip-Flops = 1 Register (8 bits):</text>
+          <rect x="8" y="98" width="18" height="16" rx="2" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+          <rect x="28" y="98" width="18" height="16" rx="2" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+          <rect x="48" y="98" width="18" height="16" rx="2" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+          <text x="68" y="110" fill="#6a8aaa" font-size="7">…</text>
+          <rect x="80" y="98" width="18" height="16" rx="2" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+          <rect x="100" y="98" width="18" height="16" rx="2" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+          <rect x="120" y="98" width="18" height="16" rx="2" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+          <rect x="140" y="98" width="18" height="16" rx="2" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+          <rect x="160" y="98" width="18" height="16" rx="2" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+        </svg>
+        <div class="diagram-caption">8 flip-flops side by side form an 8-bit register</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 40 – SR FLIP-FLOP
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Flip-Flops</div>
+  <h2>SR Flip-Flop (Set-Reset)</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>SR</strong> stands for <strong>Set-Reset</strong>. The SR flip-flop has two inputs (S and R) and two outputs (Q and Q').</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Inputs</h4>
+        <ul>
+          <li><strong>S (Set)</strong> — when activated, sets Q to 1</li>
+          <li><strong>R (Reset)</strong> — when activated, sets Q to 0</li>
+        </ul>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>SR flip-flop:</strong> A basic sequential circuit with Set and Reset inputs. Q' is always the opposite of Q (unless invalid state).</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Truth Table (NOR-based)</h4>
+        <table>
+          <thead>
+            <tr><th>S</th><th>R</th><th>Q(next)</th><th>Q'(next)</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>0</td><td>0</td><td>Q (no change)</td><td>Q'</td><td>Hold state</td></tr>
+            <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>Reset</td></tr>
+            <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>Set</td></tr>
+            <tr><td>1</td><td>1</td><td>?</td><td>?</td><td><strong>Invalid</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="diagram-box mt-6">
+        <svg viewBox="0 0 250 70" style="width:100%; max-width:250px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Cross-Coupled NOR Gates</text>
+          <rect x="8" y="22" width="80" height="40" rx="3" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="28" y="46" fill="#5ae0c0" font-size="9" font-weight="600">NOR</text>
+          <rect x="130" y="22" width="80" height="40" rx="3" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="150" y="46" fill="#5ae0c0" font-size="9" font-weight="600">NOR</text>
+          <line x1="88" y1="32" x2="130" y2="52" stroke="#f78c6c" stroke-width="1"/>
+          <line x1="130" y1="32" x2="88" y2="52" stroke="#f78c6c" stroke-width="1"/>
+          <text x="100" y="28" fill="#f78c6c" font-size="6">Feedback</text>
+        </svg>
+        <div class="diagram-caption">Cross-coupled NOR gates: output feeds back to input</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 41 – JK FLIP-FLOP
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Flip-Flops</div>
+  <h2>JK Flip-Flop</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p>A <strong>JK flip-flop</strong> improves on the SR flip-flop by removing the <strong>invalid state</strong>.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Inputs</h4>
+        <ul>
+          <li><strong>J</strong> — behaves like Set (S) in SR</li>
+          <li><strong>K</strong> — behaves like Reset (R) in SR</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Toggle Behaviour</h4>
+        <p>When <strong>J = 1 and K = 1</strong>, the output <strong>toggles</strong>:</p>
+        <ul>
+          <li>If Q was 0, it becomes 1</li>
+          <li>If Q was 1, it becomes 0</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Truth Table</h4>
+        <table>
+          <thead>
+            <tr><th>J</th><th>K</th><th>Q(next)</th><th>Action</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>0</td><td>0</td><td>Q (no change)</td><td>Hold state</td></tr>
+            <tr><td>0</td><td>1</td><td>0</td><td>Reset</td></tr>
+            <tr><td>1</td><td>0</td><td>1</td><td>Set</td></tr>
+            <tr><td>1</td><td>1</td><td>Q' (toggle)</td><td><strong>Toggle</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>The key difference from SR: JK has <strong>no invalid state</strong>. When J=1 and K=1, the JK flip-flop toggles — something the SR cannot do. Remember: JK = “Just Keep toggling”.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 42 – FLIP-FLOPS AS STORAGE ELEMENTS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Flip-Flops</div>
+  <h2>Flip-Flops as Storage Elements</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How Flip-Flops Store Data</h4>
+        <ul>
+          <li>A <strong>single flip-flop</strong> stores <strong>one bit</strong> (0 or 1)</li>
+          <li>A group of flip-flops forms a <strong>register</strong></li>
+          <li>Registers store binary values temporarily inside the CPU</li>
+          <li>Flip-flops are controlled by <strong>clock signals</strong> in synchronous circuits</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Examples of Use</h4>
+        <ul>
+          <li><strong>Registers</strong> in the CPU (program counter, accumulator, etc.)</li>
+          <li><strong>Memory cells</strong> in cache and RAM</li>
+          <li><strong>Counters</strong> in timing circuits</li>
+          <li><strong>State machines</strong> in control units</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="exam-tip-box">
+        <h4>Exam Tip</h4>
+        <p>A flip-flop is <strong>not</strong> the same as a logic gate. It has <strong>memory</strong> because its output depends on its <strong>previous state</strong>. Combinational logic (like AND, OR) has no memory — output depends only on current inputs.</p>
+      </div>
+      <div class="diagram-box mt-6">
+        <svg viewBox="0 0 280 80" style="width:100%; max-width:280px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Sequential vs Combinational</text>
+          <rect x="8" y="22" width="120" height="20" rx="3" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+          <text x="14" y="36" fill="#80c8a0" font-size="7">Combinational: No memory</text>
+          <rect x="8" y="50" width="120" height="20" rx="3" fill="#2a1a0a" stroke="#f78c6c" stroke-width="1"/>
+          <text x="14" y="64" fill="#f78c6c" font-size="7">Sequential: Has memory</text>
+          <text x="136" y="44" fill="#b8d4ff" font-size="8">AND, OR, XOR, NAND, NOR</text>
+          <text x="136" y="64" fill="#b8d4ff" font-size="8">Flip-flops, registers, counters</text>
+        </svg>
+        <div class="diagram-caption">Flip-flops belong to sequential logic — they remember past inputs</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 43 – BOOLEAN ALGEBRA LAWS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Boolean Algebra</div>
+  <h2>Boolean Algebra Laws</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Law</th><th>AND Form</th><th>OR Form</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Identity</strong></td><td>A · 1 = A</td><td>A + 0 = A</td><td>Leaves value unchanged</td></tr>
+      <tr><td><strong>Null (Annulment)</strong></td><td>A · 0 = 0</td><td>A + 1 = 1</td><td>Force result to 0 or 1</td></tr>
+      <tr><td><strong>Idempotent</strong></td><td>A · A = A</td><td>A + A = A</td><td>Repeated same value</td></tr>
+      <tr><td><strong>Complement</strong></td><td>A · A' = 0</td><td>A + A' = 1</td><td>Inverse cancels</td></tr>
+      <tr><td><strong>Double Negation</strong></td><td>(A')' = A</td><td colspan="2">Two NOTs cancel out</td></tr>
+      <tr><td><strong>Commutative</strong></td><td>A · B = B · A</td><td>A + B = B + A</td><td>Order does not matter</td></tr>
+      <tr><td><strong>Associative</strong></td><td>(A·B)·C = A·(B·C)</td><td>(A+B)+C = A+(B+C)</td><td>Grouping does not matter</td></tr>
+      <tr><td><strong>Distributive</strong></td><td>A·(B+C) = AB+AC</td><td>A+BC = (A+B)(A+C)</td><td>Factorising expressions</td></tr>
+    </tbody>
+  </table>
+  <div class="callout info mt-6">
+    <strong>Note:</strong> The Distributive law for OR (A + BC = (A + B)(A + C)) does <strong>not</strong> exist in normal algebra — it is unique to Boolean algebra!
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 44 – DE MORGAN’S LAWS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Boolean Algebra</div>
+  <h2>De Morgan’s Laws</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Law 1</h4>
+        <p style="font-size:1.3rem; text-align:center; padding:8px;">
+          <span class="inline-code" style="font-size:1.1rem;">(A · B)' = A' + B'</span>
+        </p>
+        <p>The complement of an AND becomes the <strong>OR of the complements</strong>.</p>
+        <p style="margin-top:4px;">A NAND gate is equivalent to an OR gate with inverted inputs.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Law 2</h4>
+        <p style="font-size:1.3rem; text-align:center; padding:8px;">
+          <span class="inline-code" style="font-size:1.1rem;">(A + B)' = A' · B'</span>
+        </p>
+        <p>The complement of an OR becomes the <strong>AND of the complements</strong>.</p>
+        <p style="margin-top:4px;">A NOR gate is equivalent to an AND gate with inverted inputs.</p>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 320 120" style="width:100%; max-width:320px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Gate Equivalences</text>
+          <text x="8" y="34" fill="#5ae0c0" font-size="8" font-weight="600">NAND =</text>
+          <rect x="50" y="22" width="30" height="16" rx="2" fill="none" stroke="#4a7ac8" stroke-width="1"/>
+          <circle cx="80" cy="30" r="2.5" fill="none" stroke="#4a7ac8" stroke-width="1"/>
+          <text x="86" y="34" fill="#b8d4ff" font-size="8">= (A·B)'</text>
+          <text x="8" y="60" fill="#5ae0c0" font-size="8" font-weight="600">=</text>
+          <circle cx="34" cy="54" r="2.5" fill="none" stroke="#f78c6c" stroke-width="1"/>
+          <path d="M40 46 L70 46 Q80 54 70 62 L40 62 Z" fill="none" stroke="#f78c6c" stroke-width="1"/>
+          <text x="90" y="60" fill="#b8d4ff" font-size="8">= A' + B'</text>
+          <text x="8" y="90" fill="#5ae0c0" font-size="8" font-weight="600">NOR =</text>
+          <path d="M50 82 Q60 90 50 98 L70 98 Q80 90 70 82 Z" fill="none" stroke="#4a7ac8" stroke-width="1"/>
+          <circle cx="70" cy="90" r="2.5" fill="none" stroke="#4a7ac8" stroke-width="1"/>
+          <text x="86" y="94" fill="#b8d4ff" font-size="8">= (A+B)'</text>
+          <text x="8" y="116" fill="#5ae0c0" font-size="8" font-weight="600">=</text>
+          <circle cx="34" cy="110" r="2.5" fill="none" stroke="#f78c6c" stroke-width="1"/>
+          <circle cx="34" cy="110" r="2.5" fill="none" stroke="#f78c6c" stroke-width="1"/>
+          <rect x="40" y="102" width="30" height="16" rx="2" fill="none" stroke="#f78c6c" stroke-width="1"/>
+          <text x="86" y="116" fill="#b8d4ff" font-size="8">= A' · B'</text>
+        </svg>
+        <div class="diagram-caption">NAND = OR with inverted inputs; NOR = AND with inverted inputs</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 45 – APPLYING DE MORGAN’S LAWS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Boolean Algebra</div>
+  <h2>Applying De Morgan’s Laws — Worked Examples</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Example 1: Simplify X = (A · B)'</h4>
+    <p>Using De Morgan’s Law 1:</p>
+    <div class="code-block">
+X = (A · B)'
+X = A' + B'
+    </div>
+    <p>A NAND gate is equivalent to an OR gate with inverted inputs.</p>
+  </div>
+  <div class="worked-example mt-6">
+    <h4>Example 2: Simplify Y = (A + B + C)'</h4>
+    <p>Using De Morgan’s Law 2 (extended to 3 variables):</p>
+    <div class="code-block">
+Y = (A + B + C)'
+Y = A' · B' · C'
+    </div>
+    <p>The NOT of an OR becomes the AND of the individual NOTs.</p>
+  </div>
+  <div class="worked-example mt-6">
+    <h4>Example 3: Simplify Z = ((A + B) · C)'</h4>
+    <div class="code-block">
+Z = ((A + B) · C)'
+Z = (A + B)' + C'    <span style="color:#546e7a;">// De Morgan: NOT of AND</span>
+Z = A' · B' + C'     <span style="color:#546e7a;">// De Morgan: NOT of OR</span>
+    </div>
+    <p>Apply De Morgan’s laws sequentially from the <strong>outermost complement</strong>.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 46 – BOOLEAN SIMPLIFICATION WORKED EXAMPLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Boolean Algebra</div>
+  <h2>Boolean Simplification — Worked Example</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Simplify: X = AB + AB'</h4>
+    <div class="code-block">
+X = AB + AB'
+X = A(B + B')      <span style="color:#546e7a;">// Factor out A (Distributive law)</span>
+X = A(1)           <span style="color:#546e7a;">// Complement law: B + B' = 1</span>
+X = A              <span style="color:#546e7a;">// Identity law: A · 1 = A</span>
+    </div>
+    <p style="margin-top:6px;">The expression simplifies from <strong>two AND gates and one OR gate</strong> to just <strong>one wire</strong> — the output is simply A.</p>
+  </div>
+  <div class="card mt-6">
+    <h4>Verification Using Truth Table</h4>
+    <table>
+      <thead><tr><th>A</th><th>B</th><th>AB</th><th>AB'</th><th>AB + AB'</th><th>A</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+        <tr><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:4px;">The output matches <strong>A</strong> for all input combinations. Simplification confirmed!</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 47 – SIMPLIFYING A LOGIC CIRCUIT
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Boolean Algebra</div>
+  <h2>Simplifying a Logic Circuit</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Original Circuit</h4>
+        <p>Consider a circuit with:</p>
+        <ul>
+          <li>A and B go to an AND gate (gives AB)</li>
+          <li>A and NOT B go to another AND gate (gives AB')</li>
+          <li>Both outputs go to an OR gate</li>
+        </ul>
+        <p style="margin-top:4px;">Expression: <span class="inline-code">X = AB + AB'</span></p>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Gate reduction:</strong> The process of simplifying a logic circuit to use fewer gates, reducing cost, power and complexity.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Simplified Circuit</h4>
+        <p>Using Boolean algebra:</p>
+        <div class="code-block">
+X = AB + AB'
+X = A(B + B')
+X = A(1)
+X = A
+        </div>
+        <p>The entire circuit reduces to <strong>just A</strong> — no gates needed!</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Which gates can be removed?</strong> Both AND gates and the OR gate can be removed. The output is simply connected directly to input A.
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>In exams, always show each <strong>step</strong> of simplification with the law used. Even if your final answer is wrong, you can earn method marks.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 48 – WHAT IS A KARNAUGH MAP?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Karnaugh Maps</div>
+  <h2>What Is a Karnaugh Map?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p>A <strong>Karnaugh map</strong> (K-map) is a visual method used to simplify Boolean expressions.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Purpose</h4>
+        <ul>
+          <li>Reduces <strong>complex Boolean expressions</strong></li>
+          <li>Helps design <strong>simpler circuits</strong></li>
+          <li>Minimises <strong>number of gates</strong></li>
+          <li>Can be <strong>quicker and less error-prone</strong> than algebra for small numbers of variables</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 280 100" style="width:100%; max-width:280px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">K-map vs Boolean Algebra</text>
+          <rect x="8" y="22" width="120" height="28" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="14" y="40" fill="#5ae0c0" font-size="8">Boolean Algebra</text>
+          <text x="14" y="50" fill="#b8d4ff" font-size="6">Step-by-step manipulation</text>
+          <rect x="150" y="22" width="120" height="28" rx="4" fill="#0e2840" stroke="#f78c6c" stroke-width="1.5"/>
+          <text x="156" y="40" fill="#f78c6c" font-size="8">Karnaugh Map</text>
+          <text x="156" y="50" fill="#b8d4ff" font-size="6">Visual pattern recognition</text>
+        </svg>
+        <div class="diagram-caption">K-maps provide a visual alternative to algebraic simplification</div>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Karnaugh map:</strong> A grid-based diagram where each cell represents a unique combination of input values. Adjacent cells differ by only one variable.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 49 – BENEFITS OF KARNAUGH MAPS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Karnaugh Maps</div>
+  <h2>Benefits of Karnaugh Maps</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>✅ Benefits</h4>
+      <ul>
+        <li><strong>Visual</strong> simplification method — easier to spot patterns</li>
+        <li>Groups adjacent 1s to find <strong>simplified terms</strong></li>
+        <li>Reduces <strong>gate count</strong> — fewer components needed</li>
+        <li>Reduces <strong>circuit complexity</strong></li>
+        <li>Helps identify <strong>common patterns</strong></li>
+        <li>Useful for <strong>2, 3 and 4 variable</strong> logic problems</li>
+        <li>Less error-prone than algebraic manipulation for some cases</li>
+      </ul>
+    </div>
+    <div>
+      <div class="exam-tip-box">
+        <h4>Exam Tip</h4>
+        <p>K-maps are normally used to produce simplified <strong>Sum of Products</strong> (SOP) expressions. Each group of 1s corresponds to one product term in the simplified expression.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>When to Use K-maps</h4>
+        <ul>
+          <li>For 2, 3, or 4 variables — K-maps are efficient</li>
+          <li>For 5+ variables — K-maps become complex; Boolean algebra or computer tools are better</li>
+          <li>Use when you need a <strong>minimal Sum of Products</strong> expression</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 50 – K-MAP RULES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Karnaugh Maps</div>
+  <h2>Karnaugh Map Rules</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Essential Rules</h4>
+      <ol style="padding-left:18px;">
+        <li>Place <strong>1s</strong> in cells where the output is 1</li>
+        <li>Adjacent cells differ by <strong>only one variable</strong></li>
+        <li>Group 1s in <strong>powers of two</strong>: 1, 2, 4, 8, 16</li>
+        <li>Make groups as <strong>large as possible</strong></li>
+        <li>Groups may <strong>overlap</strong></li>
+        <li>Groups may <strong>wrap around</strong> edges</li>
+        <li>Every 1 must be included in <strong>at least one group</strong></li>
+        <li>Each group produces <strong>one simplified term</strong></li>
+      </ol>
+    </div>
+    <div>
+      <div class="common-mistake-box">
+        <h4>Common Mistakes</h4>
+        <ul>
+          <li>Using normal binary order instead of <strong>Gray code</strong></li>
+          <li>Forgetting <strong>wrap-around</strong> adjacency</li>
+          <li>Making groups that are <strong>not powers of two</strong></li>
+          <li>Making groups <strong>too small</strong> (missing simplification)</li>
+          <li><strong>Missing a 1</strong> — not all 1s grouped</li>
+          <li>Including a <strong>0 in a group</strong></li>
+          <li>Not overlapping when it helps simplify further</li>
+        </ul>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>Always circle the <strong>largest valid groups first</strong>. Then check for remaining uncircled 1s. This ensures you get the most simplified expression.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 51 – 2-VARIABLE K-MAP EXAMPLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Karnaugh Maps</div>
+  <h2>2-Variable K-map — Worked Example</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Simplify: X = A'B + AB</h4>
+    <p>Truth table for reference:</p>
+    <table>
+      <thead><tr><th>A</th><th>B</th><th>A'B</th><th>AB</th><th>X = A'B + AB</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>0</td><td>1</td><td>1</td><td>0</td><td><strong>1</strong></td></tr>
+        <tr><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>1</td><td>1</td><td>0</td><td>1</td><td><strong>1</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="grid-2 mt-6">
+      <div>
+        <h4>K-map Layout</h4>
+        <p>Rows: A = 0, A = 1<br>Columns: B = 0, B = 1</p>
+        <table>
+          <tr><th></th><th>B=0</th><th>B=1</th></tr>
+          <tr><th>A=0</th><td>0</td><td><strong>1</strong></td></tr>
+          <tr><th>A=1</th><td>0</td><td><strong>1</strong></td></tr>
+        </table>
+      </div>
+      <div>
+        <h4>Simplification</h4>
+        <p>The two 1s are in the <strong>B = 1 column</strong>.<br>Group them together.</p>
+        <p style="margin-top:8px; font-size:1.1rem;">
+          <span class="inline-code">X = B</span>
+        </p>
+        <p style="margin-top:4px;">The variable <strong>B</strong> is the same in both cells. A changes (0→1) but B = 1 in both. So B is the simplified term.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 52 – 3-VARIABLE K-MAP LAYOUT
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Karnaugh Maps</div>
+  <h2>3-Variable K-map Layout</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Layout Structure</h4>
+        <ul>
+          <li><strong>Rows:</strong> A = 0, A = 1</li>
+          <li><strong>Columns:</strong> BC = 00, 01, 11, 10</li>
+          <li>Total: 2 rows × 4 columns = <strong>8 cells</strong></li>
+        </ul>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Gray code:</strong> A binary sequence where adjacent values differ by <strong>only one bit</strong>. Example: 00, 01, 11, 10 (not 00, 01, 10, 11).</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Why Gray code?</strong> In binary, 01→10 changes both bits. In Gray code, 01→11 changes only one bit. This makes adjacent cells in the K-map differ by only one variable — which is essential for simplification.
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 280 150" style="width:100%; max-width:280px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">3-Variable K-map Grid (8 cells)</text>
+          <text x="60" y="34" fill="#5ae0c0" font-size="8">BC</text>
+          <text x="78" y="34" fill="#b8d4ff" font-size="7">00</text>
+          <text x="118" y="34" fill="#b8d4ff" font-size="7">01</text>
+          <text x="158" y="34" fill="#b8d4ff" font-size="7">11</text>
+          <text x="198" y="34" fill="#b8d4ff" font-size="7">10</text>
+          <text x="8" y="60" fill="#5ae0c0" font-size="8">A=0</text>
+          <rect x="48" y="42" width="216" height="40" rx="2" fill="none" stroke="#2ac8a0" stroke-width="1.5"/>
+          <line x1="96" y1="42" x2="96" y2="82" stroke="#2ac8a0" stroke-width="1"/>
+          <line x1="144" y1="42" x2="144" y2="82" stroke="#2ac8a0" stroke-width="1"/>
+          <line x1="192" y1="42" x2="192" y2="82" stroke="#2ac8a0" stroke-width="1"/>
+          <line x1="48" y1="82" x2="264" y2="82" stroke="#2ac8a0" stroke-width="1"/>
+          <text x="8" y="108" fill="#5ae0c0" font-size="8">A=1</text>
+          <rect x="48" y="90" width="216" height="40" rx="2" fill="none" stroke="#2ac8a0" stroke-width="1.5"/>
+          <line x1="96" y1="90" x2="96" y2="130" stroke="#2ac8a0" stroke-width="1"/>
+          <line x1="144" y1="90" x2="144" y2="130" stroke="#2ac8a0" stroke-width="1"/>
+          <line x1="192" y1="90" x2="192" y2="130" stroke="#2ac8a0" stroke-width="1"/>
+          <line x1="48" y1="130" x2="264" y2="130" stroke="#2ac8a0" stroke-width="1"/>
+        </svg>
+        <div class="diagram-caption">Columns use Gray code order: 00, 01, 11, 10</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 53 – 3-VARIABLE K-MAP WORKED EXAMPLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Karnaugh Maps</div>
+  <h2>3-Variable K-map — Worked Example</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Simplify: X = A'B'C + A'BC + AB'C + ABC</h4>
+    <div class="grid-2 mt-6">
+      <div>
+        <h4>Step 1: Place 1s in K-map</h4>
+        <table>
+          <tr><th></th><th>00</th><th>01</th><th>11</th><th>10</th></tr>
+          <tr><th>A=0</th><td>0</td><td>0</td><td><strong>1</strong></td><td>0</td></tr>
+          <tr><th>A=1</th><td>0</td><td>0</td><td><strong>1</strong></td><td>0</td></tr>
+        </table>            <p style="margin-top:4px;">A'B'C = 001 → BC=01 &nbsp; A'BC = 011 → BC=11 &nbsp; AB'C = 101 → BC=01 &nbsp; ABC = 111 → BC=11</p>
+          </div>
+          <div>
+            <h4>K-map with 1s placed</h4>
+        <table>
+          <tr><th></th><th>00</th><th>01</th><th>11</th><th>10</th></tr>
+          <tr><th>A=0</th><td>0</td><td><strong>1</strong></td><td><strong>1</strong></td><td>0</td></tr>
+          <tr><th>A=1</th><td>0</td><td><strong>1</strong></td><td><strong>1</strong></td><td>0</td></tr>
+        </table>
+        <p>The 1s are in columns BC = 01 and BC = 11 <br>across both rows.</p>
+      </div>
+    </div>
+    <h4>Step 2: Group the 1s</h4>
+    <p>The four 1s form one rectangular group covering all cells where <strong>C = 1</strong>.</p>
+    <h4>Step 3: Simplified Result</h4>
+    <p style="font-size:1.3rem; text-align:center; padding:8px;">
+      <span class="inline-code" style="font-size:1.1rem;">X = C</span>
+    </p>
+    <p>Check: In BC=01, C=1. In BC=11, C=1. In both rows, C=1. B changes (0→1) and A changes (0→1) but C stays 1. So only C is the common variable.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 54 – 4-VARIABLE K-MAP LAYOUT
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Karnaugh Maps</div>
+  <h2>4-Variable K-map Layout</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Layout Structure</h4>
+        <ul>
+          <li><strong>Rows:</strong> AB = 00, 01, 11, 10</li>
+          <li><strong>Columns:</strong> CD = 00, 01, 11, 10</li>
+          <li>Total: 4 rows × 4 columns = <strong>16 cells</strong></li>
+        </ul>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Note:</strong> Both row and column labels use <strong>Gray code order</strong>. This ensures every adjacent cell (horizontally or vertically) differs by only one variable.
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 280 140" style="width:100%; max-width:280px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">4-Variable K-map Grid (16 cells)</text>
+          <text x="66" y="34" fill="#5ae0c0" font-size="8">CD</text>
+          <text x="80" y="34" fill="#b8d4ff" font-size="7">00</text>
+          <text x="112" y="34" fill="#b8d4ff" font-size="7">01</text>
+          <text x="144" y="34" fill="#b8d4ff" font-size="7">11</text>
+          <text x="176" y="34" fill="#b8d4ff" font-size="7">10</text>
+          <text x="8" y="56" fill="#5ae0c0" font-size="7">AB</text>
+          <text x="14" y="68" fill="#b8d4ff" font-size="7">00</text>
+          <text x="14" y="90" fill="#b8d4ff" font-size="7">01</text>
+          <text x="14" y="112" fill="#b8d4ff" font-size="7">11</text>
+          <text x="14" y="134" fill="#b8d4ff" font-size="7">10</text>
+          <rect x="42" y="40" width="224" height="96" rx="2" fill="none" stroke="#2ac8a0" stroke-width="1.5"/>
+          <line x1="74" y1="40" x2="74" y2="136" stroke="#2ac8a0" stroke-width="1"/>
+          <line x1="106" y1="40" x2="106" y2="136" stroke="#2ac8a0" stroke-width="1"/>
+          <line x1="138" y1="40" x2="138" y2="136" stroke="#2ac8a0" stroke-width="1"/>
+          <line x1="170" y1="40" x2="170" y2="136" stroke="#2ac8a0" stroke-width="1"/>
+          <line x1="42" y1="64" x2="266" y2="64" stroke="#2ac8a0" stroke-width="1"/>
+          <line x1="42" y1="88" x2="266" y2="88" stroke="#2ac8a0" stroke-width="1"/>
+          <line x1="42" y1="112" x2="266" y2="112" stroke="#2ac8a0" stroke-width="1"/>
+        </svg>
+        <div class="diagram-caption">4×4 grid = 16 cells for four variables</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 55 – 4-VARIABLE K-MAP WORKED EXAMPLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Karnaugh Maps</div>
+  <h2>4-Variable K-map — Worked Example</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>    <div class="worked-example">
+      <h4>Simplify: X = Σ(1, 3, 5, 7, 13, 15)</h4>
+      <p>Minterms where output = 1. Variables: A, B, C, D.</p>
+      <div class="grid-2 mt-6">
+        <div>
+          <h4>Step 1: Place 1s in K-map</h4>
+          <p style="font-size:0.82rem;">m1=0001 &nbsp; m3=0011 &nbsp; m5=0101 &nbsp; m7=0111 &nbsp; m13=1101 &nbsp; m15=1111</p>
+          <table>
+            <tr><th></th><th>00</th><th>01</th><th>11</th><th>10</th></tr>
+            <tr><th>00</th><td>0</td><td><strong>1</strong></td><td><strong>1</strong></td><td>0</td></tr>
+            <tr><th>01</th><td>0</td><td><strong>1</strong></td><td><strong>1</strong></td><td>0</td></tr>
+            <tr><th>11</th><td>0</td><td><strong>1</strong></td><td><strong>1</strong></td><td>0</td></tr>
+            <tr><th>10</th><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+          </table>
+        </div>
+        <div>
+          <h4>Step 2: Identify valid groups</h4>
+          <p>The 1s appear to form a 3×2 rectangle, but <strong>groups must be powers of 2</strong>. A 3×2 group (6 cells) is <strong>not valid</strong>.</p>
+          <p>Instead, split into <strong>two valid 2×2 groups</strong>:</p>
+          <ul>
+            <li><strong>Group 1:</strong> Rows 00, 01, columns 01, 11<br>→ A varies, B=0? No — AB=00 (B=0), AB=01 (B=1). Neither A nor B is common. CD: C varies, D=1. Wait — let's check: only two rows can be grouped together, not three!</li>
+          </ul>
+        </div>
+      </div>
+      <h4 class="mt-6">Step 3: Correct grouping approach</h4>
+      <p>
+        <strong>Group A:</strong> Rows AB=00,01, columns CD=01,11 → A=0, B varies, D=1 → <span class="inline-code">A'·D</span><br>
+        <strong>Group B:</strong> Rows AB=01,11, columns CD=01,11 → B=1, D=1 — wait, A varies. A'B' (00), A'B (01), AB (11) — only two rows at a time in valid groups!
+      </p>
+      <p>Let me split into <strong>two valid 2×2 groups</strong>:</p>
+      <table>
+        <tr><th></th><th>00</th><th>01</th><th>11</th><th>10</th></tr>
+        <tr><th>00</th><td>0</td><td><strong style="color:#f78c6c;">1</strong></td><td><strong style="color:#f78c6c;">1</strong></td><td>0</td></tr>
+        <tr><th>01</th><td>0</td><td><strong style="color:#2ac8a0;">1</strong></td><td><strong style="color:#2ac8a0;">1</strong></td><td>0</td></tr>
+        <tr><th>11</th><td>0</td><td><strong style="color:#4a7ac8;">1</strong></td><td><strong style="color:#4a7ac8;">1</strong></td><td>0</td></tr>
+        <tr><th>10</th><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+      </table>
+      <p style="margin-top:6px;">
+        <strong style="color:#f78c6c;">Group 1</strong> (top 2×2): Rows 00-01, Columns 01-11<br>
+        &nbsp; → A=0, B varies, D=1 → <strong>A'D</strong><br>
+        <strong style="color:#2ac8a0;">Group 2</strong> (middle 2×2): Rows 01-11, Columns 01-11<br>
+        &nbsp; → A varies, B=1, D=1 → <strong>BD</strong><br>
+        <strong style="color:#4a7ac8;">Group 3</strong> (wrap-around?): Rows 11-—actually, row 10 has no 1s, so no wrap group.
+      </p>
+      <h4 class="mt-6">Simplified Result: X = A'D + BD</h4>
+      <p>We can factor D: <span class="inline-code">X = D(A' + B)</span></p>
+    </div>
+`);
+
+// ==================================================================
+// SLIDE 56 – COMMON K-MAP MISTAKES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">15.2 Karnaugh Maps</div>
+  <h2>Common K-map Mistakes — Summary</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="common-mistake-box">
+      <h4>⚠️ Mistake 1: Wrong column order</h4>
+      <p>Using binary order (00, 01, 10, 11) instead of <strong>Gray code</strong> (00, 01, 11, 10).</p>
+      <p>This breaks the adjacency rule — adjacent cells would differ by 2 bits instead of 1.</p>
+    </div>
+    <div class="common-mistake-box">
+      <h4>⚠️ Mistake 2: Wrong group sizes</h4>
+      <p>Groups must be <strong>powers of 2</strong>: 1, 2, 4, 8, 16. A group of 3 or 6 cells is invalid.</p>
+    </div>
+    <div class="common-mistake-box">
+      <h4>⚠️ Mistake 3: Forgetting wrap-around</h4>
+      <p>Cells on the <strong>top edge connect to the bottom</strong>; cells on the <strong>left connect to the right</strong>.</p>
+    </div>
+    <div class="common-mistake-box">
+      <h4>⚠️ Mistake 4: Grouping zeros</h4>
+      <p>Only group the <strong>1s</strong>! Grouping 0s gives the complement of the function (though this can be useful for simplification using Product of Sums).</p>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 57 – TOPIC SUMMARY: 15.1
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Topic Summary</div>
+  <h2>Topic 15.1 — Summary</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:10px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Processors</h4>
+      <ul>
+        <li><strong>RISC</strong> uses simple, fixed-length instructions and many registers</li>
+        <li><strong>CISC</strong> uses larger, more complex instructions with variable length</li>
+        <li><strong>Pipelining</strong> overlaps instruction stages to increase throughput</li>
+        <li><strong>Registers</strong> reduce memory access and support faster execution</li>
+        <li>Both RISC and CISC handle interrupts — RISC is often simpler and more predictable</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Parallel Processing</h4>
+      <ul>
+        <li><strong>Flynn’s taxonomy</strong>: SISD, SIMD, MISD, MIMD</li>
+        <li><strong>SISD</strong> — sequential (no parallelism)</li>
+        <li><strong>SIMD</strong> — same instruction on many data items</li>
+        <li><strong>MISD</strong> — rare, fault-tolerant systems</li>
+        <li><strong>MIMD</strong> — common in multicore/distributed systems</li>
+        <li><strong>Massively parallel</strong> computers use thousands of processors</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card mt-6">
+    <h4>Virtual Machines</h4>
+    <ul>
+      <li>VMs emulate physical computers in software via a <strong>hypervisor</strong></li>
+      <li>Benefits: better hardware use, isolation, snapshots, flexibility</li>
+      <li>Limitations: performance overhead, resource contention, complexity</li>
+    </ul>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 58 – TOPIC SUMMARY: 15.2
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Topic Summary</div>
+  <h2>Topic 15.2 — Summary</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:10px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Logic Circuits</h4>
+      <ul>
+        <li><strong>Truth tables</strong> show all input/output combinations</li>
+        <li><strong>Half adders</strong> add two bits (XOR for sum, AND for carry)</li>
+        <li><strong>Full adders</strong> add three bits (cascaded for multi-bit addition)</li>
+        <li><strong>SR flip-flops</strong> store one bit (Set/Reset, invalid state when both 1)</li>
+        <li><strong>JK flip-flops</strong> improve SR — toggle when J=K=1</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Boolean Algebra &amp; K-maps</h4>
+      <ul>
+        <li><strong>Boolean algebra</strong> simplifies logic expressions using laws</li>
+        <li><strong>De Morgan’s laws</strong>: (AB)' = A'+B' and (A+B)' = A'·B'</li>
+        <li><strong>K-maps</strong> provide a visual method for simplification</li>
+        <li>Group 1s in powers of 2, use Gray code order</li>
+        <li>Largest groups first, wrap-around edges allowed</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 59 – EXAM PRACTICE QUESTIONS: SHORT ANSWER (15.1)
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Exam Practice</div>
+  <h2>Practice Questions — 15.1 Hardware and Virtual Machines</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:10px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Question 1 [2 marks]</h4>
+        <p>State <strong>two</strong> differences between RISC and CISC processors.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 2 [3 marks]</h4>
+        <p>Explain why <strong>pipelining</strong> is commonly used in RISC processors.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 3 [3 marks]</h4>
+        <p>Describe the <strong>role of registers</strong> in a RISC processor.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 4 [4 marks]</h4>
+        <p>Explain what happens when a processor <strong>receives an interrupt</strong>.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Question 5 [4 marks]</h4>
+        <p>Name the <strong>four categories</strong> in Flynn’s taxonomy. Give one example of each.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 6 [4 marks]</h4>
+        <p>State <strong>two</strong> benefits and <strong>two</strong> limitations of virtual machines.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 7 [3 marks]</h4>
+        <p>Explain the difference between a <strong>Type 1</strong> and <strong>Type 2</strong> hypervisor.</p>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>For comparison questions, structure your answer <strong>feature by feature</strong>. State the feature and then the RISC vs CISC position for each. Use precise terminology.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 60 – EXAM PRACTICE QUESTIONS: LOGIC (15.2)
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Exam Practice</div>
+  <h2>Practice Questions — 15.2 Boolean Algebra and Logic</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:10px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Question 1 [4 marks]</h4>
+        <p>Produce the <strong>truth table</strong> for X = AB + C'.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 2 [4 marks]</h4>
+        <p>Draw the circuit for a <strong>half adder</strong> and give its Boolean expressions.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 3 [4 marks]</h4>
+        <p>Complete the <strong>truth table</strong> for a full adder. Label all inputs and outputs.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 4 [3 marks]</h4>
+        <p>Explain how an <strong>SR flip-flop</strong> can store one bit of data.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Question 5 [2 marks]</h4>
+        <p>State <strong>De Morgan’s</strong> two laws in Boolean form.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 6 [2 marks]</h4>
+        <p>Simplify <span class="inline-code">AB + AB'</span> using Boolean algebra. Show each step.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 7 [5 marks]</h4>
+        <p>Use a <strong>Karnaugh map</strong> to simplify the 3-variable expression:</p>
+        <p><span class="inline-code">X = A'B'C' + A'BC' + AB'C' + ABC'</span></p>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>For logic questions, always include <strong>intermediate columns</strong> in truth tables. For K-maps, show the <strong>grid with 1s placed</strong> and clearly <strong>circle the groups</strong>.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 61 – FINAL EXAM TIPS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Revision Guidance</div>
+  <h2>Final Exam Tips</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:10px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="exam-tip-box">
+        <h4>Use Precise Terminology</h4>
+        <p>Use exact terms: <strong>instruction set</strong>, <strong>register</strong>, <strong>pipeline</strong>, <strong>interrupt</strong>, <strong>hypervisor</strong>, <strong>load/store architecture</strong>.</p>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Comparisons</h4>
+        <p>For comparisons (RISC vs CISC, physical vs VM), write <strong>matching points on both sides</strong>. Don’t just list features of one.</p>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Logic Questions</h4>
+        <p>Always include <strong>intermediate columns</strong> in truth tables. Show working even if you can see the answer.</p>
+      </div>
+    </div>
+    <div>
+      <div class="exam-tip-box">
+        <h4>Karnaugh Maps</h4>
+        <p>Use <strong>Gray code order</strong> for column/row labels. Circle largest groups first. Remember <strong>wrap-around</strong> edges.</p>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Flip-Flops</h4>
+        <p>Mention <strong>previous state</strong> where relevant. SR = Set/Reset; JK = no invalid state (toggle when both 1).</p>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Balanced Answers</h4>
+        <p>For “benefits and limitations” questions, give <strong>balanced</strong> points. Do not only describe benefits.</p>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Don’t Confuse</h4>
+        <p><strong>Parallel processing</strong> is not the same as multitasking. <strong>Pipelining</strong> increases throughput, not single-instruction speed.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 62 – END SLIDE
+// ==================================================================
+addSlide(`
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+    <div class="section-badge" style="margin-bottom:16px;">Cambridge International AS &amp; A Level — 9618</div>
+    <h1 style="font-size:2.8rem; margin-bottom:8px; color:#5ae0c0;">Hardware and Virtual Machines</h1>
+    <div style="width:80px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:18px;"></div>
+    <p style="font-size:1.2rem; color:#7ab8a8; margin-bottom:24px;">Ready for Exam Practice!</p>
+    <div class="grid-2" style="max-width:600px;">
+      <div class="card">
+        <h4>📝 Revise Definitions</h4>
+        <p style="font-size:0.85rem;">Instruction set, register, pipeline, interrupt, hypervisor, flip-flop</p>
+      </div>
+      <div class="card">
+        <h4>🧮 Practise Truth Tables</h4>
+        <p style="font-size:0.85rem;">Half adder, full adder, any Boolean expression</p>
+      </div>
+      <div class="card">
+        <h4>📊 Practise K-map Grouping</h4>
+        <p style="font-size:0.85rem;">2-, 3- and 4-variable K-maps with Gray code</p>
+      </div>
+      <div class="card">
+        <h4>✅ Use Mark Schemes</h4>
+        <p style="font-size:0.85rem;">Check your wording matches Cambridge mark scheme expectations</p>
+      </div>
+    </div>
+    <p style="color:#3a6a6a; font-size:0.85rem; margin-top:24px;">Good luck with your revision!</p>
+  </div>
+`);
+
+// ==================================================================
+// RENDER ALL SLIDES
+// ==================================================================
+</script>
+
+</div>
+
+<div class="nav-bar">
+  <button id="prevBtn" onclick="changeSlide(-1)">◀ Prev</button>
+  <span class="slide-counter" id="slideCounter">1 / 62</span>
+  <div class="progress-dots" id="progressDots"></div>
+  <button id="nextBtn" onclick="changeSlide(1)">Next ▶</button>
+</div>
+<div class="kbd-hint">← → arrow keys to navigate</div>
+<script>renderSlides();</script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AS & A Level 9618 — Hardware & Virtual Machines Quiz</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0a0e1a;
+    color: #d0e4ec;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .bg-grid {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      linear-gradient(rgba(200, 160, 48, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200, 160, 48, 0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: 0; pointer-events: none;
+  }
+  .header {
+    position: relative; z-index: 1;
+    text-align: center; padding: 28px 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .header h1 { font-size: 1.5rem; font-weight: 700; color: #f0faff; }
+  .header h1 span { background: linear-gradient(135deg, #f0a030, #f06080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .header .badge { display: inline-block; background: #2a1a0a; border: 1px solid #c08020; color: #f0c040; padding: 2px 14px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; margin-bottom: 6px; }
+  .header p { font-size: 0.85rem; color: #8a7a5a; margin-top: 4px; }
+  .main { position: relative; z-index: 1; max-width: 780px; width: 100%; margin: 0 auto; padding: 20px; flex: 1; display: flex; flex-direction: column; }
+  #setupScreen { animation: fadeIn 0.4s ease-out; }
+  .setup-card { background: rgba(10,14,26,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 20px 24px; backdrop-filter: blur(10px); margin-bottom: 16px; }
+  .setup-card h2 { font-size: 1.05rem; font-weight: 600; color: #f0c040; margin-bottom: 10px; }
+  .setup-card p { font-size: 0.88rem; color: #8a7a5a; line-height: 1.5; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(135deg, #3a2a0a, #6a4a1a);
+    border: 1px solid #c08020; color: #f0c040;
+    padding: 12px 32px; border-radius: 10px;
+    font-size: 1rem; font-weight: 600; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { background: linear-gradient(135deg, #5a3a1a, #8a5a2a); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(240,160,48,0.2); }
+  .btn-secondary {
+    background: rgba(10,14,26,0.6); border: 1px solid #3a2a1a;
+    color: #8a7a5a; padding: 10px 24px; border-radius: 8px;
+    font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: #f0a030; color: #f0c040; }
+  .quiz-options { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .quiz-options label { font-size: 0.88rem; color: #8a7a5a; }
+  .quiz-options select { background: #0a0f1e; border: 1px solid #3a2a1a; border-radius: 6px; color: #d0e4ec; padding: 6px 10px; font-size: 0.88rem; }
+  .quiz-options select:focus { outline: none; border-color: #f0a030; }
+  .topic-chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+  .topic-chip { display: inline-block; background: #2a1a0a; border: 1px solid #3a2a1a; border-radius: 16px; padding: 4px 12px; font-size: 0.75rem; color: #f0c040; }
+  .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+  .quiz-progress { font-size: 0.85rem; color: #8a7a5a; }
+  .quiz-progress strong { color: #d0e4ec; }
+  .quiz-score { font-size: 0.85rem; color: #8bc34a; }
+  .q-type-tag { display: inline-block; padding: 1px 10px; border-radius: 10px; font-size: 0.68rem; font-weight: 600; background: rgba(240,160,48,0.15); color: #f0c040; }
+  .progress-bar-wrap { width: 100%; height: 5px; background: #0a0f1e; border-radius: 3px; overflow: hidden; margin-bottom: 16px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #f0a030, #f06080); transition: width 0.4s ease; border-radius: 3px; }
+  .question-card { background: rgba(10,14,26,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 24px; backdrop-filter: blur(10px); }
+  .question-text { font-size: 1.1rem; font-weight: 600; color: #f0faff; line-height: 1.5; margin-bottom: 18px; }
+  .options-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .option-btn { display: block; width: 100%; text-align: left; padding: 12px 16px; border-radius: 10px; background: rgba(10,14,26,0.4); border: 1px solid rgba(255,255,255,0.06); color: #c0d8e0; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
+  .option-btn:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.02); }
+  .option-btn.selected { border-color: #f0a030; background: rgba(240,160,48,0.1); }
+  .option-btn.correct { border-color: #8bc34a; background: rgba(139,195,74,0.1); color: #c3e88d; }
+  .option-btn.incorrect { border-color: #e57373; background: rgba(229,115,115,0.1); color: #ffb8b8; }
+  .option-btn.disabled { cursor: default; pointer-events: none; }
+  .option-btn .opt-letter { display: inline-block; width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.04); text-align: center; line-height: 26px; font-size: 0.78rem; font-weight: 600; margin-right: 10px; }
+  .feedback-area { padding: 12px 16px; border-radius: 10px; margin-bottom: 14px; display: none; font-size: 0.88rem; line-height: 1.5; }
+  .feedback-area.correct { display: block; background: rgba(139,195,74,0.08); border: 1px solid rgba(139,195,74,0.2); color: #b8d8a0; }
+  .feedback-area.incorrect { display: block; background: rgba(229,115,115,0.08); border: 1px solid rgba(229,115,115,0.2); color: #e0b0b0; }
+  .feedback-area .fb-label { font-weight: 700; }
+  .q-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .results-card { background: rgba(10,14,26,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 28px 24px; backdrop-filter: blur(10px); text-align: center; }
+  .results-score { font-size: 3.5rem; font-weight: 800; background: linear-gradient(135deg, #f0a030, #f06080); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
+  .results-label { font-size: 1rem; color: #8a7a5a; margin-top: 4px; }
+  .results-details { display: flex; gap: 20px; justify-content: center; margin: 14px 0; flex-wrap: wrap; }
+  .results-stat { text-align: center; }
+  .results-stat .num { font-size: 1.3rem; font-weight: 700; color: #f0faff; }
+  .results-stat .desc { font-size: 0.76rem; color: #5a7a7a; }
+  .results-msg { font-size: 0.95rem; padding: 10px; border-radius: 8px; margin: 14px 0; }
+  .results-msg.perfect { background: rgba(255,215,0,0.08); color: #ffd700; border: 1px solid rgba(255,215,0,0.15); }
+  .results-msg.great { background: rgba(139,195,74,0.08); color: #8bc34a; border: 1px solid rgba(139,195,74,0.15); }
+  .results-msg.good { background: rgba(240,160,48,0.08); color: #f0a030; border: 1px solid rgba(240,160,48,0.15); }
+  .results-msg.retry { background: rgba(229,115,115,0.08); color: #e57373; border: 1px solid rgba(229,115,115,0.15); }
+  .results-chart { display: flex; gap: 8px; justify-content: center; margin: 14px 0; }
+  .results-chart .bar { width: 36px; border-radius: 4px 4px 0 0; transition: height 0.6s ease; }
+  .results-chart .bar.cb { background: #8bc34a; }
+  .results-chart .bar.ib { background: #e57373; }
+  .review-list { margin-top: 14px; text-align: left; }
+  .review-item { padding: 10px 14px; border-radius: 8px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.04); }
+  .review-item.cr { border-left: 3px solid #8bc34a; }
+  .review-item.ir { border-left: 3px solid #e57373; }
+  .review-item .rq { font-size: 0.85rem; color: #d0e4ec; margin-bottom: 3px; }
+  .review-item .ra { font-size: 0.8rem; }
+  .review-item .ra .ya { color: #e57373; }
+  .review-item .ra .ca { color: #8bc34a; }
+  .btn-small { font-size:0.82rem; padding:6px 16px; }
+  .stats-section { background:rgba(10,14,26,0.5); border:1px solid rgba(255,255,255,0.04); border-radius:10px; padding:14px 18px; margin-bottom:10px; display:flex; flex-wrap:wrap; gap:20px; align-items:center; }
+  .stats-section .stat-item { display:flex; align-items:center; gap:8px; font-size:0.85rem; }
+  .stats-section .stat-item .stat-num { font-size:1.2rem; font-weight:700; color:#f0faff; }
+  .stats-section .stat-item .stat-label { color:#5a9a8a; }
+  .history-section { max-height:0; overflow:hidden; transition:max-height 0.35s ease; }
+  .history-section.open { max-height:420px; overflow-y:auto; }
+  .history-item { display:flex; justify-content:space-between; padding:7px 10px; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.82rem; }
+  .history-item:last-child { border-bottom:none; }
+  .history-item .h-date { color:#5a9a8a; }
+  .history-item .h-score { font-weight:600; color:#d0e4ec; }
+  .history-item .h-pct { color:#8bc34a; font-weight:600; }
+  .footer { position: relative; z-index: 1; text-align: center; padding: 14px; color: #3a5a5a; font-size: 0.72rem; border-top: 1px solid rgba(255,255,255,0.04); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 600px) {
+    .header h1 { font-size: 1.2rem; }
+    .setup-card { padding: 14px; }
+    .question-card { padding: 16px; }
+    .question-text { font-size: 1rem; }
+    .results-score { font-size: 2.5rem; }
+    .quiz-options { flex-direction: column; align-items: stretch; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<header class="header">
+  <div class="badge">Cambridge AS & A Level 9618</div>
+  <h1>🔧 <span>Hardware & Virtual Machines</span></h1>
+  <p>Interactive Quiz — RISC/CISC, Pipelining, Flynn's Taxonomy, Boolean Algebra & Logic</p>
+</header>
+<div class="main">
+  <div id="setupScreen">
+    <div class="setup-card">
+      <h2>🎯 Topic Coverage</h2>
+      <p>This quiz tests your knowledge of RISC vs CISC processors, pipelining, interrupt handling, Flynn's taxonomy (SISD/SIMD/MISD/MIMD), virtual machines, Boolean algebra, logic gates, flip-flops, and Karnaugh maps.</p>
+      <div class="topic-chips">
+        <span class="topic-chip">RISC vs CISC</span>
+        <span class="topic-chip">Pipelining</span>
+        <span class="topic-chip">Interrupts</span>
+        <span class="topic-chip">Flynn's Taxonomy</span>
+        <span class="topic-chip">Virtual Machines</span>
+        <span class="topic-chip">Boolean Algebra</span>
+        <span class="topic-chip">De Morgan's Laws</span>
+        <span class="topic-chip">Flip-Flops</span>
+        <span class="topic-chip">Karnaugh Maps</span>
+      </div>
+    </div>
+    <div class="setup-card">
+      <h2>⚙️ Quiz Settings</h2>
+      <div class="quiz-options">
+        <label>Questions: <select id="numQuestions">
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+          <option value="0">All (25)</option>
+        </select></label>
+        <label>Type: <select id="questionType">
+          <option value="all" selected>Mixed</option>
+          <option value="mcq">Multiple Choice</option>
+          <option value="truefalse">True / False</option>
+        </select></label>
+      </div>
+    </div>    <div class="setup-card" id="statsCard">
+      <h2>📈 Your Progress</h2>
+      <div class="stats-section" id="statsSection">
+        <div class="stat-item">🏆 Best: <span class="stat-num" id="bestScore">—</span></div>
+        <div class="stat-item">📝 Attempts: <span class="stat-num" id="totalAttempts">0</span></div>
+        <div class="stat-item">📊 Average: <span class="stat-num" id="avgScore">—</span></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-secondary btn-small" onclick="toggleHistory()">📜 History</button>
+        <button class="btn-secondary btn-small" onclick="clearHistory()">🗑️ Clear Data</button>
+      </div>
+      <div class="history-section" id="historySection">
+        <div id="historyList"></div>
+        <p id="historyEmpty" style="color:#5a9a8a;font-size:0.82rem;padding:10px;text-align:center;">No attempts yet. Complete a quiz to see your history!</p>
+      </div>
+    </div>
+    <div style="text-align:center;"><button class="btn-primary" onclick="startQuiz()">🚀 Start Quiz</button></div>
+  </div>
+  <div id="quizScreen" style="display:none;">
+    <div class="quiz-header">
+      <div><span class="quiz-progress">Question <strong id="currentQ">1</strong> of <strong id="totalQ">10</strong></span></div>
+      <span class="quiz-score">✅ <span id="scoreDisplay">0</span>/<span id="totalCorrect">10</span></span>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="question-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span class="q-type-tag" id="qTypeTag">MCQ</span></div>
+      <div class="question-text" id="qText">Loading question...</div>
+      <div class="options-list" id="optionsList"></div>
+      <div class="feedback-area" id="feedbackArea"></div>
+      <div class="q-actions"><button class="btn-secondary" id="nextBtn" style="display:none;" onclick="nextQuestion()">Next →</button></div>
+    </div>
+  </div>
+  <div id="resultsScreen" style="display:none;">
+    <div class="results-card">
+      <div class="results-score" id="finalScore">0%</div>
+      <div class="results-label">Final Score</div>
+      <div class="results-details">
+        <div class="results-stat"><span class="num" id="rCorrect">0</span><div class="desc">Correct</div></div>
+        <div class="results-stat"><span class="num" id="rIncorrect">0</span><div class="desc">Incorrect</div></div>
+        <div class="results-stat"><span class="num" id="rTotal">0</span><div class="desc">Total</div></div>
+      </div>
+      <div class="results-chart" id="resultsChart">
+        <div class="bar cb" id="correctBar" style="height:40px;"></div>
+        <div class="bar ib" id="incorrectBar" style="height:20px;"></div>
+      </div>
+      <div class="results-msg" id="resultsMsg">Great job!</div>
+      <div class="review-list" id="reviewList"></div>
+      <div class="results-actions" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px;">
+        <button class="btn-primary" onclick="resetQuiz()">🔄 Try Again</button>
+        <button class="btn-secondary" onclick="showSetup()">⚙️ Settings</button>
+      </div>
+    </div>
+  </div>
+</div>
+<footer class="footer">Cambridge AS & A Level 9618 &bull; Topic 15: Hardware & Virtual Machines &bull; Interactive Quiz</footer>
+<script>
+  const QB = [
+    {type:"mcq", q:"What does RISC stand for?", options:["Reduced Instruction Set Computer","Regular Instruction Set Computer","Reduced Integrated System Circuit","Random Instruction Set Code"], correct:0, explain:"RISC = Reduced Instruction Set Computer. It uses a small, simple set of fixed-length instructions."},
+    {type:"mcq", q:"Which of the following is a characteristic of RISC processors?", options:["Variable-length instructions","Many general-purpose registers (32+)","Complex instructions that access memory directly","Large instruction set"], correct:1, explain:"RISC processors have many general-purpose registers (32+). Instructions are simple, fixed-length, and use a load/store architecture."},
+    {type:"truefalse", q:"CISC processors typically have more registers than RISC processors.", correct:false, explain:"RISC processors typically have more registers (32+) while CISC processors have fewer registers."},
+    {type:"mcq", q:"What is a key advantage of RISC processors?", options:["Smaller code size","Easier pipelining due to fixed-length instructions","Fewer instructions needed per program","Complex instructions that do more per cycle"], correct:1, explain:"RISC's fixed-length, simple instructions make pipelining easier, improving instruction throughput."},
+    {type:"mcq", q:"What is pipelining?", options:["Increasing clock speed","Overlapping execution stages of multiple instructions","Adding more cores to a processor","Reducing the number of registers"], correct:1, explain:"Pipelining overlaps the execution stages of several instructions to improve throughput — like an assembly line."},
+    {type:"mcq", q:"In a classic 5-stage RISC pipeline, what are the stages in order?", options:["Fetch, Decode, Execute, Memory, Write Back","Fetch, Execute, Decode, Memory, Write Back","Fetch, Memory, Decode, Execute, Write Back","Load, Decode, Execute, Store, Write Back"], correct:0, explain:"The 5 classic stages are: Fetch → Decode → Execute → Memory → Write Back."},
+    {type:"truefalse", q:"Pipelining reduces the time needed to execute a single instruction.", correct:false, explain:"Pipelining increases throughput (instructions per unit time) but does NOT reduce the execution time of a single instruction."},
+    {type:"mcq", q:"What type of hazard occurs when an instruction depends on data not yet produced by a previous instruction?", options:["Control hazard","Structural hazard","Data hazard","Memory hazard"], correct:2, explain:"A data hazard occurs when an instruction needs data that has not yet been produced by a previous instruction in the pipeline."},
+    {type:"mcq", q:"What happens when an interrupt is received by a processor?", options:["The processor shuts down","Current state is saved and an ISR is executed","The pipeline is cleared permanently","The processor ignores it"], correct:1, explain:"The processor saves the current state (registers, PC), executes the Interrupt Service Routine (ISR), then restores and resumes."},
+    {type:"truefalse", q:"Interrupt handling is simpler in RISC than in CISC due to simpler instructions and fixed instruction length.", correct:true, explain:"RISC's uniform, fixed-length instructions make state saving and interrupt handling more predictable and simpler."},
+    {type:"mcq", q:"Flynn's taxonomy classifies parallel computers. What does SIMD stand for?", options:["Single Instruction, Multiple Data","Simple Instruction, Multiple Devices","Sequential Instruction, Memory Data","Single Integrated, Multiple Devices"], correct:0, explain:"SIMD = Single Instruction, Multiple Data. One instruction operates on multiple data elements simultaneously (e.g., GPU operations)."},
+    {type:"mcq", q:"Which Flynn classification represents a standard single-core processor?", options:["SIMD","MIMD","SISD","MISD"], correct:2, explain:"SISD (Single Instruction, Single Data) represents a traditional von Neumann machine with one instruction stream and one data stream."},
+    {type:"mcq", q:"What is a virtual machine?", options:["A physical server","An emulation of a computer system that runs an OS","A type of CPU architecture","A network protocol"], correct:1, explain:"A virtual machine is software that emulates a complete computer system, allowing multiple guest OSs to run on one physical host."},
+    {type:"truefalse", q:"A hypervisor is software that manages and runs virtual machines.", correct:true, explain:"A hypervisor (or VMM) manages virtual machines, allocating physical resources like CPU, memory, and storage to each VM."},
+    {type:"mcq", q:"What is the Boolean algebra expression for a half adder's SUM output?",
+      options:["A AND B","A OR B","A XOR B","A NAND B"], correct:2, explain:"In a half adder, SUM = A XOR B (the exclusive OR of the two inputs). Carry = A AND B."},
+    {type:"truefalse", q:"De Morgan's Law states that NOT(A AND B) = NOT A OR NOT B.", correct:true, explain:"De Morgan's First Law: ¬(A ∧ B) = ¬A ∨ ¬B. The second law: ¬(A ∨ B) = ¬A ∧ ¬B."},
+    {type:"mcq", q:"What is an SR flip-flop used for?", options:["Arithmetic operations","Storing a single bit of data","Converting analog to digital","Generating clock signals"], correct:1, explain:"An SR (Set-Reset) flip-flop is a sequential logic circuit that stores one bit of data. It has two stable states."},
+    {type:"mcq", q:"What is the output of a full adder when A=1, B=1, Cin=1?", options:["SUM=0, Cout=1","SUM=1, Cout=1","SUM=0, Cout=0","SUM=1, Cout=0"], correct:1, explain:"Full adder: 1+1+1 = 11 in binary. SUM = 1, Carry Out = 1."},
+    {type:"truefalse", q:"Karnaugh maps are used to simplify Boolean expressions.", correct:true, explain:"K-Maps provide a visual method to simplify Boolean algebra expressions by grouping adjacent 1s."},
+    {type:"mcq", q:"What is the main difference between RISC and CISC instruction sets?", options:["RISC uses variable-length, CISC uses fixed-length","RISC has a smaller, simpler instruction set; CISC has a larger, more complex one","RISC uses fewer registers","RISC is only used in desktop computers"], correct:1, explain:"RISC has a small, simple instruction set with many registers. CISC has a large, complex instruction set with fewer registers."},
+    {type:"truefalse", q:"A JK flip-flop eliminates the invalid state found in an SR flip-flop.", correct:true, explain:"The JK flip-flop resolves the SR flip-flop's invalid state (S=1, R=1) by toggling the output when J=1 and K=1."},
+    {type:"mcq", q:"Which Boolean expression is equivalent to A·(A+B)?", options:["A","B","A·B","A+B"], correct:0, explain:"Using the absorption law: A·(A+B) = A. This is a fundamental Boolean algebra simplification."},
+    {type:"mcq", q:"What does MIMD stand for in Flynn's taxonomy?", options:["Multiple Instruction, Multiple Data","Multiple Integrated, Multiple Devices","Main Instruction, Main Data","Modified Instruction Mode"], correct:0, explain:"MIMD = Multiple Instruction, Multiple Data. Multiple processors execute different instructions on different data simultaneously."},
+    {type:"truefalse", q:"A disadvantage of virtual machines is performance overhead compared to running directly on hardware.", correct:true, explain:"VMs introduce overhead from the hypervisor and resource sharing, which can reduce performance compared to bare-metal execution."},
+    {type:"mcq", q:"What is a key benefit of using massively parallel computers?", options:["Simpler programming","Handling large-scale computations faster","Lower power consumption","Easier cooling"], correct:1, explain:"Massively parallel systems use many processors to solve large computational problems faster, such as scientific simulations."},
+  ];
+  let S = { questions: [], current: 0, score: 0, answers: [], answered: false };
+  function startQuiz() {
+    let pool = [...QB]; const typeFilter = document.getElementById('questionType').value;
+    if (typeFilter !== 'all') { pool = pool.filter(q => q.type === typeFilter); if (!pool.length) { alert('No questions of this type available.'); return; } }
+    for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+    let numQ = parseInt(document.getElementById('numQuestions').value);
+    if (numQ === 0 || numQ > pool.length) numQ = pool.length;
+    S.questions = pool.slice(0, numQ); S.current = 0; S.score = 0; S.answers = []; S.answered = false;
+    showScreen('quizScreen'); renderQ();
+  }
+  function renderQ() {
+    const q = S.questions[S.current]; const total = S.questions.length; const idx = S.current;
+    document.getElementById('currentQ').textContent = idx + 1; document.getElementById('totalQ').textContent = total;
+    document.getElementById('scoreDisplay').textContent = S.score; document.getElementById('totalCorrect').textContent = total;
+    document.getElementById('progressFill').style.width = (idx / total * 100) + '%'; document.getElementById('qText').textContent = q.q;
+    document.getElementById('qTypeTag').textContent = q.type === 'truefalse' ? 'True / False' : 'Multiple Choice';
+    const container = document.getElementById('optionsList'); container.innerHTML = '';
+    if (q.type === 'truefalse') {
+      ['True','False'].forEach((text,i) => { const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerHTML = '<span class="opt-letter">'+(i===0?'T':'F')+'</span>'+text; btn.dataset.index = i; btn.addEventListener('click',()=>selectAns(i)); container.appendChild(btn); });
+    } else {
+      const letters = ['A','B','C','D']; q.options.forEach((text,i) => { const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerHTML = '<span class="opt-letter">'+letters[i]+'</span>'+text; btn.dataset.index = i; btn.addEventListener('click',()=>selectAns(i)); container.appendChild(btn); });
+    }
+    const fb = document.getElementById('feedbackArea'); fb.className = 'feedback-area'; fb.textContent = '';
+    document.getElementById('nextBtn').style.display = 'none'; S.answered = false;
+  }
+  function selectAns(index) {
+    if (S.answered) return; S.answered = true;
+    const q = S.questions[S.current]; const buttons = document.querySelectorAll('.option-btn'); const correct = (index === q.correct);
+    buttons.forEach((btn,i) => { btn.classList.add('disabled'); if (i === q.correct) btn.classList.add('correct'); if (i === index && !correct) btn.classList.add('incorrect'); if (i === index) btn.classList.add('selected'); });
+    if (correct) S.score++; document.getElementById('scoreDisplay').textContent = S.score;
+    const fb = document.getElementById('feedbackArea'); fb.className = 'feedback-area ' + (correct ? 'correct' : 'incorrect');
+    fb.innerHTML = '<span class="fb-label">' + (correct ? '✅ Correct!' : '❌ Incorrect.') + '</span> ' + q.explain;
+    S.answers.push({selected: index, correctIdx: q.correct, question: q, wasCorrect: correct});
+    const nextBtn = document.getElementById('nextBtn'); nextBtn.style.display = 'inline-flex'; nextBtn.textContent = (S.current === S.questions.length - 1) ? '📊 See Results' : 'Next →';
+  }
+  function nextQuestion() { if (S.current >= S.questions.length - 1) { showResults(); return; } S.current++; renderQ(); }
+  function showResults() {
+    showScreen('resultsScreen'); const total = S.questions.length; const correct = S.score; const incorrect = total - correct; const pct = total > 0 ? Math.round(correct/total*100) : 0;
+    document.getElementById('finalScore').textContent = pct + '%'; document.getElementById('rCorrect').textContent = correct;
+    document.getElementById('rIncorrect').textContent = incorrect; document.getElementById('rTotal').textContent = total;
+    const maxH = 80; document.getElementById('correctBar').style.height = (total > 0 ? (correct/total)*maxH : 0) + 'px'; document.getElementById('incorrectBar').style.height = (total > 0 ? (incorrect/total)*maxH : 0) + 'px';
+    const msg = document.getElementById('resultsMsg'); msg.className = 'results-msg';
+    if (pct === 100) { msg.textContent = '🏆 Perfect! You\'ve mastered Hardware & Virtual Machines!'; msg.classList.add('perfect'); }
+    else if (pct >= 80) { msg.textContent = '🌟 Excellent! Strong understanding of processors and logic.'; msg.classList.add('great'); }
+    else if (pct >= 60) { msg.textContent = '👍 Good effort! Review the incorrect answers below.'; msg.classList.add('good'); }
+    else { msg.textContent = '📚 Keep studying! Review the presentation and try again.'; msg.classList.add('retry'); }
+    const rl = document.getElementById('reviewList'); rl.innerHTML = '<h3 style="font-size:0.92rem;color:#f0c040;margin-bottom:8px;">📋 Review Answers</h3>';
+    const letters = ['A','B','C','D']; S.answers.forEach((a,i) => {
+      const item = document.createElement('div'); item.className = 'review-item ' + (a.wasCorrect ? 'cr' : 'ir'); const q = a.question; const ya = q.type === 'truefalse' ? (a.selected===0?'True':'False') : letters[a.selected]; const ca = q.type === 'truefalse' ? 'True' : letters[a.correctIdx];
+      item.innerHTML = '<div class="rq">'+(i+1)+'. '+q.q+'</div><div class="ra">'+(a.wasCorrect ? '<span style="color:#8bc34a;">✅ Correct</span>' : '<span class="ya">❌ Your answer: '+ya+'</span> — <span class="ca">Correct: '+ca+'</span>')+'</div><div style="color:#5a9a8a;font-size:0.76rem;margin-top:3px;">'+q.explain+'</div>'; rl.appendChild(item);
+    });
+    saveResult(correct, total);
+  }
+  function resetQuiz() { S.current=0; S.score=0; S.answers=[]; S.answered=false; const pool=S.questions; for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];} showScreen('quizScreen'); renderQ(); }
+  function showSetup() { showScreen('setupScreen'); }
+  function showScreen(id) { ['setupScreen','quizScreen','resultsScreen'].forEach(s=>{const el=document.getElementById(s);if(el)el.style.display=(s===id?'block':'none');}); }
+
+  const QUIZ_TOPIC = 'Hardware and Virtual Machines';
+  function getStorageKey() { return 'quiz9618_'+QUIZ_TOPIC.replace(/[^a-zA-Z0-9]/g,'_'); }
+  function getStats() { try{const d=localStorage.getItem(getStorageKey());return d?JSON.parse(d):{best:null,attempts:[]};}catch(e){return{best:null,attempts:[]};} }
+  function saveResult(correct,total) { try{const stats=getStats();const pct=Math.round(correct/total*100);const entry={date:new Date().toISOString(),correct,total,pct};stats.attempts.push(entry);if(stats.best===null||pct>stats.best.pct)stats.best=entry;localStorage.setItem(getStorageKey(),JSON.stringify(stats));loadStats();}catch(e){} }
+  function loadStats() { try{const stats=getStats();document.getElementById('bestScore').textContent=stats.best?stats.best.correct+'/'+stats.best.total+' ('+stats.best.pct+'%)':'—';document.getElementById('totalAttempts').textContent=stats.attempts.length;if(stats.attempts.length>0){const avg=Math.round(stats.attempts.reduce((s,a)=>s+a.pct,0)/stats.attempts.length);document.getElementById('avgScore').textContent=avg+'%';}else document.getElementById('avgScore').textContent='—';const hl=document.getElementById('historyList');const he=document.getElementById('historyEmpty');if(hl){hl.innerHTML='';if(stats.attempts.length===0){if(he)he.style.display='block';}else{if(he)he.style.display='none';[...stats.attempts].reverse().slice(0,30).forEach(a=>{const d=new Date(a.date);const ds=d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});const div=document.createElement('div');div.className='history-item';div.innerHTML='<span class="h-date">'+ds+'</span><span class="h-score">'+a.correct+'/'+a.total+'</span><span class="h-pct">'+a.pct+'%</span>';hl.appendChild(div);});}}}catch(e){} }
+  function toggleHistory(){document.getElementById('historySection').classList.toggle('open');}
+  function clearHistory(){try{if(confirm('Clear all saved quiz history for this topic?')){localStorage.removeItem(getStorageKey());loadStats();document.getElementById('historySection').classList.remove('open');}}catch(e){}}
+  document.addEventListener('DOMContentLoaded',loadStats);
+</script>
+</body>
+</html>

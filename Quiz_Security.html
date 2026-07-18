@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AS & A Level 9618 — Security Quiz</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0a0e1a; color: #d0e4ec; min-height: 100vh; display: flex; flex-direction: column; }
+  .bg-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(rgba(200, 60, 60, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(200, 60, 60, 0.04) 1px, transparent 1px); background-size: 60px 60px; z-index: 0; pointer-events: none; }
+  .header { position: relative; z-index: 1; text-align: center; padding: 28px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .header h1 { font-size: 1.5rem; font-weight: 700; color: #f0faff; }
+  .header h1 span { background: linear-gradient(135deg, #e06060, #f0a030); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .header .badge { display: inline-block; background: #2a0a0a; border: 1px solid #a04040; color: #e08080; padding: 2px 14px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; margin-bottom: 6px; }
+  .header p { font-size: 0.85rem; color: #9a6a6a; margin-top: 4px; }
+  .main { position: relative; z-index: 1; max-width: 780px; width: 100%; margin: 0 auto; padding: 20px; flex: 1; display: flex; flex-direction: column; }
+  #setupScreen { animation: fadeIn 0.4s ease-out; }
+  .setup-card { background: rgba(10,14,26,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 20px 24px; backdrop-filter: blur(10px); margin-bottom: 16px; }
+  .setup-card h2 { font-size: 1.05rem; font-weight: 600; color: #e08080; margin-bottom: 10px; }
+  .setup-card p { font-size: 0.88rem; color: #9a6a6a; line-height: 1.5; }
+  .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #3a0a0a, #5a2a2a); border: 1px solid #a04040; color: #e08080; padding: 12px 32px; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-primary:hover { background: linear-gradient(135deg, #5a1a1a, #7a3a3a); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,60,60,0.2); }
+  .btn-secondary { background: rgba(10,14,26,0.6); border: 1px solid #3a1a1a; color: #9a6a6a; padding: 10px 24px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; }
+  .btn-secondary:hover { border-color: #e06060; color: #e08080; }
+  .btn-small { font-size:0.82rem; padding:6px 16px; }
+  .stats-section { background:rgba(10,14,26,0.5); border:1px solid rgba(255,255,255,0.04); border-radius:10px; padding:14px 18px; margin-bottom:10px; display:flex; flex-wrap:wrap; gap:20px; align-items:center; }
+  .stats-section .stat-item { display:flex; align-items:center; gap:8px; font-size:0.85rem; }
+  .stats-section .stat-item .stat-num { font-size:1.2rem; font-weight:700; color:#f0faff; }
+  .stats-section .stat-item .stat-label { color:#9a6a6a; }
+  .history-section { max-height:0; overflow:hidden; transition:max-height 0.35s ease; }
+  .history-section.open { max-height:420px; overflow-y:auto; }
+  .history-item { display:flex; justify-content:space-between; padding:7px 10px; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.82rem; }
+  .history-item:last-child { border-bottom:none; }
+  .history-item .h-date { color:#9a6a6a; }
+  .history-item .h-score { font-weight:600; color:#d0e4ec; }
+  .history-item .h-pct { color:#8bc34a; font-weight:600; }
+  .quiz-options { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .quiz-options label { font-size: 0.88rem; color: #9a6a6a; }
+  .quiz-options select { background: #0a0f1e; border: 1px solid #3a1a1a; border-radius: 6px; color: #d0e4ec; padding: 6px 10px; font-size: 0.88rem; }
+  .quiz-options select:focus { outline: none; border-color: #e06060; }
+  .topic-chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+  .topic-chip { display: inline-block; background: #2a0a0a; border: 1px solid #3a1a1a; border-radius: 16px; padding: 4px 12px; font-size: 0.75rem; color: #e08080; }
+  .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+  .quiz-progress { font-size: 0.85rem; color: #9a6a6a; }
+  .quiz-progress strong { color: #d0e4ec; }
+  .quiz-score { font-size: 0.85rem; color: #8bc34a; }
+  .q-type-tag { display: inline-block; padding: 1px 10px; border-radius: 10px; font-size: 0.68rem; font-weight: 600; background: rgba(200,60,60,0.15); color: #e08080; }
+  .progress-bar-wrap { width: 100%; height: 5px; background: #0a0f1e; border-radius: 3px; overflow: hidden; margin-bottom: 16px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #e06060, #f0a030); transition: width 0.4s ease; border-radius: 3px; }
+  .question-card { background: rgba(10,14,26,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 24px; backdrop-filter: blur(10px); }
+  .question-text { font-size: 1.1rem; font-weight: 600; color: #f0faff; line-height: 1.5; margin-bottom: 18px; }
+  .options-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .option-btn { display: block; width: 100%; text-align: left; padding: 12px 16px; border-radius: 10px; background: rgba(10,14,26,0.4); border: 1px solid rgba(255,255,255,0.06); color: #c0d8e0; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
+  .option-btn:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.02); }
+  .option-btn.selected { border-color: #e06060; background: rgba(200,60,60,0.1); }
+  .option-btn.correct { border-color: #8bc34a; background: rgba(139,195,74,0.1); color: #c3e88d; }
+  .option-btn.incorrect { border-color: #e57373; background: rgba(229,115,115,0.1); color: #ffb8b8; }
+  .option-btn.disabled { cursor: default; pointer-events: none; }
+  .option-btn .opt-letter { display: inline-block; width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.04); text-align: center; line-height: 26px; font-size: 0.78rem; font-weight: 600; margin-right: 10px; }
+  .feedback-area { padding: 12px 16px; border-radius: 10px; margin-bottom: 14px; display: none; font-size: 0.88rem; line-height: 1.5; }
+  .feedback-area.correct { display: block; background: rgba(139,195,74,0.08); border: 1px solid rgba(139,195,74,0.2); color: #b8d8a0; }
+  .feedback-area.incorrect { display: block; background: rgba(229,115,115,0.08); border: 1px solid rgba(229,115,115,0.2); color: #e0b0b0; }
+  .feedback-area .fb-label { font-weight: 700; }
+  .q-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .results-card { background: rgba(10,14,26,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 28px 24px; backdrop-filter: blur(10px); text-align: center; }
+  .results-score { font-size: 3.5rem; font-weight: 800; background: linear-gradient(135deg, #e06060, #f0a030); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
+  .results-label { font-size: 1rem; color: #9a6a6a; margin-top: 4px; }
+  .results-details { display: flex; gap: 20px; justify-content: center; margin: 14px 0; flex-wrap: wrap; }
+  .results-stat { text-align: center; }
+  .results-stat .num { font-size: 1.3rem; font-weight: 700; color: #f0faff; }
+  .results-stat .desc { font-size: 0.76rem; color: #5a7a7a; }
+  .results-msg { font-size: 0.95rem; padding: 10px; border-radius: 8px; margin: 14px 0; }
+  .results-msg.perfect { background: rgba(255,215,0,0.08); color: #ffd700; border: 1px solid rgba(255,215,0,0.15); }
+  .results-msg.great { background: rgba(139,195,74,0.08); color: #8bc34a; border: 1px solid rgba(139,195,74,0.15); }
+  .results-msg.good { background: rgba(240,160,48,0.08); color: #f0a030; border: 1px solid rgba(240,160,48,0.15); }
+  .results-msg.retry { background: rgba(229,115,115,0.08); color: #e57373; border: 1px solid rgba(229,115,115,0.15); }
+  .results-chart { display: flex; gap: 8px; justify-content: center; margin: 14px 0; }
+  .results-chart .bar { width: 36px; border-radius: 4px 4px 0 0; transition: height 0.6s ease; }
+  .results-chart .bar.cb { background: #8bc34a; }
+  .results-chart .bar.ib { background: #e57373; }
+  .review-list { margin-top: 14px; text-align: left; }
+  .review-item { padding: 10px 14px; border-radius: 8px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.04); }
+  .review-item.cr { border-left: 3px solid #8bc34a; }
+  .review-item.ir { border-left: 3px solid #e57373; }
+  .review-item .rq { font-size: 0.85rem; color: #d0e4ec; margin-bottom: 3px; }
+  .review-item .ra { font-size: 0.8rem; }
+  .review-item .ra .ya { color: #e57373; }
+  .review-item .ra .ca { color: #8bc34a; }
+  .footer { position: relative; z-index: 1; text-align: center; padding: 14px; color: #3a5a5a; font-size: 0.72rem; border-top: 1px solid rgba(255,255,255,0.04); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 600px) {
+    .header h1 { font-size: 1.2rem; } .setup-card { padding: 14px; } .question-card { padding: 16px; } .question-text { font-size: 1rem; } .results-score { font-size: 2.5rem; } .quiz-options { flex-direction: column; align-items: stretch; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<header class="header">
+  <div class="badge">Cambridge AS & A Level 9618</div>
+  <h1>🔐 <span>Security</span></h1>
+  <p>Interactive Quiz — Encryption, SSL/TLS, Digital Certificates & Quantum Cryptography</p>
+</header>
+<div class="main">
+  <div id="setupScreen">
+    <div class="setup-card">
+      <h2>🎯 Topic Coverage</h2>
+      <p>This quiz tests your knowledge of symmetric and asymmetric key cryptography, public/private key pairs, digital signatures, SSL/TLS handshake, digital certificates, certificate authorities, and quantum cryptography.</p>
+      <div class="topic-chips">
+        <span class="topic-chip">Symmetric Encryption</span>
+        <span class="topic-chip">Asymmetric Encryption</span>
+        <span class="topic-chip">Public Key</span>
+        <span class="topic-chip">Private Key</span>
+        <span class="topic-chip">Digital Signatures</span>
+        <span class="topic-chip">SSL/TLS</span>
+        <span class="topic-chip">Digital Certificates</span>
+        <span class="topic-chip">CA</span>
+        <span class="topic-chip">Quantum Cryptography</span>
+      </div>
+    </div>
+    <div class="setup-card">
+      <h2>⚙️ Quiz Settings</h2>
+      <div class="quiz-options">
+        <label>Questions: <select id="numQuestions">
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+          <option value="0">All (25)</option>
+        </select></label>
+        <label>Type: <select id="questionType">
+          <option value="all" selected>Mixed</option>
+          <option value="mcq">Multiple Choice</option>
+          <option value="truefalse">True / False</option>
+        </select></label>
+      </div>
+    </div>
+    <div class="setup-card" id="statsCard">
+      <h2>📈 Your Progress</h2>
+      <div class="stats-section" id="statsSection">
+        <div class="stat-item">🏆 Best: <span class="stat-num" id="bestScore">—</span></div>
+        <div class="stat-item">📝 Attempts: <span class="stat-num" id="totalAttempts">0</span></div>
+        <div class="stat-item">📊 Average: <span class="stat-num" id="avgScore">—</span></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-secondary btn-small" onclick="toggleHistory()">📜 History</button>
+        <button class="btn-secondary btn-small" onclick="clearHistory()">🗑️ Clear Data</button>
+      </div>
+      <div class="history-section" id="historySection">
+        <div id="historyList"></div>
+        <p id="historyEmpty" style="color:#9a6a6a;font-size:0.82rem;padding:10px;text-align:center;">No attempts yet. Complete a quiz to see your history!</p>
+      </div>
+    </div>
+    <div style="text-align:center;"><button class="btn-primary" onclick="startQuiz()">🚀 Start Quiz</button></div>
+  </div>
+  <div id="quizScreen" style="display:none;">
+    <div class="quiz-header">
+      <div><span class="quiz-progress">Question <strong id="currentQ">1</strong> of <strong id="totalQ">10</strong></span></div>
+      <span class="quiz-score">✅ <span id="scoreDisplay">0</span>/<span id="totalCorrect">10</span></span>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="question-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span class="q-type-tag" id="qTypeTag">MCQ</span></div>
+      <div class="question-text" id="qText">Loading question...</div>
+      <div class="options-list" id="optionsList"></div>
+      <div class="feedback-area" id="feedbackArea"></div>
+      <div class="q-actions"><button class="btn-secondary" id="nextBtn" style="display:none;" onclick="nextQuestion()">Next →</button></div>
+    </div>
+  </div>
+  <div id="resultsScreen" style="display:none;">
+    <div class="results-card">
+      <div class="results-score" id="finalScore">0%</div>
+      <div class="results-label">Final Score</div>
+      <div class="results-details">
+        <div class="results-stat"><span class="num" id="rCorrect">0</span><div class="desc">Correct</div></div>
+        <div class="results-stat"><span class="num" id="rIncorrect">0</span><div class="desc">Incorrect</div></div>
+        <div class="results-stat"><span class="num" id="rTotal">0</span><div class="desc">Total</div></div>
+      </div>
+      <div class="results-chart" id="resultsChart">
+        <div class="bar cb" id="correctBar" style="height:40px;"></div>
+        <div class="bar ib" id="incorrectBar" style="height:20px;"></div>
+      </div>
+      <div class="results-msg" id="resultsMsg">Great job!</div>
+      <div class="review-list" id="reviewList"></div>
+      <div class="results-actions" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px;">
+        <button class="btn-primary" onclick="resetQuiz()">🔄 Try Again</button>
+        <button class="btn-secondary" onclick="showSetup()">⚙️ Settings</button>
+      </div>
+    </div>
+  </div>
+</div>
+<footer class="footer">Cambridge AS & A Level 9618 &bull; Topic 17: Security &bull; Interactive Quiz</footer>
+<script>
+  const QB = [
+    {type:"mcq", q:"What is the main difference between symmetric and asymmetric encryption?", options:["Symmetric uses one key; asymmetric uses a key pair (public + private)","Symmetric is faster than asymmetric","Symmetric is more secure","There is no difference"], correct:0, explain:"Symmetric encryption uses a single shared key. Asymmetric uses a mathematically linked key pair: a public key and a private key."},
+    {type:"mcq", q:"In asymmetric encryption, which key can be publicly shared?", options:["Private key","Public key","Both keys","Neither key"], correct:1, explain:"The public key is shared openly. The private key is kept secret by the owner and never shared."},
+    {type:"truefalse", q:"If Alice wants to send Bob an encrypted message, she encrypts it using Bob's private key.", correct:false, explain:"Alice encrypts using Bob's public key. Only Bob can decrypt with his private key. This ensures only Bob can read it."},
+    {type:"mcq", q:"What is a digital signature used for?", options:["Encrypting data","Proving authenticity and integrity of a message","Speeding up data transfer","Compressing files"], correct:1, explain:"A digital signature proves the message was created by the claimed sender (authenticity) and hasn't been altered (integrity)."},
+    {type:"mcq", q:"How is a digital signature created?", options:["Encrypting the entire message with a private key","Encrypting a hash of the message with the sender's private key","Encrypting the message with a public key","Decrypting with a shared key"], correct:1, explain:"The sender creates a hash of the message, then encrypts that hash using their private key. This encrypted hash is the digital signature."},
+    {type:"truefalse", q:"The recipient of a digitally signed message can use the sender's public key to verify the signature.", correct:true, explain:"The recipient decrypts the signature using the sender's public key, then compares the result with a freshly computed hash of the message."},
+    {type:"mcq", q:"What does SSL/TLS provide for internet communications?", options:["Faster downloads","Secure encrypted communication between client and server","Larger storage capacity","Free web hosting"], correct:1, explain:"SSL/TLS provides encryption, authentication, and integrity for data transmitted between a client (browser) and a server."},
+    {type:"mcq", q:"During an SSL/TLS handshake, what is the first step?", options:["Data transfer begins","The client sends a 'ClientHello' message with supported cipher suites","The server sends its public key","The session key is generated"], correct:1, explain:"The handshake starts with the client sending a ClientHello message listing supported TLS versions, cipher suites, and a random number."},
+    {type:"truefalse", q:"In SSL/TLS, a session key is a symmetric key generated during the handshake.", correct:true, explain:"A symmetric session key is generated during the handshake using asymmetric encryption. This session key is then used for bulk data encryption."},
+    {type:"mcq", q:"What is a digital certificate?", options:["A password","A document that binds a public key to an entity's identity","A type of encryption algorithm","A hardware device"], correct:1, explain:"A digital certificate (e.g., X.509) is an electronic document that binds a public key to the identity of an entity (person, organisation, domain)."},
+    {type:"mcq", q:"What is the role of a Certificate Authority (CA)?", options:["Encrypt all internet traffic","Issue and verify digital certificates","Manage passwords","Develop encryption algorithms"], correct:1, explain:"A CA is a trusted third party that issues digital certificates, verifying the identity of the certificate holder before issuing."},
+    {type:"truefalse", q:"A self-signed certificate is signed by a trusted Certificate Authority.", correct:false, explain:"A self-signed certificate is signed by its own creator, not by a trusted CA. This means it cannot be verified by a third party."},
+    {type:"mcq", q:"How does quantum key distribution (QKD) detect eavesdropping?", options:["Using complex encryption algorithms","Using the laws of quantum mechanics — any measurement disturbs the quantum state","Using checksums","Using firewall rules"], correct:1, explain:"QKD uses quantum properties — any attempt to measure/intercept the quantum bits changes their state, alerting the communicating parties."},
+    {type:"truefalse", q:"Asymmetric encryption is faster than symmetric encryption for large amounts of data.", correct:false, explain:"Asymmetric encryption is computationally slower than symmetric encryption. In practice, asymmetric is used for key exchange, and symmetric for bulk data encryption."},
+    {type:"mcq", q:"What does a digital certificate typically contain?", options:["The user's password","Subject's public key, identity info, issuer, validity period, and CA signature","The encrypted message","The secret key"], correct:1, explain:"A certificate contains the subject's public key, identifying information, issuer (CA) details, validity dates, and the CA's digital signature."},
+    {type:"mcq", q:"What is a key benefit of symmetric encryption over asymmetric?", options:["No need for secure key exchange","Computationally faster for bulk data","Only requires one party to have a key","It is more secure"], correct:1, explain:"Symmetric encryption is much faster computationally, making it suitable for encrypting large amounts of data. Its weakness is the need for secure key exchange."},
+    {type:"truefalse", q:"The private key in asymmetric encryption can be derived from the public key.", correct:false, explain:"It is computationally infeasible to derive the private key from the public key, which is why the public key can be safely shared."},
+    {type:"mcq", q:"What is a hash function used for in digital signatures?", options:["Encrypt the message","Create a fixed-length digest of the message","Generate the private key","Decrypt the signature"], correct:1, explain:"A hash function produces a fixed-length digest (hash) of the message. This digest is then encrypted with the private key to create the signature."},
+    {type:"truefalse", q:"Quantum computers pose a potential threat to current asymmetric encryption methods.", correct:true, explain:"Shor's algorithm on a sufficiently powerful quantum computer could factor large numbers efficiently, breaking RSA and other asymmetric cryptosystems."},
+    {type:"mcq", q:"What is the main goal of the SSL/TLS handshake?", options:["To transfer data quickly","To agree on cipher suites, authenticate the server, and establish session keys","To compress the data","To set up a firewall"], correct:1, explain:"The SSL/TLS handshake negotiates parameters, authenticates the server (and optionally the client), and establishes shared session keys for secure communication."},
+    {type:"mcq", q:"In the context of security, what does 'non-repudiation' mean?", options:["Data cannot be encrypted","The sender cannot deny having sent the message","Data is compressed","The password cannot be changed"], correct:1, explain:"Non-repudiation ensures that the sender cannot later deny having sent a message. Digital signatures provide non-repudiation."},
+    {type:"truefalse", q:"Symmetric encryption requires a secure method to share the key between sender and receiver.", correct:true, explain:"The major challenge of symmetric encryption is the secure distribution of the shared key. Asymmetric encryption solves this but is slower."},
+    {type:"mcq", q:"What is a key difference between TLS and its predecessor SSL?", options:["TLS is more secure and is based on SSL 3.0","TLS is faster but less secure","TLS uses symmetric encryption only","There is no difference"], correct:0, explain:"TLS (Transport Layer Security) is the successor to SSL (Secure Sockets Layer). TLS 1.0 was based on SSL 3.0 with improvements."},
+    {type:"truefalse", q:"A digital certificate expires after a certain period and must be renewed.", correct:true, explain:"Digital certificates have a validity period defined by the CA. After expiry, the certificate is no longer trusted and must be renewed."},
+    {type:"mcq", q:"What is the main advantage of quantum key distribution over classical encryption?", options:["It is faster","It can detect any eavesdropping attempt","It uses longer keys","It doesn't require keys"], correct:1, explain:"QKD's key advantage is that any interception attempt disturbs the quantum states, making eavesdropping detectable. Classical encryption cannot detect interception."},
+  ];
+  let S = { questions: [], current: 0, score: 0, answers: [], answered: false };
+  function startQuiz() {
+    let pool = [...QB]; const typeFilter = document.getElementById('questionType').value;
+    if (typeFilter !== 'all') { pool = pool.filter(q => q.type === typeFilter); if (!pool.length) { alert('No questions of this type available.'); return; } }
+    for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+    let numQ = parseInt(document.getElementById('numQuestions').value);
+    if (numQ === 0 || numQ > pool.length) numQ = pool.length;
+    S.questions = pool.slice(0, numQ); S.current = 0; S.score = 0; S.answers = []; S.answered = false;
+    showScreen('quizScreen'); renderQ();
+  }
+  function renderQ() {
+    const q = S.questions[S.current]; const total = S.questions.length; const idx = S.current;
+    document.getElementById('currentQ').textContent = idx + 1; document.getElementById('totalQ').textContent = total;
+    document.getElementById('scoreDisplay').textContent = S.score; document.getElementById('totalCorrect').textContent = total;
+    document.getElementById('progressFill').style.width = (idx / total * 100) + '%'; document.getElementById('qText').textContent = q.q;
+    document.getElementById('qTypeTag').textContent = q.type === 'truefalse' ? 'True / False' : 'Multiple Choice';
+    const container = document.getElementById('optionsList'); container.innerHTML = '';
+    if (q.type === 'truefalse') {
+      ['True','False'].forEach((text,i) => { const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerHTML = '<span class="opt-letter">'+(i===0?'T':'F')+'</span>'+text; btn.dataset.index = i; btn.addEventListener('click',()=>selectAns(i)); container.appendChild(btn); });
+    } else {
+      const letters = ['A','B','C','D']; q.options.forEach((text,i) => { const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerHTML = '<span class="opt-letter">'+letters[i]+'</span>'+text; btn.dataset.index = i; btn.addEventListener('click',()=>selectAns(i)); container.appendChild(btn); });
+    }
+    const fb = document.getElementById('feedbackArea'); fb.className = 'feedback-area'; fb.textContent = ''; document.getElementById('nextBtn').style.display = 'none'; S.answered = false;
+  }
+  function selectAns(index) {
+    if (S.answered) return; S.answered = true;
+    const q = S.questions[S.current]; const buttons = document.querySelectorAll('.option-btn'); const correct = (index === q.correct);
+    buttons.forEach((btn,i) => { btn.classList.add('disabled'); if (i === q.correct) btn.classList.add('correct'); if (i === index && !correct) btn.classList.add('incorrect'); if (i === index) btn.classList.add('selected'); });
+    if (correct) S.score++; document.getElementById('scoreDisplay').textContent = S.score;
+    const fb = document.getElementById('feedbackArea'); fb.className = 'feedback-area ' + (correct ? 'correct' : 'incorrect');
+    fb.innerHTML = '<span class="fb-label">' + (correct ? '✅ Correct!' : '❌ Incorrect.') + '</span> ' + q.explain;
+    S.answers.push({selected: index, correctIdx: q.correct, question: q, wasCorrect: correct});
+    const nextBtn = document.getElementById('nextBtn'); nextBtn.style.display = 'inline-flex'; nextBtn.textContent = (S.current === S.questions.length - 1) ? '📊 See Results' : 'Next →';
+  }
+  function nextQuestion() { if (S.current >= S.questions.length - 1) { showResults(); return; } S.current++; renderQ(); }
+  function showResults() {
+    showScreen('resultsScreen'); const total = S.questions.length; const correct = S.score; const incorrect = total - correct; const pct = total > 0 ? Math.round(correct/total*100) : 0;
+    document.getElementById('finalScore').textContent = pct+'%'; document.getElementById('rCorrect').textContent = correct; document.getElementById('rIncorrect').textContent = incorrect; document.getElementById('rTotal').textContent = total;
+    const maxH = 80; document.getElementById('correctBar').style.height = (total > 0 ? (correct/total)*maxH : 0) + 'px'; document.getElementById('incorrectBar').style.height = (total > 0 ? (incorrect/total)*maxH : 0) + 'px';
+    const msg = document.getElementById('resultsMsg'); msg.className = 'results-msg';
+    if (pct === 100) { msg.textContent = '🏆 Perfect! You\'ve mastered Security!'; msg.classList.add('perfect'); }
+    else if (pct >= 80) { msg.textContent = '🌟 Excellent! Strong understanding of encryption and protocols.'; msg.classList.add('great'); }
+    else if (pct >= 60) { msg.textContent = '👍 Good effort! Review the incorrect answers below.'; msg.classList.add('good'); }
+    else { msg.textContent = '📚 Keep studying! Review the presentation and try again.'; msg.classList.add('retry'); }
+    const rl = document.getElementById('reviewList'); rl.innerHTML = '<h3 style="font-size:0.92rem;color:#e08080;margin-bottom:8px;">📋 Review Answers</h3>';
+    const letters = ['A','B','C','D']; S.answers.forEach((a,i) => {
+      const item = document.createElement('div'); item.className = 'review-item ' + (a.wasCorrect ? 'cr' : 'ir'); const q = a.question; const ya = q.type === 'truefalse' ? (a.selected===0?'True':'False') : letters[a.selected]; const ca = q.type === 'truefalse' ? 'True' : letters[a.correctIdx];
+      item.innerHTML = '<div class="rq">'+(i+1)+'. '+q.q+'</div><div class="ra">'+(a.wasCorrect ? '<span style="color:#8bc34a;">✅ Correct</span>' : '<span class="ya">❌ Your answer: '+ya+'</span> — <span class="ca">Correct: '+ca+'</span>')+'</div><div style="color:#5a9a8a;font-size:0.76rem;margin-top:3px;">'+q.explain+'</div>'; rl.appendChild(item);
+    });
+    saveResult(correct, total);
+  }
+  function resetQuiz() { S.current=0; S.score=0; S.answers=[]; S.answered=false; const pool=S.questions; for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];} showScreen('quizScreen'); renderQ(); }
+  function showSetup() { showScreen('setupScreen'); }
+  function showScreen(id) { ['setupScreen','quizScreen','resultsScreen'].forEach(s=>{const el=document.getElementById(s);if(el)el.style.display=(s===id?'block':'none');}); }
+
+  const QUIZ_TOPIC = 'Security';
+  function getStorageKey(){return 'quiz9618_'+QUIZ_TOPIC.replace(/[^a-zA-Z0-9]/g,'_');}
+  function getStats(){try{const d=localStorage.getItem(getStorageKey());return d?JSON.parse(d):{best:null,attempts:[]};}catch(e){return{best:null,attempts:[]};}}
+  function saveResult(correct,total){try{const stats=getStats();const pct=Math.round(correct/total*100);const entry={date:new Date().toISOString(),correct,total,pct};stats.attempts.push(entry);if(stats.best===null||pct>stats.best.pct)stats.best=entry;localStorage.setItem(getStorageKey(),JSON.stringify(stats));loadStats();}catch(e){}}
+  function loadStats(){try{const stats=getStats();document.getElementById('bestScore').textContent=stats.best?stats.best.correct+'/'+stats.best.total+' ('+stats.best.pct+'%)':'—';document.getElementById('totalAttempts').textContent=stats.attempts.length;if(stats.attempts.length>0){const avg=Math.round(stats.attempts.reduce((s,a)=>s+a.pct,0)/stats.attempts.length);document.getElementById('avgScore').textContent=avg+'%';}else document.getElementById('avgScore').textContent='—';const hl=document.getElementById('historyList');const he=document.getElementById('historyEmpty');if(hl){hl.innerHTML='';if(stats.attempts.length===0){if(he)he.style.display='block';}else{if(he)he.style.display='none';[...stats.attempts].reverse().slice(0,30).forEach(a=>{const d=new Date(a.date);const ds=d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});const div=document.createElement('div');div.className='history-item';div.innerHTML='<span class="h-date">'+ds+'</span><span class="h-score">'+a.correct+'/'+a.total+'</span><span class="h-pct">'+a.pct+'%</span>';hl.appendChild(div);});}}}catch(e){}}
+  function toggleHistory(){document.getElementById('historySection').classList.toggle('open');}
+  function clearHistory(){try{if(confirm('Clear all saved quiz history for this topic?')){localStorage.removeItem(getStorageKey());loadStats();document.getElementById('historySection').classList.remove('open');}}catch(e){}}
+  document.addEventListener('DOMContentLoaded',loadStats);
+</script>
+</body>
+</html>

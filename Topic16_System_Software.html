@@ -1,0 +1,2012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topic 16: System Software — Cambridge 9618</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #080c18;
+    color: #e0e8f0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+  .presentation { position: relative; width: 100vw; height: 100vh; }
+  .slide {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none;
+    flex-direction: column;
+    padding: 36px 50px;
+    background: linear-gradient(135deg, #0a0e1e 0%, #101838 50%, #0a0e1e 100%);
+    overflow-y: auto;
+  }
+  .slide.active { display: flex; }
+  .slide::-webkit-scrollbar { width: 6px; }
+  .slide::-webkit-scrollbar-track { background: #0a0e1e; }
+  .slide::-webkit-scrollbar-thumb { background: #1a5a6a; border-radius: 3px; }
+
+  h1 { font-size: 2.4rem; font-weight: 700; color: #f0f6ff; margin-bottom: 8px; letter-spacing: -0.5px; }
+  h2 { font-size: 1.6rem; font-weight: 600; color: #b8d4ff; margin-bottom: 6px; border-bottom: 2px solid #1a7a6a; padding-bottom: 4px; }
+  h3 { font-size: 1.2rem; font-weight: 600; color: #8bb8ff; margin-bottom: 5px; }
+  h4 { font-size: 1rem; font-weight: 600; color: #5ae0c0; margin-bottom: 4px; }
+  p, li { font-size: 1rem; line-height: 1.5; color: #d0dcec; margin-bottom: 4px; }
+  ul { padding-left: 20px; margin-bottom: 6px; }
+  li { margin-bottom: 2px; }
+  strong { color: #e8f0ff; }
+
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 0.88rem; }
+  th { background: #0e2840; color: #5ae0c0; font-weight: 600; padding: 7px 10px; text-align: left; border: 1px solid #1a5a6a; }
+  td { padding: 6px 10px; border: 1px solid #1a3a4a; color: #c8d8ec; }
+  tr:nth-child(even) td { background: #0a0e1e; }
+  tr:nth-child(odd) td { background: #0e1428; }
+
+  .code-block { font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; background: #080c18; border: 1px solid #1a5a6a; border-radius: 8px; padding: 10px 14px; font-size: 0.82rem; line-height: 1.5; color: #d4e4ff; overflow-x: auto; margin: 6px 0; white-space: pre; }
+  .inline-code { font-family: 'Cascadia Code', 'Consolas', monospace; background: #080c18; color: #5ae0c0; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; border: 1px solid #1a5a6a; }
+
+  .flex-row { display: flex; flex-direction: row; gap: 16px; }
+  .flex-col { display: flex; flex-direction: column; gap: 6px; }
+  .flex-1 { flex: 1; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
+  .mt-6 { margin-top: 6px; } .mt-8 { margin-top: 8px; } .mt-10 { margin-top: 10px; } .mt-12 { margin-top: 12px; }
+  .mb-6 { margin-bottom: 6px; } .mb-8 { margin-bottom: 8px; } .mb-10 { margin-bottom: 10px; }
+  .text-center { text-align: center; }
+
+  .card { background: #0a0e1e; border: 1px solid #1a5a6a; border-radius: 10px; padding: 10px 12px; transition: border-color 0.2s; }
+  .card:hover { border-color: #2ac8a0; }
+  .card h4 { color: #5ae0c0; margin-bottom: 3px; }
+
+  .diagram-box { background: #080c18; border: 1px solid #1a5a6a; border-radius: 10px; padding: 12px; margin: 8px 0; display: flex; flex-direction: column; align-items: center; }
+  .diagram-box svg { max-width: 100%; height: auto; }
+  .diagram-caption { margin-top: 5px; font-size: 0.78rem; color: #7ab8a8; font-style: italic; text-align: center; }
+
+  .callout { background: #0a0e1e; border-left: 4px solid #f78c6c; padding: 8px 12px; border-radius: 0 6px 6px 0; margin: 5px 0; font-size: 0.9rem; }
+  .callout.info { border-left-color: #2ac8a0; }
+  .callout.warn { border-left-color: #f78c6c; }
+  .callout.success { border-left-color: #8bc34a; }
+
+  .section-badge { display: inline-block; background: linear-gradient(135deg, #0a2840, #1a5a6a); color: #5ae0c0; padding: 3px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; margin-bottom: 6px; letter-spacing: 0.5px; text-transform: uppercase; border: 1px solid #2a9a8a; }
+
+  .objectives-list { list-style: none; padding: 0; }
+  .objectives-list li { padding: 6px 10px 6px 30px; background: #080c18; border-left: 3px solid #2ac8a0; margin-bottom: 6px; border-radius: 0 6px 6px 0; position: relative; }
+  .objectives-list li::before { content: "▸"; position: absolute; left: 10px; color: #2ac8a0; font-weight: bold; }
+
+  .worked-example { background: linear-gradient(135deg, #0c1a20, #0e2828); border: 1px solid #2a9a8a; border-radius: 10px; padding: 12px 16px; margin: 6px 0; }
+  .worked-example h4 { color: #f78c6c; margin-bottom: 5px; }
+
+  .key-term-box { background: linear-gradient(135deg, #1a0a2e, #2a0a4a); border: 1px solid #6a3aaa; border-radius: 10px; padding: 10px 14px; margin: 6px 0; }
+  .key-term-box h4 { color: #b080f0; }
+  .key-term-box h4::before { content: "🔑 "; }
+
+  .exam-tip-box { background: linear-gradient(135deg, #1a1a0a, #2a2a0a); border: 1px solid #c8a020; border-radius: 10px; padding: 8px 14px; margin: 6px 0; }
+  .exam-tip-box h4 { color: #f0c040; }
+  .exam-tip-box h4::before { content: "💡 "; }
+
+  .common-mistake-box { background: linear-gradient(135deg, #2a0a0a, #3a1a0a); border: 1px solid #c04040; border-radius: 10px; padding: 8px 14px; margin: 6px 0; }
+  .common-mistake-box h4 { color: #e06060; }
+  .common-mistake-box h4::before { content: "⚠️ "; }
+
+  .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 8px 20px; background: rgba(8,12,24,0.94); backdrop-filter: blur(10px); border-top: 1px solid #1a3a4a; z-index: 100; }
+  .nav-bar button { background: #0e2840; border: 1px solid #1a5a6a; color: #5ae0c0; padding: 6px 16px; border-radius: 6px; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+  .nav-bar button:hover { background: #1a5a6a; }
+  .nav-bar button:disabled { opacity: 0.35; cursor: default; }
+  .nav-bar .slide-counter { color: #7ab8a8; font-size: 0.82rem; min-width: 80px; text-align: center; }
+  .nav-bar .progress-dots { display: flex; gap: 3px; flex-wrap: wrap; max-width: 400px; justify-content: center; }
+  .nav-bar .dot { width: 6px; height: 6px; border-radius: 50%; background: #1a3a4a; border: none; cursor: pointer; padding: 0; transition: background 0.2s; }
+  .nav-bar .dot.active { background: #2ac8a0; }
+  .nav-bar .dot:hover { background: #3aaa7a; }
+
+  .slide-number { position: absolute; bottom: 48px; right: 20px; color: #1a2a3a; font-size: 0.78rem; font-weight: 600; z-index: 1; }
+  .kbd-hint { position: fixed; bottom: 52px; right: 16px; color: #2a5a5a; font-size: 0.7rem; z-index: 90; }
+
+  .chip-group { display: flex; gap: 6px; flex-wrap: wrap; margin: 5px 0; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; background: #080c18; border: 1px solid #1a5a6a; border-radius: 20px; padding: 3px 10px; font-size: 0.78rem; color: #5ae0c0; }
+  .tag { display: inline-block; background: #0e2840; color: #5ae0c0; padding: 2px 10px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; border: 1px solid #1a5a6a; margin-right: 3px; }
+
+  @media (max-width: 900px) {
+    .slide { padding: 20px 18px; }
+    h1 { font-size: 1.6rem; }
+    h2 { font-size: 1.2rem; }
+    h3 { font-size: 1rem; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .flex-row { flex-direction: column; }
+    .nav-bar .progress-dots { max-width: 200px; }
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .slide.active > * { animation: fadeIn 0.35s ease-out; }
+</style>
+</head>
+<body>
+<div class="presentation" id="presentation"></div>
+
+<div class="nav-bar">
+  <button id="prevBtn" onclick="changeSlide(-1)">◀ Prev</button>
+  <span class="slide-counter" id="slideCounter">1 / 1</span>
+  <div class="progress-dots" id="progressDots"></div>
+  <button id="nextBtn" onclick="changeSlide(1)">Next ▶</button>
+</div>
+<div class="kbd-hint">← → arrow keys to navigate</div>
+
+<script>
+const slides = [];
+function addSlide(html) { slides.push(html); }
+
+function renderSlides() {
+  const container = document.getElementById('presentation');
+  slides.forEach((html, i) => {
+    const div = document.createElement('div');
+    div.className = 'slide' + (i === 0 ? ' active' : '');
+    div.dataset.slide = i + 1;
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+  renderDots();
+  updateNav();
+}
+
+function renderDots() {
+  const dots = document.getElementById('progressDots');
+  if (!dots) return;
+  dots.innerHTML = '';
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'dot' + (i === currentSlide ? ' active' : '');
+    dot.onclick = () => goToSlide(i);
+    dots.appendChild(dot);
+  });
+}
+
+let currentSlide = 0;
+
+function changeSlide(dir) {
+  const next = currentSlide + dir;
+  if (next < 0 || next >= slides.length) return;
+  goToSlide(next);
+}
+
+function goToSlide(idx) {
+  const all = document.querySelectorAll('.slide');
+  all.forEach(s => s.classList.remove('active'));
+  all[idx].classList.add('active');
+  currentSlide = idx;
+  const counter = document.getElementById('slideCounter');
+  if (counter) counter.textContent = (idx + 1) + ' / ' + slides.length;
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === slides.length - 1;
+  renderDots();
+  all[idx].scrollTop = 0;
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+});
+
+function updateNav() {
+  const counter = document.getElementById('slideCounter');
+  if (counter) counter.textContent = '1 / ' + slides.length;
+  document.getElementById('prevBtn').disabled = true;
+  if (slides.length <= 1) document.getElementById('nextBtn').disabled = true;
+}
+
+// ==================================================================
+// ALL SLIDES START HERE
+// ==================================================================
+
+// ==================================================================
+// SLIDE 1 – TITLE SLIDE
+// ==================================================================
+addSlide(`
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+    <div class="section-badge" style="margin-bottom:14px;">Cambridge International AS &amp; A Level — 9618</div>
+    <h1 style="font-size:3rem; margin-bottom:6px;">Topic 16</h1>
+    <h1 style="font-size:2.6rem; margin-bottom:8px; color:#5ae0c0;">System Software</h1>
+    <div style="width:80px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:18px;"></div>
+    <p style="font-size:1.1rem; color:#7ab8a8; margin-bottom:16px;">Cambridge International AS &amp; A Level Computer Science 9618</p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:700px;">
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Operating Systems</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Process Management</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Scheduling</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Virtual Memory</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Compilers</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">BNF &amp; RPN</span>
+    </div>
+    <div style="margin-top:24px; text-align:left; max-width:650px;">
+      <h4 style="color:#b8d4ff; margin-bottom:8px;">Learning Objectives:</h4>
+      <ul>
+        <li>Show understanding of how an OS can maximise use of resources</li>
+        <li>Describe how the user interface hides hardware complexity</li>
+        <li>Show understanding of process management and scheduling</li>
+        <li>Understand virtual memory, paging and segmentation</li>
+        <li>Show understanding of how interpreters execute programs</li>
+        <li>Understand the stages of compilation</li>
+        <li>Use syntax diagrams and BNF notation</li>
+        <li>Evaluate expressions using Reverse Polish Notation</li>
+      </ul>
+    </div>
+    <p style="color:#3a6a6a; font-size:0.82rem; margin-top:20px;">Press <span class="inline-code">→</span> or click navigation to begin</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 2 – BIG PICTURE OVERVIEW
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Topic 16 Overview</div>
+  <h2>Big Picture of Topic 16</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:10px;"></div>
+  <p style="margin-bottom:10px;"><strong>System software</strong> manages the computer system and provides a platform for running application software.</p>
+  <div class="grid-2" style="margin-top:8px;">
+    <div class="card">
+      <h4>16.1 Purposes of an OS</h4>
+      <ul>
+        <li>Resource management and maximisation</li>
+        <li>User interface hiding hardware complexity</li>
+        <li>Process management and multi-tasking</li>
+        <li>Process states: running, ready, blocked</li>
+        <li>Scheduling routines (RR, SJF, FCFS, SRT)</li>
+        <li>Kernel as interrupt handler</li>
+        <li>Virtual memory, paging, segmentation</li>
+        <li>Page replacement and disk thrashing</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>16.2 Translation Software</h4>
+      <ul>
+        <li>Interpreters vs compilers</li>
+        <li>Stages of compilation</li>
+        <li>Lexical and syntax analysis</li>
+        <li>Code generation and optimisation</li>
+        <li>Syntax diagrams and BNF notation</li>
+        <li>Reverse Polish Notation (RPN)</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 3 – WHAT IS AN OPERATING SYSTEM?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Operating Systems</div>
+  <h2>What Is an Operating System?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p>An <strong>operating system (OS)</strong> is a set of programs that manages the hardware and software resources of a computer system.</p>
+        <p style="margin-top:6px;">It provides a <strong>bridge</strong> between the user/application software and the physical hardware.</p>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Operating System:</strong> System software that manages computer hardware and software resources, and provides common services for computer programs.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Core Functions of an OS</h4>
+        <ul>
+          <li><strong>Process management</strong> — scheduling and managing running programs</li>
+          <li><strong>Memory management</strong> — allocating RAM to processes</li>
+          <li><strong>File management</strong> — organising and controlling file storage</li>
+          <li><strong>Device management</strong> — controlling peripherals via drivers</li>
+          <li><strong>Security and access control</strong> — protecting resources</li>
+          <li><strong>User interface</strong> — providing a way to interact with the system</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 4 – MAXIMISING USE OF RESOURCES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Operating Systems</div>
+  <h2>Maximising Use of Resources</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How the OS Maximises Resources</h4>
+        <ul>
+          <li><strong>CPU utilisation:</strong> The OS schedules processes efficiently so the CPU is never idle when work is available</li>
+          <li><strong>Memory utilisation:</strong> Virtual memory and paging allow more programs to run than physical RAM alone would support</li>
+          <li><strong>I/O management:</strong> Buffering, spooling and interrupt-driven I/O keep devices busy without wasting CPU time</li>
+          <li><strong>Disk management:</strong> File systems organise data efficiently to minimise seek times</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Resource Types Managed by OS</h4>
+        <table>
+          <tr><th>Resource</th><th>How OS Manages It</th></tr>
+          <tr><td>CPU time</td><td>Scheduling algorithms allocate CPU time to processes</td></tr>
+          <tr><td>Memory (RAM)</td><td>Allocation, paging, segmentation, virtual memory</td></tr>
+          <tr><td>Storage</td><td>File systems, directories, access permissions</td></tr>
+          <tr><td>I/O devices</td><td>Device drivers, interrupt handling, buffers</td></tr>
+          <tr><td>Network</td><td>Protocol stacks, bandwidth management</td></tr>
+        </table>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>When asked how an OS maximises resources, give <strong>specific examples</strong> — e.g., "The OS uses scheduling algorithms to ensure the CPU is kept busy, and virtual memory to allow more processes to run than physical RAM alone would permit."</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 5 – USER INTERFACE HIDING HARDWARE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Operating Systems</div>
+  <h2>User Interface — Hiding Hardware Complexity</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Abstraction Layers</h4>
+        <p>The OS provides <strong>abstraction</strong> — it hides the low-level details of hardware from users and applications.</p>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>Examples of Abstraction</h4>
+        <table>
+          <tr><th>Hardware Detail</th><th>What User Sees</th></tr>
+          <tr><td>Disk sectors, tracks, heads</td><td>Files and folders</td></tr>
+          <tr><td>Memory addresses and page tables</td><td>Running programs with available memory</td></tr>
+          <tr><td>CPU registers and instruction cycles</td><td>A user interface with windows and icons</td></tr>
+          <tr><td>Network packets, MAC addresses</td><td>A web browser that "just works"</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 280 160" style="width:100%; max-width:280px;">
+          <rect x="8" y="8" width="264" height="24" rx="4" fill="#0e2840" stroke="#5ae0c0" stroke-width="1.5"/>
+          <text x="40" y="24" fill="#5ae0c0" font-size="10" font-weight="600">User / Application Software</text>
+          <line x1="140" y1="32" x2="140" y2="42" stroke="#4a7ac8" stroke-width="1.5"/>
+          <rect x="8" y="42" width="264" height="24" rx="4" fill="#1a2840" stroke="#7ab8ff" stroke-width="1.5"/>
+          <text x="70" y="58" fill="#7ab8ff" font-size="10" font-weight="600">Operating System (Abstraction)</text>
+          <line x1="140" y1="66" x2="140" y2="76" stroke="#4a7ac8" stroke-width="1.5"/>
+          <rect x="8" y="76" width="264" height="24" rx="4" fill="#1a1a0a" stroke="#f0c040" stroke-width="1.5"/>
+          <text x="91" y="92" fill="#f0c040" font-size="10" font-weight="600">Device Drivers / Kernel</text>
+          <line x1="140" y1="100" x2="140" y2="110" stroke="#4a7ac8" stroke-width="1.5"/>
+          <rect x="8" y="110" width="264" height="24" rx="4" fill="#2a1a0a" stroke="#e06060" stroke-width="1.5"/>
+          <text x="95" y="126" fill="#e06060" font-size="10" font-weight="600">Physical Hardware</text>
+        </svg>
+        <div class="diagram-caption">Each layer abstracts the details of the layer below</div>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Key idea:</strong> The OS provides a <strong>virtual machine</strong> to each application — making hardware appear simpler and more uniform than it actually is.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 6 – PROCESS MANAGEMENT INTRODUCTION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Process Management</div>
+  <h2>Process Management — Introduction</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is a Process?</h4>
+        <p>A <strong>process</strong> is a program in execution. It includes the program code, current activity (program counter, registers) and associated resources.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Process vs Program</h4>
+        <table>
+          <tr><th>Program</th><th>Process</th></tr>
+          <tr><td>Passive — stored on disk</td><td>Active — loaded in memory</td></tr>
+          <tr><td>Static code</td><td>Dynamic — has state</td></tr>
+          <tr><td>One program can create many processes</td><td>Each process is unique</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Process:</strong> A program in execution — includes the program code, current values of the program counter and registers, and the process stack.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Process Control Block (PCB)</h4>
+        <p>The OS stores information about each process in a <strong>Process Control Block</strong>, which contains:</p>
+        <ul>
+          <li>Process ID (PID)</li>
+          <li>Process state (running, ready, blocked)</li>
+          <li>Program counter</li>
+          <li>CPU registers</li>
+          <li>Memory limits</li>
+          <li>List of open files</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 7 – MULTI-TASKING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Process Management</div>
+  <h2>Multi-Tasking</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is Multi-Tasking?</h4>
+        <p><strong>Multi-tasking</strong> is the ability of an OS to run multiple processes seemingly simultaneously by rapidly switching between them.</p>
+        <p style="margin-top:6px;">The CPU can only execute one instruction at a time, but by switching between processes very quickly (context switching), it creates the <strong>illusion</strong> of parallelism.</p>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>How Multi-Tasking Works</h4>
+        <ol>
+          <li>Process A runs for a short time slice</li>
+          <li>OS <strong>interrupts</strong> Process A</li>
+          <li><strong>Context switch</strong> — saves A's state, loads B's state</li>
+          <li>Process B runs for a time slice</li>
+          <li>Repeat, cycling through all ready processes</li>
+        </ol>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Context switch:</strong> The process of saving the state of one process (registers, program counter) and loading the saved state of another process so it can resume execution.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Benefits of Multi-Tasking</h4>
+        <ul>
+          <li>Better <strong>CPU utilisation</strong> — CPU is kept busy</li>
+          <li>Improved <strong>user experience</strong> — multiple apps feel simultaneous</li>
+          <li><strong>Fairness</strong> — all processes get CPU time</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 8 – PROCESS STATES: RUNNING, READY, BLOCKED
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Process Management</div>
+  <h2>Process States — Running, Ready, Blocked</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Three Process States</h4>
+        <table>
+          <tr><th>State</th><th>Description</th></tr>
+          <tr><td><strong>Running</strong></td><td>The process is currently being executed by the CPU</td></tr>
+          <tr><td><strong>Ready</strong></td><td>The process is loaded in memory and waiting for CPU time</td></tr>
+          <tr><td><strong>Blocked</strong></td><td>The process is waiting for an event (e.g., I/O completion) before it can continue</td></tr>
+        </table>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Process state:</strong> The current status of a process — running, ready, or blocked. A process moves between these states during its lifetime.</p>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 320 180" style="width:100%; max-width:320px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="10" font-weight="600">Process State Diagram</text>
+          <rect x="100" y="24" width="90" height="36" rx="6" fill="#0e2840" stroke="#2ac8a0" stroke-width="2"/>
+          <text x="116" y="48" fill="#2ac8a0" font-size="12" font-weight="700">Running</text>
+          <rect x="10" y="100" width="90" height="36" rx="6" fill="#1a2840" stroke="#7ab8ff" stroke-width="2"/>
+          <text x="26" y="124" fill="#7ab8ff" font-size="12" font-weight="700">Ready</text>
+          <rect x="200" y="100" width="90" height="36" rx="6" fill="#2a1a0a" stroke="#f78c6c" stroke-width="2"/>
+          <text x="218" y="124" fill="#f78c6c" font-size="12" font-weight="700">Blocked</text>
+          <text x="60" y="86" fill="#4a7ac8" font-size="8">Scheduler selects</text>
+          <text x="50" y="96" fill="#4a7ac8" font-size="8">← from ready queue →</text>
+          <text x="152" y="74" fill="#e06060" font-size="8">Interrupt /</text>
+          <text x="155" y="84" fill="#e06060" font-size="8">time slice</text>
+          <text x="152" y="96" fill="#e06060" font-size="8">expired</text>
+          <text x="142" y="108" fill="#f78c6c" font-size="7">→ Waiting</text>
+          <text x="142" y="118" fill="#f78c6c" font-size="7">for I/O →</text>
+          <text x="98" y="154" fill="#8bc34a" font-size="7">← I/O complete / event occurs ←</text>
+        </svg>
+        <div class="diagram-caption">Arrows show transitions between states</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 9 – PROCESS STATE TRANSITIONS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Process Management</div>
+  <h2>Process State Transitions</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Detailed Transitions</h4>
+    <table>
+      <thead><tr><th>Transition</th><th>From</th><th>To</th><th>When It Happens</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Dispatch</strong></td><td>Ready</td><td>Running</td><td>Scheduler selects a ready process to run</td></tr>
+        <tr><td><strong>Time slice expired</strong></td><td>Running</td><td>Ready</td><td>Process used its allocated CPU time; returned to ready queue</td></tr>
+        <tr><td><strong>Interrupt</strong></td><td>Running</td><td>Ready</td><td>Higher priority process needs CPU; current process preempted</td></tr>
+        <tr><td><strong>Wait</strong></td><td>Running</td><td>Blocked</td><td>Process requests I/O or an event that hasn't occurred yet</td></tr>
+        <tr><td><strong>Wake up</strong></td><td>Blocked</td><td>Ready</td><td>I/O completes or the awaited event occurs</td></tr>
+        <tr><td><strong>New → Ready</strong></td><td>New</td><td>Ready</td><td>Process is loaded into memory and added to ready queue</td></tr>
+        <tr><td><strong>Running → Terminated</strong></td><td>Running</td><td>Terminated</td><td>Process finishes execution or is killed</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>You should be able to <strong>draw</strong> the process state diagram with transitions and <strong>explain</strong> what causes each transition. The three main states are running, ready, and blocked.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 10 – SCHEDULING INTRODUCTION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Scheduling</div>
+  <h2>Scheduling — Introduction</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is Scheduling?</h4>
+        <p><strong>Scheduling</strong> is the method by which the OS decides which process gets the CPU and for how long.</p>
+        <p style="margin-top:6px;">The part of the OS that performs scheduling is called the <strong>scheduler</strong>.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Why Is Scheduling Needed?</h4>
+        <ul>
+          <li>Multiple processes compete for limited CPU time</li>
+          <li>Need to ensure <strong>fairness</strong> — no process is starved</li>
+          <li>Need to <strong>maximise CPU utilisation</strong></li>
+          <li>Need to <strong>minimise response time</strong> for interactive tasks</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Scheduling:</strong> The process of deciding which process in the ready queue should be allocated the CPU. The scheduling algorithm determines the order and duration of CPU access.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Four Scheduling Routines</h4>
+        <ul>
+          <li><strong>Round Robin (RR)</strong></li>
+          <li><strong>Shortest Job First (SJF)</strong></li>
+          <li><strong>First Come First Served (FCFS)</strong></li>
+          <li><strong>Shortest Remaining Time (SRT)</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 11 – ROUND ROBIN SCHEDULING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Scheduling</div>
+  <h2>Round Robin (RR) Scheduling</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How It Works</h4>
+        <ul>
+          <li>Each process gets a fixed <strong>time slice</strong> (quantum)</li>
+          <li>Processes are arranged in a <strong>circular queue</strong></li>
+          <li>CPU cycles through processes, giving each one time quantum</li>
+          <li>If a process doesn't finish, it goes to the back of the queue</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Benefits</h4>
+        <ul>
+          <li><strong>Fair</strong> — every process gets equal CPU time</li>
+          <li><strong>Good response time</strong> for interactive tasks</li>
+          <li>No process <strong>starvation</strong></li>
+          <li>Simple to implement</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Limitations</h4>
+        <ul>
+          <li>If time quantum is too small → too many <strong>context switches</strong> (overhead)</li>
+          <li>If time quantum is too large → behaves like FCFS</li>
+          <li>Not optimal for <strong>throughput</strong></li>
+        </ul>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>Example (Quantum = 4ms)</h4>
+        <p>Processes: P1 (10ms), P2 (5ms), P3 (8ms)</p>
+        <div class="code-block" style="font-size:0.7rem;">
+Time 0-4:  P1 runs  (remaining: 6)
+Time 4-8:  P2 runs  (remaining: 1)
+Time 8-12: P3 runs  (remaining: 4)
+Time 12-16: P1 runs (remaining: 2)  ← back to P1
+Time 16-17: P2 runs (FINISHED)
+Time 17-21: P3 runs (FINISHED)
+Time 21-23: P1 runs (FINISHED)
+        </div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 12 – SHORTEST JOB FIRST (SJF)
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Scheduling</div>
+  <h2>Shortest Job First (SJF) Scheduling</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How It Works</h4>
+        <ul>
+          <li>The process with the <strong>shortest estimated total execution time</strong> runs next</li>
+          <li>Non-preemptive — once a process starts, it runs to completion</li>
+          <li>The scheduler must know or estimate the CPU burst time of each process</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Benefits</h4>
+        <ul>
+          <li><strong>Minimises average waiting time</strong></li>
+          <li>Good for batch processing where job times are known</li>
+          <li>Optimal in terms of average turnaround time</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Limitations</h4>
+        <ul>
+          <li>Can cause <strong>starvation</strong> — long jobs may never run if short jobs keep arriving</li>
+          <li>Requires <strong>advance knowledge</strong> of execution time (often impossible)</li>
+          <li>Not suitable for interactive systems</li>
+        </ul>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>Example</h4>
+        <p>Processes arriving at time 0: P1 (10ms), P2 (3ms), P3 (5ms)</p>
+        <div class="code-block" style="font-size:0.7rem;">
+SJF order: P2 (3ms) → P3 (5ms) → P1 (10ms)
+
+P2 finishes at: 3
+P3 finishes at: 8
+P1 finishes at: 18
+
+Average waiting time: (0 + 3 + 8) / 3 = 3.67ms
+        </div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 13 – FIRST COME FIRST SERVED (FCFS)
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Scheduling</div>
+  <h2>First Come First Served (FCFS) Scheduling</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How It Works</h4>
+        <ul>
+          <li>Processes are executed in the <strong>order they arrive</strong></li>
+          <li>Implemented as a <strong>first-in, first-out (FIFO) queue</strong></li>
+          <li>Non-preemptive — once a process gets the CPU, it runs to completion</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Benefits</h4>
+        <ul>
+          <li><strong>Simple</strong> to implement and understand</li>
+          <li><strong>Fair</strong> in the sense of arrival order</li>
+          <li><strong>No starvation</strong> — every process eventually runs</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Limitations</h4>
+        <ul>
+          <li><strong>Convoy effect</strong> — a long job blocks many short jobs behind it</li>
+          <li>Poor <strong>average waiting time</strong> if a long job arrives first</li>
+          <li>Not suitable for <strong>interactive systems</strong></li>
+        </ul>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>Example</h4>
+        <p>Processes arriving at time 0: P1 (20ms), P2 (2ms), P3 (2ms)</p>
+        <div class="code-block" style="font-size:0.7rem;">
+FCFS order: P1 → P2 → P3
+
+P1 finishes at: 20
+P2 finishes at: 22
+P3 finishes at: 24
+
+Average waiting time: (0 + 20 + 22) / 3 = 14ms
+(Convoy effect: short jobs wait for long job)
+        </div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 14 – SHORTEST REMAINING TIME (SRT)
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Scheduling</div>
+  <h2>Shortest Remaining Time (SRT) Scheduling</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How It Works</h4>
+        <ul>
+          <li><strong>Preemptive</strong> version of SJF</li>
+          <li>The process with the <strong>shortest remaining execution time</strong> is always given the CPU</li>
+          <li>If a new process arrives with a shorter remaining time than the current process, the current process is <strong>preempted</strong></li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Benefits</h4>
+        <ul>
+          <li><strong>Optimal</strong> average waiting time</li>
+          <li>Responds quickly to short jobs arriving later</li>
+          <li>Good for interactive systems where job times vary</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Limitations</h4>
+        <ul>
+          <li>Can cause <strong>starvation</strong> for long jobs</li>
+          <li>High <strong>overhead</strong> from frequent context switches</li>
+          <li>Requires <strong>knowledge of remaining time</strong> (hard to estimate)</li>
+        </ul>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>Example</h4>
+        <p>P1 arrives at 0 (10ms), P2 arrives at 2 (4ms), P3 arrives at 4 (2ms)</p>
+        <div class="code-block" style="font-size:0.7rem;">
+Time 0-2:  P1 runs (remaining 8)   ← P2 arrives (4ms < 8)
+Time 2-4:  P2 runs (remaining 2)   ← P3 arrives (2ms = 2ms)
+Time 4-6:  P3 runs (FINISHED)      
+Time 6-8:  P2 runs (FINISHED)
+Time 8-16: P1 runs (FINISHED)
+        </div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 15 – SCHEDULING COMPARISON TABLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Scheduling</div>
+  <h2>Scheduling Algorithms — Comparison</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Round Robin</th><th>SJF</th><th>FCFS</th><th>SRT</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Preemptive?</strong></td><td>Yes</td><td>No</td><td>No</td><td>Yes</td></tr>
+      <tr><td><strong>Selection basis</strong></td><td>Fixed time quantum</td><td>Shortest total time</td><td>Arrival order</td><td>Shortest remaining</td></tr>
+      <tr><td><strong>Starvation possible?</strong></td><td>No</td><td>Yes (long jobs)</td><td>No</td><td>Yes (long jobs)</td></tr>
+      <tr><td><strong>Average waiting time</strong></td><td>Moderate</td><td>Low</td><td>High (convoy)</td><td>Lowest</td></tr>
+      <tr><td><strong>Context switch overhead</strong></td><td>High (small quantum)</td><td>Low</td><td>Very low</td><td>High</td></tr>
+      <tr><td><strong>Best for</strong></td><td>Interactive / general purpose</td><td>Batch systems</td><td>Simple batch</td><td>Interactive with varied jobs</td></tr>
+      <tr><td><strong>Complexity</strong></td><td>Simple</td><td>Moderate</td><td>Simplest</td><td>Complex</td></tr>
+    </tbody>
+  </table>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>For scheduling questions, be prepared to: (1) <strong>compare</strong> algorithms, (2) <strong>calculate</strong> average waiting time, (3) <strong>explain</strong> which is best for a given scenario.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 16 – KERNEL AS INTERRUPT HANDLER
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Interrupt Handling</div>
+  <h2>Kernel as Interrupt Handler</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is the Kernel?</h4>
+        <p>The <strong>kernel</strong> is the core component of the OS. It has full control over all system resources and handles low-level operations.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Kernel as Interrupt Handler</h4>
+        <ul>
+          <li>The kernel acts as the <strong>interrupt handler</strong> for the system</li>
+          <li>When hardware generates an interrupt (e.g., I/O device, timer), the kernel takes control</li>
+          <li>The kernel <strong>saves the current state</strong> (registers, program counter)</li>
+          <li>It determines the <strong>cause</strong> of the interrupt</li>
+          <li>It calls the appropriate <strong>interrupt service routine (ISR)</strong></li>
+          <li>After handling, it <strong>restores</strong> the previous state</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Kernel:</strong> The central component of an OS that manages system resources and provides low-level services including interrupt handling, process scheduling, and memory management.</p>
+      </div>
+      <div class="diagram-box mt-6">
+        <svg viewBox="0 0 280 120" style="width:100%; max-width:280px;">
+          <rect x="8" y="8" width="264" height="20" rx="3" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+          <text x="14" y="22" fill="#80c8a0" font-size="8" font-weight="600">User Processes / Applications</text>
+          <line x1="140" y1="28" x2="140" y2="36" stroke="#4a7ac8" stroke-width="1"/>
+          <rect x="8" y="36" width="264" height="48" rx="3" fill="#0e2840" stroke="#5ae0c0" stroke-width="1.5"/>
+          <text x="100" y="52" fill="#5ae0c0" font-size="10" font-weight="600">KERNEL</text>
+          <text x="14" y="66" fill="#b8d4ff" font-size="7">Process Scheduler</text>
+          <text x="160" y="66" fill="#b8d4ff" font-size="7">Interrupt Handler</text>
+          <text x="14" y="78" fill="#b8d4ff" font-size="7">Memory Manager</text>
+          <text x="160" y="78" fill="#b8d4ff" font-size="7">Device Drivers</text>
+          <line x1="140" y1="84" x2="140" y2="92" stroke="#4a7ac8" stroke-width="1"/>
+          <rect x="8" y="92" width="264" height="20" rx="3" fill="#2a1a0a" stroke="#e06060" stroke-width="1"/>
+          <text x="85" y="106" fill="#e06060" font-size="8" font-weight="600">Hardware (CPU, Memory, Devices)</text>
+        </svg>
+        <div class="diagram-caption">The kernel sits between hardware and user processes</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 17 – INTERRUPT HANDLING FOR LOW-LEVEL SCHEDULING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Interrupt Handling</div>
+  <h2>Interrupt Handling for Low-Level Scheduling</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How Interrupts Drive Scheduling</h4>
+        <ul>
+          <li>A <strong>timer interrupt</strong> fires after each time quantum expires</li>
+          <li>The kernel's interrupt handler takes control</li>
+          <li>It <strong>saves</strong> the current process state</li>
+          <li>It calls the <strong>scheduler</strong> to select the next process</li>
+          <li>A <strong>context switch</strong> is performed</li>
+          <li>The next process <strong>resumes</strong> execution</li>
+        </ul>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>Step-by-Step: Timer Interrupt</h4>
+        <ol>
+          <li>Process A is running</li>
+          <li>Timer interrupt fires</li>
+          <li>CPU switches to kernel mode</li>
+          <li>Kernel saves Process A's state (registers, PC)</li>
+          <li>Scheduler selects Process B from ready queue</li>
+          <li>Kernel loads Process B's saved state</li>
+          <li>CPU switches to user mode</li>
+          <li>Process B resumes execution</li>
+        </ol>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 300 140" style="width:100%; max-width:300px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Timer Interrupt → Context Switch</text>
+          <rect x="8" y="22" width="80" height="24" rx="3" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+          <text x="18" y="38" fill="#2ac8a0" font-size="7">Process A</text>
+          <rect x="8" y="54" width="80" height="24" rx="3" fill="#2a1a0a" stroke="#f78c6c" stroke-width="1"/>
+          <text x="28" y="70" fill="#f78c6c" font-size="7">Interrupt!</text>
+          <rect x="8" y="86" width="80" height="36" rx="3" fill="#1a2840" stroke="#7ab8ff" stroke-width="1"/>
+          <text x="18" y="100" fill="#7ab8ff" font-size="7">Kernel saves</text>
+          <text x="18" y="114" fill="#7ab8ff" font-size="7">state of A</text>
+          <rect x="178" y="86" width="80" height="36" rx="3" fill="#1a2840" stroke="#7ab8ff" stroke-width="1"/>
+          <text x="186" y="100" fill="#7ab8ff" font-size="7">Kernel loads</text>
+          <text x="186" y="114" fill="#7ab8ff" font-size="7">state of B</text>
+          <rect x="178" y="22" width="80" height="24" rx="3" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+          <text x="188" y="38" fill="#2ac8a0" font-size="7">Process B</text>
+          <text x="90" y="106" fill="#b8d4ff" font-size="10">→</text>
+          <text x="164" y="106" fill="#b8d4ff" font-size="10">→</text>
+        </svg>
+        <div class="diagram-caption">Interrupts trigger context switches between processes</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 18 – VIRTUAL MEMORY INTRODUCTION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Memory Management</div>
+  <h2>Virtual Memory — Introduction</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is Virtual Memory?</h4>
+        <p><strong>Virtual memory</strong> is a memory management technique that gives a program the illusion that it has more memory than is physically available (RAM).</p>
+        <p style="margin-top:6px;">It uses <strong>secondary storage</strong> (e.g., hard disk, SSD) as an extension of RAM.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Why Use Virtual Memory?</h4>
+        <ul>
+          <li>Allows running more/larger programs than physical RAM alone supports</li>
+          <li>Provides <strong>isolation</strong> between processes (each has own virtual address space)</li>
+          <li><strong>Simplifies programming</strong> — programs don't need to manage memory manually</li>
+          <li>Enables <strong>efficient sharing</strong> of memory between processes</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Virtual memory:</strong> A memory management technique that uses a combination of RAM and secondary storage to give the illusion of a larger memory space than physically available.</p>
+      </div>
+      <div class="diagram-box mt-6">
+        <svg viewBox="0 0 280 100" style="width:100%; max-width:280px;">
+          <rect x="8" y="8" width="264" height="28" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="80" y="26" fill="#5ae0c0" font-size="10" font-weight="600">Virtual Address Space</text>
+          <text x="8" y="38" fill="#b8d4ff" font-size="7">(What a program "sees" — e.g., 4GB)</text>
+          <line x1="140" y1="38" x2="140" y2="48" stroke="#4a7ac8" stroke-width="1.5"/>
+          <rect x="8" y="48" width="120" height="28" rx="4" fill="#1a2820" stroke="#80c8a0" stroke-width="1.5"/>
+          <text x="30" y="66" fill="#80c8a0" font-size="10" font-weight="600">Physical RAM</text>
+          <rect x="150" y="48" width="120" height="28" rx="4" fill="#2a1a0a" stroke="#f78c6c" stroke-width="1.5"/>
+          <text x="174" y="66" fill="#f78c6c" font-size="10" font-weight="600">Swap Space (Disk)</text>
+          <text x="54" y="96" fill="#b8d4ff" font-size="8">MMU maps virtual → physical addresses</text>
+        </svg>
+        <div class="diagram-caption">Virtual memory maps virtual addresses to physical RAM or disk</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 19 – PAGING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Memory Management</div>
+  <h2>Paging</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is Paging?</h4>
+        <p><strong>Paging</strong> divides <strong>virtual memory</strong> into fixed-size blocks called <strong>pages</strong> and <strong>physical memory</strong> into same-sized blocks called <strong>frames</strong>.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Key Concepts</h4>
+        <ul>
+          <li>Each <strong>page</strong> is a fixed-size block of virtual memory (e.g., 4KB)</li>
+          <li>Each <strong>frame</strong> is a fixed-size block of physical memory (same size as a page)</li>
+          <li>A <strong>page table</strong> maps each virtual page to a physical frame</li>
+          <li>Not all pages need to be in RAM — some can be <strong>swapped</strong> to disk</li>
+          <li>The <strong>Memory Management Unit (MMU)</strong> translates virtual addresses to physical addresses</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>How Address Translation Works</h4>
+        <div class="code-block" style="font-size:0.75rem;">
+Virtual address = 8196 (decimal)
+Page size = 4096 bytes
+
+Page number = 8196 / 4096 = 2
+Offset = 8196 % 4096 = 4
+
+Page table says: Page 2 → Frame 5
+
+Physical address = (5 × 4096) + 4 = 20484
+        </div>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Page table:</strong> A data structure used by the OS to store the mapping between virtual page numbers and physical frame numbers for each process.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 20 – SEGMENTATION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Memory Management</div>
+  <h2>Segmentation</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is Segmentation?</h4>
+        <p><strong>Segmentation</strong> divides memory into <strong>variable-sized blocks</strong> called segments. Each segment corresponds to a logical unit (e.g., code, data, stack).</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Key Concepts</h4>
+        <ul>
+          <li>Each <strong>segment</strong> is a logical division of a program (code, data, heap, stack)</li>
+          <li>Segments are <strong>variable in size</strong></li>
+          <li>A <strong>segment table</strong> maps each segment to a physical memory location</li>
+          <li>Each segment table entry contains: <strong>base address</strong> and <strong>limit</strong> (size)</li>
+          <li>Logical addressing: segment number + offset within the segment</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Typical Segments in a Program</h4>
+        <table>
+          <tr><th>Segment</th><th>Contents</th></tr>
+          <tr><td><strong>Code / Text</strong></td><td>Program instructions (read-only)</td></tr>
+          <tr><td><strong>Data</strong></td><td>Global and static variables</td></tr>
+          <tr><td><strong>Heap</strong></td><td>Dynamically allocated memory</td></tr>
+          <tr><td><strong>Stack</strong></td><td>Function call stack, local variables</td></tr>
+        </table>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Segmentation:</strong> A memory management scheme where memory is divided into variable-sized logical segments, each with a base address and a limit.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 21 – PAGING VS SEGMENTATION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Memory Management</div>
+  <h2>Paging vs Segmentation — Comparison</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Paging</th><th>Segmentation</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Block size</strong></td><td>Fixed-size pages / frames</td><td>Variable-size segments</td></tr>
+      <tr><td><strong>Division basis</strong></td><td>Physical — divides memory into equal chunks</td><td>Logical — divides by program structure</td></tr>
+      <tr><td><strong>Fragmentation</strong></td><td>Internal fragmentation (last page may be partially used)</td><td>External fragmentation (gaps between segments)</td></tr>
+      <tr><td><strong>User/programmer visible?</strong></td><td>No — transparent to the programmer</td><td>Yes — programmer can organise code into segments</td></tr>
+      <tr><td><strong>Memory protection</strong></td><td>Per-page protection bits</td><td>Per-segment protection (e.g., code segment is read-only)</td></tr>
+      <tr><td><strong>Sharing</strong></td><td>Pages can be shared between processes</td><td>Segments can be shared (e.g., shared libraries)</td></tr>
+      <tr><td><strong>Table structure</strong></td><td>Page table per process</td><td>Segment table per process</td></tr>
+    </tbody>
+  </table>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>You need to know the <strong>difference between paging and segmentation</strong>. Key distinction: paging divides memory into <strong>fixed-size</strong> blocks (physical), while segmentation divides into <strong>variable-size</strong> logical units.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 22 – PAGE REPLACEMENT
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Memory Management</div>
+  <h2>Page Replacement</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is Page Replacement?</h4>
+        <p>When a process references a page that is not in RAM (<strong>page fault</strong>), the OS must load it from disk. If all frames are full, the OS must <strong>replace</strong> an existing page.</p>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>Page Fault Handling Steps</h4>
+        <ol>
+          <li>Process references a virtual address</li>
+          <li>MMU checks the page table — page not in RAM (<strong>page fault</strong>)</li>
+          <li>OS locates the page on disk (swap space)</li>
+          <li>If RAM is full, OS selects a page to <strong>evict</strong></li>
+          <li>If evicted page was modified, it is <strong>written back</strong> to disk</li>
+          <li>Requested page is <strong>loaded</strong> from disk into a free frame</li>
+          <li>Page table is <strong>updated</strong></li>
+          <li>Process resumes</li>
+        </ol>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Common Page Replacement Algorithms</h4>
+        <ul>
+          <li><strong>FIFO</strong> — Replace the oldest page in memory (simple, but may replace frequently used pages)</li>
+          <li><strong>LRU (Least Recently Used)</strong> — Replace the page that hasn't been used for the longest time</li>
+          <li><strong>Optimal</strong> — Replace the page that won't be used for the longest time in the future (theoretical — impossible to implement)</li>
+        </ul>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Page fault:</strong> An interrupt that occurs when a program tries to access a page that is mapped in virtual memory but not currently loaded in physical RAM.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 23 – DISK THRASHING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.1 Memory Management</div>
+  <h2>Disk Thrashing</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is Thrashing?</h4>
+        <p><strong>Thrashing</strong> occurs when the system spends more time <strong>swapping pages</strong> between RAM and disk than actually executing processes.</p>
+        <p style="margin-top:6px;">The system becomes <strong>I/O bound</strong> — CPU utilisation drops because the CPU is waiting for disk operations to complete.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Causes of Thrashing</h4>
+        <ul>
+          <li>Too many processes running simultaneously</li>
+          <li>Each process does not have enough frames for its working set</li>
+          <li>High page fault rate — pages are constantly swapped in and out</li>
+          <li>Insufficient physical RAM for current workload</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Signs of Thrashing</h4>
+        <ul>
+          <li>Very high <strong>disk activity</strong> (constant page swaps)</li>
+          <li>Very low <strong>CPU utilisation</strong></li>
+          <li>System feels <strong>unresponsive</strong></li>
+          <li>High <strong>page fault rate</strong></li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Solutions</h4>
+        <ul>
+          <li><strong>Reduce</strong> the number of running processes</li>
+          <li><strong>Increase RAM</strong> (physical memory upgrade)</li>
+          <li>Adjust OS <strong>working set</strong> parameters</li>
+          <li>Use faster secondary storage (SSD instead of HDD)</li>
+        </ul>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>Thrashing is characterised by <strong>high disk I/O and low CPU utilisation</strong>. This is a key indicator — when asked, mention both symptoms.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 24 – INTRODUCTION TO TRANSLATION SOFTWARE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.2 Translation Software</div>
+  <h2>Introduction to Translation Software</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is Translation Software?</h4>
+        <p><strong>Translation software</strong> converts source code written in a high-level language (HLL) into machine code that a computer can execute.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Three Types of Translator</h4>
+        <table>
+          <tr><th>Translator</th><th>Description</th></tr>
+          <tr><td><strong>Compiler</strong></td><td>Translates entire HLL program into machine code at once. Produces an executable file.</td></tr>
+          <tr><td><strong>Interpreter</strong></td><td>Executes HLL code line-by-line without producing a separate machine code file.</td></tr>
+          <tr><td><strong>Assembler</strong></td><td>Translates assembly language into machine code.</td></tr>
+        </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Translator:</strong> Software that converts source code from one programming language to another (usually from HLL to machine code).</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Note:</strong> The syllabus focuses on <strong>compilers</strong> and <strong>interpreters</strong> for 16.2. Assemblers are covered in other topics.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 25 – INTERPRETERS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.2 Translation Software</div>
+  <h2>Interpreters</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How Interpreters Work</h4>
+        <p>An <strong>interpreter</strong> executes a program <strong>line-by-line</strong> without producing a standalone executable file.</p>
+        <ul>
+          <li>Reads one line/statement of source code</li>
+          <li>Translates it to machine code</li>
+          <li>Executes it immediately</li>
+          <li>Moves to the next line</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Benefits of Interpreters</h4>
+        <ul>
+          <li><strong>Easier debugging</strong> — errors are reported immediately on the offending line</li>
+          <li>No separate compilation step needed</li>
+          <li>Good for <strong>rapid prototyping</strong> and scripting</li>
+          <li><strong>Platform independent</strong> — only the interpreter needs to be ported</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Limitations of Interpreters</h4>
+        <ul>
+          <li><strong>Slower execution</strong> — translation happens every time a line is executed</li>
+          <li>Source code must be available at runtime</li>
+          <li>Cannot produce a standalone executable</li>
+          <li>Not suitable for <strong>performance-critical</strong> applications</li>
+        </ul>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Interpreter:</strong> A program that executes source code directly by translating and executing each statement one at a time, without producing a separate machine code file.</p>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>An interpreter does <strong>not</strong> produce a translated version. It executes the code directly as it reads it. This is the key difference from a compiler.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 26 – COMPILATION STAGES OVERVIEW
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.2 Translation Software</div>
+  <h2>Stages of Compilation — Overview</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="diagram-box">
+    <svg viewBox="0 0 500 140" style="width:100%; max-width:500px;">
+      <text x="8" y="14" fill="#b8d4ff" font-size="10" font-weight="600">The Compilation Pipeline</text>
+      <rect x="8" y="24" width="90" height="30" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+      <text x="14" y="44" fill="#5ae0c0" font-size="8" font-weight="600">Source Code</text>
+      <text x="102" y="44" fill="#b8d4ff" font-size="12">→</text>
+      <rect x="118" y="24" width="100" height="30" rx="4" fill="#1a2840" stroke="#7ab8ff" stroke-width="1.5"/>
+      <text x="130" y="40" fill="#7ab8ff" font-size="8" font-weight="600">Lexical</text>
+      <text x="130" y="50" fill="#7ab8ff" font-size="8" font-weight="600">Analysis</text>
+      <text x="222" y="44" fill="#b8d4ff" font-size="12">→</text>
+      <rect x="238" y="24" width="100" height="30" rx="4" fill="#2a1828" stroke="#c080f0" stroke-width="1.5"/>
+      <text x="250" y="40" fill="#c080f0" font-size="8" font-weight="600">Syntax</text>
+      <text x="250" y="50" fill="#c080f0" font-size="8" font-weight="600">Analysis</text>
+      <text x="342" y="44" fill="#b8d4ff" font-size="12">→</text>
+      <rect x="358" y="24" width="100" height="30" rx="4" fill="#2a1a0a" stroke="#f78c6c" stroke-width="1.5"/>
+      <text x="370" y="40" fill="#f78c6c" font-size="8" font-weight="600">Code</text>
+      <text x="370" y="50" fill="#f78c6c" font-size="8" font-weight="600">Generation</text>
+      <text x="462" y="44" fill="#b8d4ff" font-size="12">→</text>
+      <rect x="8" y="70" width="90" height="30" rx="4" fill="#1a2820" stroke="#80c8a0" stroke-width="1.5"/>
+      <text x="14" y="88" fill="#80c8a0" font-size="8" font-weight="600">Machine Code</text>
+      <text x="102" y="88" fill="#b8d4ff" font-size="12">←</text>
+      <rect x="230" y="70" width="130" height="30" rx="4" fill="#2a2a18" stroke="#c8a040" stroke-width="1.5"/>
+      <text x="250" y="86" fill="#c8a040" font-size="8" font-weight="600">Code Optimisation</text>
+      <text x="250" y="96" fill="#c8a040" font-size="7">(may occur at multiple stages)</text>
+    </svg>
+    <div class="diagram-caption">Four main stages: Lexical Analysis → Syntax Analysis → Code Generation → Optimisation</div>
+  </div>
+  <div class="grid-2 mt-6">
+    <div class="card">
+      <h4>Four Main Stages</h4>
+      <ol>
+        <li><strong>Lexical analysis</strong> — tokenisation of source code</li>
+        <li><strong>Syntax analysis</strong> — checking grammar against language rules</li>
+        <li><strong>Code generation</strong> — producing target machine code</li>
+        <li><strong>Code optimisation</strong> — improving efficiency of generated code</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h4>Additional Steps</h4>
+      <ul>
+        <li><strong>Symbol table</strong> — maintained throughout, stores identifiers and their attributes</li>
+        <li><strong>Semantic analysis</strong> — checking logical meaning (e.g., type checking)</li>
+        <li><strong>Error handling</strong> — reporting errors at each stage</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 27 – LEXICAL ANALYSIS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.2 Translation Software</div>
+  <h2>Lexical Analysis</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is Lexical Analysis?</h4>
+        <p><strong>Lexical analysis</strong> (or scanning) is the first stage of compilation. It reads the source code character by character and groups them into meaningful sequences called <strong>tokens</strong>.</p>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>Example: Tokenising</h4>
+        <p>Source code: <span class="inline-code">total = price + tax;</span></p>
+        <table>
+          <tr><th>Token</th><th>Lexeme</th><th>Token Type</th></tr>
+          <tr><td>1</td><td>total</td><td>Identifier</td></tr>
+          <tr><td>2</td><td>=</td><td>Assignment operator</td></tr>
+          <tr><td>3</td><td>price</td><td>Identifier</td></tr>
+          <tr><td>4</td><td>+</td><td>Arithmetic operator</td></tr>
+          <tr><td>5</td><td>tax</td><td>Identifier</td></tr>
+          <tr><td>6</td><td>;</td><td>Statement terminator</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Tokens Produced</h4>
+        <ul>
+          <li><strong>Keywords</strong> — if, while, for, int, return</li>
+          <li><strong>Identifiers</strong> — variable and function names</li>
+          <li><strong>Literals</strong> — numbers, strings, booleans</li>
+          <li><strong>Operators</strong> — +, -, *, /, =, ==, <, ></li>
+          <li><strong>Separators</strong> — ;, (, ), {, }, ,</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>What Happens During Lexical Analysis</h4>
+        <ul>
+          <li><strong>Removes whitespace</strong> and comments</li>
+          <li>Builds a <strong>symbol table</strong> of identifiers</li>
+          <li>Produces a stream of tokens for syntax analysis</li>
+          <li>Reports lexical errors (e.g., invalid characters)</li>
+        </ul>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Token:</strong> A meaningful sequence of characters identified during lexical analysis. Each token has a type and optionally a value.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 28 – SYNTAX ANALYSIS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.2 Translation Software</div>
+  <h2>Syntax Analysis</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is Syntax Analysis?</h4>
+        <p><strong>Syntax analysis</strong> (or parsing) is the second stage of compilation. It takes the token stream from the lexical analyser and checks whether it conforms to the <strong>grammar rules</strong> of the programming language.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>How It Works</h4>
+        <ul>
+          <li>Tokens are grouped into <strong>grammatical structures</strong></li>
+          <li>A <strong>parse tree</strong> or <strong>abstract syntax tree (AST)</strong> is built</li>
+          <li>The grammar rules are defined using <strong>BNF</strong> or <strong>syntax diagrams</strong></li>
+          <li>If the token sequence cannot be parsed, a <strong>syntax error</strong> is reported</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>Example Parse Tree</h4>
+        <p>Expression: <span class="inline-code">3 + 5 * 2</span></p>
+        <div class="code-block" style="font-size:0.7rem;">
+        expr
+        /│\
+       / │ \
+     expr + term
+      │      /│\
+      │     / │ \
+     term  term * factor
+      │     │      │
+      3     5      2
+        </div>
+        <p>The parse tree shows the structure and <strong>operator precedence</strong> (multiplication before addition).</p>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>Lexical analysis produces tokens; syntax analysis checks token order against grammar rules. A syntax error means the program's structure is invalid (e.g., missing semicolon, unmatched bracket).</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 29 – CODE GENERATION AND OPTIMISATION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.2 Translation Software</div>
+  <h2>Code Generation and Optimisation</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Code Generation</h4>
+        <ul>
+          <li>The compiler generates <strong>target machine code</strong> (or assembly) from the intermediate representation</li>
+          <li>Each syntactically valid construct is translated into corresponding machine instructions</li>
+          <li>Includes: register allocation, instruction selection, memory address assignment</li>
+          <li>Output: an executable file (e.g., .exe, .out) or object file</li>
+        </ul>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Object code:</strong> The machine code output produced by a compiler. It may need to be linked with other object files to produce a complete executable.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Code Optimisation</h4>
+        <ul>
+          <li>Aims to improve the <strong>efficiency</strong> of generated code</li>
+          <li>Can be applied at multiple stages of compilation</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Types of Optimisation</h4>
+        <table>
+          <tr><th>Type</th><th>Description</th><th>Example</th></tr>
+          <tr><td><strong>Constant folding</strong></td><td>Evaluate constant expressions at compile time</td><td>x = 5 + 3 → x = 8</td></tr>
+          <tr><td><strong>Dead code elimination</strong></td><td>Remove unreachable code</td><td>Remove code after return</td></tr>
+          <tr><td><strong>Loop optimisation</strong></td><td>Reduce loop overhead</td><td>Loop unrolling</td></tr>
+          <tr><td><strong>Register allocation</strong></td><td>Keep frequently used variables in registers</td><td>Reuse registers efficiently</td></tr>
+        </table>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Key idea:</strong> Optimised code runs faster and uses less memory, but the optimisation process itself takes compilation time.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 30 – SYNTAX DIAGRAMS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.2 Formal Notation</div>
+  <h2>Syntax Diagrams</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Are Syntax Diagrams?</h4>
+        <p><strong>Syntax diagrams</strong> (or railroad diagrams) are a graphical way to represent the grammar rules of a programming language.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Diagram Elements</h4>
+        <ul>
+          <li><strong>Rectangles</strong> — represent non-terminals (things that need further definition)</li>
+          <li><strong>Ovals/circles</strong> — represent terminals (actual characters/keywords)</li>
+          <li><strong>Arrows</strong> — show the flow/path</li>
+          <li><strong>Branches</strong> — show alternatives</li>
+          <li><strong>Loops</strong> — show repetition</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 360 160" style="width:100%; max-width:360px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="10" font-weight="600">Syntax Diagram: &lt;identifier&gt;</text>
+          <text x="8" y="36" fill="#5ae0c0" font-size="8">An identifier starts with a letter, followed by zero or more letters/digits:</text>
+          <rect x="8" y="46" width="60" height="24" rx="3" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="14" y="62" fill="#5ae0c0" font-size="7">letter</text>
+          <text x="72" y="62" fill="#b8d4ff" font-size="10">→</text>
+          <rect x="86" y="30" width="40" height="16" rx="8" fill="#1a2840" stroke="#7ab8ff" stroke-width="1"/>
+          <text x="90" y="42" fill="#7ab8ff" font-size="6">letter</text>
+          <rect x="130" y="30" width="40" height="16" rx="8" fill="#1a2840" stroke="#7ab8ff" stroke-width="1"/>
+          <text x="92" y="86" fill="#7ab8ff" font-size="6">digit</text>
+          <rect x="130" y="74" width="40" height="16" rx="8" fill="#1a2840" stroke="#7ab8ff" stroke-width="1"/>
+          <text x="136" y="86" fill="#7ab8ff" font-size="6">digit</text>
+          <text x="8" y="110" fill="#b8d4ff" font-size="9" font-weight="600">Syntax Diagram: &lt;digit&gt;</text>
+          <text x="8" y="130" fill="#5ae0c0" font-size="7">0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9</text>
+        </svg>
+        <div class="diagram-caption">Rectangles = non-terminals, ovals/rounded = terminals</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 31 – BACKUS-NAUR FORM (BNF)
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.2 Formal Notation</div>
+  <h2>Backus-Naur Form (BNF)</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is BNF?</h4>
+        <p><strong>Backus-Naur Form (BNF)</strong> is a formal, textual notation for describing the grammar / syntax of a programming language.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>BNF Notation</h4>
+        <ul>
+          <li><strong>Non-terminals</strong> — enclosed in angle brackets: <span class="inline-code">&lt;expression&gt;</span></li>
+          <li><strong>Terminals</strong> — quoted or plain symbols: <span class="inline-code">+, -, if, then</span></li>
+          <li><strong>::=</strong> — "is defined as"</li>
+          <li><strong>|</strong> — "or" (alternative)</li>
+          <li>Rules can be <strong>recursive</strong> (refer to themselves)</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>BNF Examples</h4>
+        <div class="code-block" style="font-size:0.78rem;">
+&lt;digit&gt; ::= 0|1|2|3|4|5|6|7|8|9
+
+&lt;letter&gt; ::= A|B|C|...|Z|a|b|c|...|z
+
+&lt;identifier&gt; ::= &lt;letter&gt; | &lt;identifier&gt;&lt;letter&gt; | &lt;identifier&gt;&lt;digit&gt;
+
+&lt;assignment&gt; ::= &lt;identifier&gt; = &lt;expression&gt;
+
+&lt;expression&gt; ::= &lt;term&gt; | &lt;expression&gt; + &lt;term&gt; | &lt;expression&gt; - &lt;term&gt;
+
+&lt;term&gt; ::= &lt;factor&gt; | &lt;term&gt; * &lt;factor&gt; | &lt;term&gt; / &lt;factor&gt;
+
+&lt;factor&gt; ::= &lt;digit&gt; | &lt;identifier&gt;
+        </div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 32 – BNF WORKED EXAMPLES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.2 Formal Notation</div>
+  <h2>BNF — Worked Examples</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Example 1: Validating an Identifier</h4>
+    <div class="code-block" style="font-size:0.7rem;">
+Given: &lt;identifier&gt; ::= &lt;letter&gt; | &lt;identifier&gt;&lt;letter&gt; | &lt;identifier&gt;&lt;digit&gt;
+
+Is "x5" a valid identifier?
+
+&lt;identifier&gt;
+→ &lt;identifier&gt;&lt;digit&gt;        (using rule 3)
+→ &lt;letter&gt;&lt;digit&gt;              (using rule 1 for &lt;identifier&gt;)
+→ x5                            (terminal substitution)
+
+Yes, "x5" is a valid identifier.
+    </div>
+  </div>
+  <div class="worked-example mt-6">
+    <h4>Example 2: Parsing an Expression</h4>
+    <div class="code-block" style="font-size:0.7rem;">
+Given: &lt;expression&gt; ::= &lt;term&gt; | &lt;expression&gt; + &lt;term&gt;
+       &lt;term&gt; ::= &lt;factor&gt; | &lt;term&gt; * &lt;factor&gt;
+       &lt;factor&gt; ::= &lt;digit&gt;
+
+Parse tree for "3 + 5 * 2":
+
+&lt;expression&gt;
+→ &lt;expression&gt; + &lt;term&gt;
+→ &lt;term&gt; + &lt;term&gt;
+→ &lt;factor&gt; + &lt;term&gt;
+→ 3 + &lt;term&gt;
+→ 3 + &lt;term&gt; * &lt;factor&gt;
+→ 3 + &lt;factor&gt; * &lt;factor&gt;
+→ 3 + 5 * 2
+    </div>
+  </div>
+  <div class="key-term-box mt-6">
+    <h4>Key Term</h4>
+    <p><strong>Recursive rule:</strong> A BNF rule that refers to itself. E.g., <span class="inline-code">&lt;identifier&gt; ::= &lt;letter&gt; | &lt;identifier&gt;&lt;letter&gt;</span> — the identifier is defined in terms of itself plus a letter.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 33 – REVERSE POLISH NOTATION (RPN) INTRODUCTION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.2 RPN</div>
+  <h2>Reverse Polish Notation (RPN) — Introduction</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is RPN?</h4>
+        <p><strong>Reverse Polish Notation (RPN)</strong> is a way of writing arithmetic expressions where the <strong>operator comes after</strong> its operands (postfix notation).</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Comparison of Notations</h4>
+        <table>
+          <tr><th>Notation</th><th>Name</th><th>Example</th></tr>
+          <tr><td><strong>Infix</strong></td><td>Operator between operands</td><td>3 + 4</td></tr>
+          <tr><td><strong>Prefix</strong></td><td>Operator before operands</td><td>+ 3 4</td></tr>
+          <tr><td><strong>Postfix (RPN)</strong></td><td>Operator after operands</td><td>3 4 +</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Reverse Polish Notation (RPN):</strong> A postfix notation for arithmetic expressions where operators follow their operands. No brackets are needed because the order of operations is unambiguous.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Why RPN Is Useful</h4>
+        <ul>
+          <li><strong>No brackets needed</strong> — order of evaluation is unambiguous</li>
+          <li><strong>Easier for computers</strong> to evaluate using a stack</li>
+          <li>Used in <strong>compilers</strong> for intermediate code</li>
+          <li>Used in <strong>stack-based</strong> calculators and virtual machines</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 34 – RPN EVALUATION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.2 RPN</div>
+  <h2>RPN Evaluation Using a Stack</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How to Evaluate RPN</h4>
+        <ol>
+          <li>Scan the RPN expression from <strong>left to right</strong></li>
+          <li>If you see an <strong>operand</strong> (number), <strong>push</strong> it onto the stack</li>
+          <li>If you see an <strong>operator</strong>:</li>
+          <ol style="padding-left:20px;">
+            <li><strong>Pop</strong> the top two values from the stack</li>
+            <li>Apply the operator (second popped <em>op</em> first popped)</li>
+            <li><strong>Push</strong> the result back onto the stack</li>
+          </ol>
+          <li>After scanning all tokens, the <strong>final result</strong> is on top of the stack</li>
+        </ol>
+      </div>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>Example: 3 4 + 5 *</h4>
+        <div class="code-block" style="font-size:0.7rem;">
+Expression: 3 4 + 5 *
+(Infix equivalent: (3 + 4) × 5)
+
+Step 1: Push 3    Stack: [3]
+Step 2: Push 4    Stack: [3, 4]
+Step 3: Pop 4,3   Apply + → 7
+         Push 7   Stack: [7]
+Step 4: Push 5    Stack: [7, 5]
+Step 5: Pop 5,7   Apply * → 35
+         Push 35  Stack: [35]
+
+Result: 35
+        </div>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>When evaluating RPN, always show the <strong>stack contents</strong> step by step. This is a common exam question and marks are given for showing each push/pop operation.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 35 – RPN WORKED EXAMPLES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">16.2 RPN</div>
+  <h2>RPN — Worked Examples</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Example 1: Convert Infix to RPN</h4>
+    <p>Infix: <span class="inline-code">(2 + 3) × 4</span></p>
+    <p>RPN: <span class="inline-code">2 3 + 4 ×</span></p>
+    <p style="margin-top:4px;">Explanation: 2 + 3 is evaluated first (brackets), then the result is multiplied by 4.</p>
+  </div>
+  <div class="worked-example mt-6">
+    <h4>Example 2: Complex Expression</h4>
+    <p>Infix: <span class="inline-code">3 × (4 + 5) - 6 ÷ 2</span></p>
+    <p>RPN: <span class="inline-code">3 4 5 + × 6 2 ÷ -</span></p>
+    <div class="grid-2 mt-6">
+      <div>
+        <p><strong>Evaluation:</strong></p>
+        <div class="code-block" style="font-size:0.65rem;">
+Push 3     [3]
+Push 4     [3, 4]
+Push 5     [3, 4, 5]
+Pop 5,4   + → 9
+Push 9     [3, 9]
+Pop 9,3   × → 27
+Push 27    [27]
+Push 6     [27, 6]
+Push 2     [27, 6, 2]
+Pop 2,6   ÷ → 3
+Push 3     [27, 3]
+Pop 3,27  - → 24
+Push 24    [24]
+        </div>
+      </div>
+      <div>
+        <p><strong>Result: 24</strong></p>
+      </div>
+    </div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>When converting infix to RPN: (1) fully bracket the expression, (2) move each operator to after its closing bracket, (3) remove the brackets. E.g., (a + b) × c → a b + c ×</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 36 – TOPIC SUMMARY: 16.1
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Topic Summary</div>
+  <h2>Topic 16.1 — Summary</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:10px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Operating System Purposes</h4>
+      <ul>
+        <li>OS <strong>maximises resources</strong> through scheduling, virtual memory, and I/O management</li>
+        <li>OS <strong>hides hardware complexity</strong> via abstraction layers</li>
+        <li><strong>Process states</strong>: running, ready, blocked</li>
+        <li>Four scheduling algorithms: <strong>RR, SJF, FCFS, SRT</strong></li>
+        <li><strong>Kernel</strong> acts as interrupt handler for low-level scheduling</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Memory Management</h4>
+      <ul>
+        <li><strong>Virtual memory</strong> extends RAM using disk space</li>
+        <li><strong>Paging</strong> — fixed-size blocks (pages/frames)</li>
+        <li><strong>Segmentation</strong> — variable-size logical blocks</li>
+        <li><strong>Page replacement</strong> — FIFO, LRU, Optimal</li>
+        <li><strong>Thrashing</strong> — excessive page swapping (high disk I/O, low CPU utilisation)</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 37 – TOPIC SUMMARY: 16.2
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Topic Summary</div>
+  <h2>Topic 16.2 — Summary</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:10px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Translation Software</h4>
+      <ul>
+        <li><strong>Interpreters</strong> execute HLL code line-by-line without producing a standalone executable</li>
+        <li><strong>Compilers</strong> translate entire HLL program to machine code in one go</li>
+        <li>Four compilation stages: <strong>Lexical → Syntax → Code Generation → Optimisation</strong></li>
+        <li><strong>Lexical analysis</strong> — tokenises source code</li>
+        <li><strong>Syntax analysis</strong> — checks token grammar using parse trees</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Formal Notation &amp; RPN</h4>
+      <ul>
+        <li><strong>Syntax diagrams</strong> — graphical grammar representation</li>
+        <li><strong>BNF</strong> — textual grammar: <span class="inline-code">::=</span> and <span class="inline-code">|</span></li>
+        <li><strong>RPN</strong> — postfix notation with operators after operands</li>
+        <li>Evaluate RPN using a <strong>stack</strong>: push operands, pop for operators</li>
+        <li>No brackets needed in RPN — unambiguous evaluation</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 38 – PRACTICE QUESTIONS: 16.1
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Exam Practice</div>
+  <h2>Practice Questions — 16.1 OS</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:10px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Question 1 [2 marks]</h4>
+        <p>Explain how the OS <strong>maximises the use of resources</strong>.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 2 [3 marks]</h4>
+        <p>Describe three <strong>process states</strong> and give one transition between each.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 3 [4 marks]</h4>
+        <p>Compare <strong>Round Robin</strong> and <strong>Shortest Job First</strong> scheduling. Give one advantage of each.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 4 [3 marks]</h4>
+        <p>Explain how the <strong>kernel</strong> acts as an interrupt handler for scheduling.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Question 5 [2 marks]</h4>
+        <p>Distinguish between <strong>paging</strong> and <strong>segmentation</strong>.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 6 [3 marks]</h4>
+        <p>Explain what is meant by <strong>disk thrashing</strong> and describe the symptoms.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 7 [4 marks]</h4>
+        <p>Calculate the <strong>average waiting time</strong> for FCFS scheduling with these processes:<br>
+        P1: burst=8ms (arrives 0), P2: burst=4ms (arrives 2), P3: burst=2ms (arrives 4)</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 39 – PRACTICE QUESTIONS: 16.2
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Exam Practice</div>
+  <h2>Practice Questions — 16.2 Translation Software</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:10px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Question 1 [3 marks]</h4>
+        <p>Explain how an <strong>interpreter</strong> executes a program. Contrast this with a compiler.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 2 [4 marks]</h4>
+        <p>Describe the steps in the <strong>lexical analysis</strong> stage of compilation.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 3 [2 marks]</h4>
+        <p>Write a BNF rule for a <span class="inline-code">&lt;digit&gt;</span> and a <span class="inline-code">&lt;positive integer&gt;</span>.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 4 [4 marks]</h4>
+        <p>Convert <span class="inline-code">(4 + 6) × (8 - 3)</span> to RPN and evaluate it showing stack at each step.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Question 5 [2 marks]</h4>
+        <p>Describe what a <strong>syntax diagram</strong> is and name the two main components.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 6 [3 marks]</h4>
+        <p>State the purpose of <strong>code optimisation</strong>. Give two specific types of optimisation.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Question 7 [3 marks]</h4>
+        <p>Evaluate this RPN expression using a stack: <span class="inline-code">5 3 + 2 × 4 ÷</span></p>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>For RPN questions, always show your <strong>stack contents</strong> after each step. For BNF questions, use <strong>::=</strong> and <strong>|</strong> correctly and remember recursive rules for repeated elements.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 40 – FINAL EXAM TIPS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Revision Guidance</div>
+  <h2>Final Exam Tips — Topic 16</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:10px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="exam-tip-box">
+        <h4>OS &amp; Process Management</h4>
+        <ul>
+          <li>Know the <strong>three process states</strong>: running, ready, blocked</li>
+          <li>Learn the <strong>four scheduling algorithms</strong> and when each is best</li>
+          <li>Practice <strong>calculating average waiting time</strong></li>
+          <li>Understand <strong>context switching</strong> and its cost</li>
+        </ul>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Memory Management</h4>
+        <ul>
+          <li>Know the <strong>difference</strong> between paging and segmentation</li>
+          <li>Explain <strong>virtual memory</strong> as RAM + disk extension</li>
+          <li>Define <strong>thrashing</strong> as high disk I/O + low CPU utilisation</li>
+          <li>Mention <strong>page fault</strong> handling steps</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="exam-tip-box">
+        <h4>Translation Software</h4>
+        <ul>
+          <li>Learn the <strong>four compilation stages</strong> in order</li>
+          <li>Understand how <strong>interpreters</strong> differ from compilers</li>
+          <li>Practise <strong>tokenising</strong> source code</li>
+          <li>Learn to <strong>draw parse trees</strong></li>
+        </ul>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>BNF &amp; RPN</h4>
+        <ul>
+          <li>BNF: use <span class="inline-code">::=</span> for definitions and <span class="inline-code">|</span> for alternatives</li>
+          <li>RPN: <strong>push operands, pop for operators</strong></li>
+          <li>Show <strong>stack contents</strong> step by step in RPN questions</li>
+          <li>Practise converting infix → RPN and evaluating</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 41 – END SLIDE
+// ==================================================================
+addSlide(`
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+    <div class="section-badge" style="margin-bottom:16px;">Cambridge International AS &amp; A Level — 9618</div>
+    <h1 style="font-size:2.8rem; margin-bottom:8px; color:#5ae0c0;">System Software</h1>
+    <div style="width:80px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:18px;"></div>
+    <p style="font-size:1.2rem; color:#7ab8a8; margin-bottom:24px;">Ready for Exam Practice!</p>
+    <div class="grid-2" style="max-width:600px;">
+      <div class="card">
+        <h4>📝 Revise Definitions</h4>
+        <p style="font-size:0.85rem;">Kernel, process, scheduling, virtual memory, page, segment, thrashing</p>
+      </div>
+      <div class="card">
+        <h4>🧮 Practise Scheduling</h4>
+        <p style="font-size:0.85rem;">Calculate average waiting time for RR, SJF, FCFS, SRT</p>
+      </div>
+      <div class="card">
+        <h4>📊 Practise BNF &amp; RPN</h4>
+        <p style="font-size:0.85rem;">Write grammar rules and evaluate postfix expressions</p>
+      </div>
+      <div class="card">
+        <h4>✅ Check Mark Schemes</h4>
+        <p style="font-size:0.85rem;">Use precise terminology aligned with Cambridge expectations</p>
+      </div>
+    </div>
+    <p style="color:#3a6a6a; font-size:0.85rem; margin-top:24px;">Good luck with your revision!</p>
+  </div>
+`);
+</script>
+<script>renderSlides();</script>
+</body>
+</html>

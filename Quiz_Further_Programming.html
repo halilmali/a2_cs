@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AS & A Level 9618 — Further Programming Quiz</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0a0e1a; color: #d0e4ec; min-height: 100vh; display: flex; flex-direction: column; }
+  .bg-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(rgba(200, 100, 160, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(200, 100, 160, 0.04) 1px, transparent 1px); background-size: 60px 60px; z-index: 0; pointer-events: none; }
+  .header { position: relative; z-index: 1; text-align: center; padding: 28px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .header h1 { font-size: 1.5rem; font-weight: 700; color: #f0faff; }
+  .header h1 span { background: linear-gradient(135deg, #c860a0, #f080d0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .header .badge { display: inline-block; background: #2a0a1e; border: 1px solid #8a3a6a; color: #d080c0; padding: 2px 14px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; margin-bottom: 6px; }
+  .header p { font-size: 0.85rem; color: #9a5a8a; margin-top: 4px; }
+  .main { position: relative; z-index: 1; max-width: 780px; width: 100%; margin: 0 auto; padding: 20px; flex: 1; display: flex; flex-direction: column; }
+  #setupScreen { animation: fadeIn 0.4s ease-out; }
+  .setup-card { background: rgba(10,14,26,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 20px 24px; backdrop-filter: blur(10px); margin-bottom: 16px; }
+  .setup-card h2 { font-size: 1.05rem; font-weight: 600; color: #d080c0; margin-bottom: 10px; }
+  .setup-card p { font-size: 0.88rem; color: #9a5a8a; line-height: 1.5; }
+  .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #3a1a2e, #5a2a4a); border: 1px solid #8a3a6a; color: #d080c0; padding: 12px 32px; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-primary:hover { background: linear-gradient(135deg, #5a2a4a, #7a3a6a); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(200,100,160,0.2); }
+  .btn-secondary { background: rgba(10,14,26,0.6); border: 1px solid #3a1a2e; color: #9a5a8a; padding: 10px 24px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; }
+  .btn-secondary:hover { border-color: #c860a0; color: #d080c0; }
+  .btn-small { font-size:0.82rem; padding:6px 16px; }
+  .stats-section { background:rgba(10,14,26,0.5); border:1px solid rgba(255,255,255,0.04); border-radius:10px; padding:14px 18px; margin-bottom:10px; display:flex; flex-wrap:wrap; gap:20px; align-items:center; }
+  .stats-section .stat-item { display:flex; align-items:center; gap:8px; font-size:0.85rem; }
+  .stats-section .stat-item .stat-num { font-size:1.2rem; font-weight:700; color:#f0faff; }
+  .stats-section .stat-item .stat-label { color:#9a5a8a; }
+  .history-section { max-height:0; overflow:hidden; transition:max-height 0.35s ease; }
+  .history-section.open { max-height:420px; overflow-y:auto; }
+  .history-item { display:flex; justify-content:space-between; padding:7px 10px; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.82rem; }
+  .history-item:last-child { border-bottom:none; }
+  .history-item .h-date { color:#9a5a8a; }
+  .history-item .h-score { font-weight:600; color:#d0e4ec; }
+  .history-item .h-pct { color:#8bc34a; font-weight:600; }
+  .quiz-options { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .quiz-options label { font-size: 0.88rem; color: #9a5a8a; }
+  .quiz-options select { background: #0a0f1e; border: 1px solid #3a1a2e; border-radius: 6px; color: #d0e4ec; padding: 6px 10px; font-size: 0.88rem; }
+  .quiz-options select:focus { outline: none; border-color: #c860a0; }
+  .topic-chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+  .topic-chip { display: inline-block; background: #2a0a1e; border: 1px solid #3a1a2e; border-radius: 16px; padding: 4px 12px; font-size: 0.75rem; color: #d080c0; }
+  .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+  .quiz-progress { font-size: 0.85rem; color: #9a5a8a; }
+  .quiz-progress strong { color: #d0e4ec; }
+  .quiz-score { font-size: 0.85rem; color: #8bc34a; }
+  .q-type-tag { display: inline-block; padding: 1px 10px; border-radius: 10px; font-size: 0.68rem; font-weight: 600; background: rgba(200,100,160,0.15); color: #d080c0; }
+  .progress-bar-wrap { width: 100%; height: 5px; background: #0a0f1e; border-radius: 3px; overflow: hidden; margin-bottom: 16px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #c860a0, #f080d0); transition: width 0.4s ease; border-radius: 3px; }
+  .question-card { background: rgba(10,14,26,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 24px; backdrop-filter: blur(10px); }
+  .question-text { font-size: 1.1rem; font-weight: 600; color: #f0faff; line-height: 1.5; margin-bottom: 18px; }
+  .options-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .option-btn { display: block; width: 100%; text-align: left; padding: 12px 16px; border-radius: 10px; background: rgba(10,14,26,0.4); border: 1px solid rgba(255,255,255,0.06); color: #c0d8e0; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
+  .option-btn:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.02); }
+  .option-btn.selected { border-color: #c860a0; background: rgba(200,100,160,0.1); }
+  .option-btn.correct { border-color: #8bc34a; background: rgba(139,195,74,0.1); color: #c3e88d; }
+  .option-btn.incorrect { border-color: #e57373; background: rgba(229,115,115,0.1); color: #ffb8b8; }
+  .option-btn.disabled { cursor: default; pointer-events: none; }
+  .option-btn .opt-letter { display: inline-block; width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.04); text-align: center; line-height: 26px; font-size: 0.78rem; font-weight: 600; margin-right: 10px; }
+  .feedback-area { padding: 12px 16px; border-radius: 10px; margin-bottom: 14px; display: none; font-size: 0.88rem; line-height: 1.5; }
+  .feedback-area.correct { display: block; background: rgba(139,195,74,0.08); border: 1px solid rgba(139,195,74,0.2); color: #b8d8a0; }
+  .feedback-area.incorrect { display: block; background: rgba(229,115,115,0.08); border: 1px solid rgba(229,115,115,0.2); color: #e0b0b0; }
+  .feedback-area .fb-label { font-weight: 700; }
+  .q-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .results-card { background: rgba(10,14,26,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 28px 24px; backdrop-filter: blur(10px); text-align: center; }
+  .results-score { font-size: 3.5rem; font-weight: 800; background: linear-gradient(135deg, #c860a0, #f080d0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
+  .results-label { font-size: 1rem; color: #9a5a8a; margin-top: 4px; }
+  .results-details { display: flex; gap: 20px; justify-content: center; margin: 14px 0; flex-wrap: wrap; }
+  .results-stat { text-align: center; }
+  .results-stat .num { font-size: 1.3rem; font-weight: 700; color: #f0faff; }
+  .results-stat .desc { font-size: 0.76rem; color: #5a7a7a; }
+  .results-msg { font-size: 0.95rem; padding: 10px; border-radius: 8px; margin: 14px 0; }
+  .results-msg.perfect { background: rgba(255,215,0,0.08); color: #ffd700; border: 1px solid rgba(255,215,0,0.15); }
+  .results-msg.great { background: rgba(139,195,74,0.08); color: #8bc34a; border: 1px solid rgba(139,195,74,0.15); }
+  .results-msg.good { background: rgba(240,160,48,0.08); color: #f0a030; border: 1px solid rgba(240,160,48,0.15); }
+  .results-msg.retry { background: rgba(229,115,115,0.08); color: #e57373; border: 1px solid rgba(229,115,115,0.15); }
+  .results-chart { display: flex; gap: 8px; justify-content: center; margin: 14px 0; }
+  .results-chart .bar { width: 36px; border-radius: 4px 4px 0 0; transition: height 0.6s ease; }
+  .results-chart .bar.cb { background: #8bc34a; }
+  .results-chart .bar.ib { background: #e57373; }
+  .review-list { margin-top: 14px; text-align: left; }
+  .review-item { padding: 10px 14px; border-radius: 8px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.04); }
+  .review-item.cr { border-left: 3px solid #8bc34a; }
+  .review-item.ir { border-left: 3px solid #e57373; }
+  .review-item .rq { font-size: 0.85rem; color: #d0e4ec; margin-bottom: 3px; }
+  .review-item .ra { font-size: 0.8rem; }
+  .review-item .ra .ya { color: #e57373; }
+  .review-item .ra .ca { color: #8bc34a; }
+  .footer { position: relative; z-index: 1; text-align: center; padding: 14px; color: #3a5a5a; font-size: 0.72rem; border-top: 1px solid rgba(255,255,255,0.04); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 600px) {
+    .header h1 { font-size: 1.2rem; } .setup-card { padding: 14px; } .question-card { padding: 16px; } .question-text { font-size: 1rem; } .results-score { font-size: 2.5rem; } .quiz-options { flex-direction: column; align-items: stretch; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<header class="header">
+  <div class="badge">Cambridge AS & A Level 9618</div>
+  <h1>💻 <span>Further Programming</span></h1>
+  <p>Interactive Quiz — Addressing Modes, OOP, Declarative Programming & Exception Handling</p>
+</header>
+<div class="main">
+  <div id="setupScreen">
+    <div class="setup-card">
+      <h2>🎯 Topic Coverage</h2>
+      <p>This quiz tests your knowledge of low-level addressing modes (immediate, direct, indirect, indexed, relative), imperative/procedural programming, OOP (encapsulation, inheritance, polymorphism), declarative programming (facts, rules, goals), file operations, and TRY-CATCH-THROW exception handling.</p>
+      <div class="topic-chips">
+        <span class="topic-chip">Addressing Modes</span>
+        <span class="topic-chip">Immediate</span>
+        <span class="topic-chip">Direct</span>
+        <span class="topic-chip">Indirect</span>
+        <span class="topic-chip">Indexed</span>
+        <span class="topic-chip">Relative</span>
+        <span class="topic-chip">OOP</span>
+        <span class="topic-chip">Encapsulation</span>
+        <span class="topic-chip">Declarative</span>
+        <span class="topic-chip">TRY-CATCH</span>
+      </div>
+    </div>
+    <div class="setup-card">
+      <h2>⚙️ Quiz Settings</h2>
+      <div class="quiz-options">
+        <label>Questions: <select id="numQuestions">
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+          <option value="0">All (25)</option>
+        </select></label>
+        <label>Type: <select id="questionType">
+          <option value="all" selected>Mixed</option>
+          <option value="mcq">Multiple Choice</option>
+          <option value="truefalse">True / False</option>
+        </select></label>
+      </div>
+    </div>
+    <div class="setup-card" id="statsCard">
+      <h2>📈 Your Progress</h2>
+      <div class="stats-section" id="statsSection">
+        <div class="stat-item">🏆 Best: <span class="stat-num" id="bestScore">—</span></div>
+        <div class="stat-item">📝 Attempts: <span class="stat-num" id="totalAttempts">0</span></div>
+        <div class="stat-item">📊 Average: <span class="stat-num" id="avgScore">—</span></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-secondary btn-small" onclick="toggleHistory()">📜 History</button>
+        <button class="btn-secondary btn-small" onclick="clearHistory()">🗑️ Clear Data</button>
+      </div>
+      <div class="history-section" id="historySection">
+        <div id="historyList"></div>
+        <p id="historyEmpty" style="color:#9a5a8a;font-size:0.82rem;padding:10px;text-align:center;">No attempts yet. Complete a quiz to see your history!</p>
+      </div>
+    </div>
+    <div style="text-align:center;"><button class="btn-primary" onclick="startQuiz()">🚀 Start Quiz</button></div>
+  </div>
+  <div id="quizScreen" style="display:none;">
+    <div class="quiz-header">
+      <div><span class="quiz-progress">Question <strong id="currentQ">1</strong> of <strong id="totalQ">10</strong></span></div>
+      <span class="quiz-score">✅ <span id="scoreDisplay">0</span>/<span id="totalCorrect">10</span></span>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="question-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span class="q-type-tag" id="qTypeTag">MCQ</span></div>
+      <div class="question-text" id="qText">Loading question...</div>
+      <div class="options-list" id="optionsList"></div>
+      <div class="feedback-area" id="feedbackArea"></div>
+      <div class="q-actions"><button class="btn-secondary" id="nextBtn" style="display:none;" onclick="nextQuestion()">Next →</button></div>
+    </div>
+  </div>
+  <div id="resultsScreen" style="display:none;">
+    <div class="results-card">
+      <div class="results-score" id="finalScore">0%</div>
+      <div class="results-label">Final Score</div>
+      <div class="results-details">
+        <div class="results-stat"><span class="num" id="rCorrect">0</span><div class="desc">Correct</div></div>
+        <div class="results-stat"><span class="num" id="rIncorrect">0</span><div class="desc">Incorrect</div></div>
+        <div class="results-stat"><span class="num" id="rTotal">0</span><div class="desc">Total</div></div>
+      </div>
+      <div class="results-chart" id="resultsChart">
+        <div class="bar cb" id="correctBar" style="height:40px;"></div>
+        <div class="bar ib" id="incorrectBar" style="height:20px;"></div>
+      </div>
+      <div class="results-msg" id="resultsMsg">Great job!</div>
+      <div class="review-list" id="reviewList"></div>
+      <div class="results-actions" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px;">
+        <button class="btn-primary" onclick="resetQuiz()">🔄 Try Again</button>
+        <button class="btn-secondary" onclick="showSetup()">⚙️ Settings</button>
+      </div>
+    </div>
+  </div>
+</div>
+<footer class="footer">Cambridge AS & A Level 9618 &bull; Topic 20: Further Programming &bull; Interactive Quiz</footer>
+<script>
+  const QB = [
+    {type:"mcq", q:"What is the five addressing modes in low-level programming?", options:["Immediate, Direct, Indirect, Indexed, Relative","Load, Store, Add, Subtract, Jump","Binary, Decimal, Hex, Octal, Float","Fetch, Decode, Execute, Memory, Write"], correct:0, explain:"The five addressing modes are: Immediate, Direct, Indirect, Indexed, and Relative. Each specifies how operands are located."},
+    {type:"mcq", q:"In immediate addressing, where is the operand?", options:["In a register","Part of the instruction itself","In memory at a specified address","In the stack"], correct:1, explain:"Immediate addressing has the operand value embedded directly in the instruction (e.g., LDA #5 loads the value 5)."},
+    {type:"truefalse", q:"In direct addressing, the instruction contains the actual memory address of the operand.", correct:true, explain:"Direct addressing means the address part of the instruction directly specifies the memory location of the operand."},
+    {type:"mcq", q:"How does indirect addressing work?", options:["The operand is in the instruction","The instruction contains an address that points to another address where the operand is found","The operand is in a register","The operand is computed using an index register"], correct:1, explain:"Indirect addressing: the instruction holds an address that points to a memory location which contains the actual address of the operand."},
+    {type:"mcq", q:"What is indexed addressing used for?", options:["Accessing elements in arrays/lists","Jumping to subroutines","Loading immediate values","Storing constants"], correct:0, explain:"Indexed addressing adds an index register value to a base address, allowing efficient access to array elements."},
+    {type:"truefalse", q:"In relative addressing, the effective address is calculated by adding an offset to the program counter.", correct:true, explain:"Relative addressing computes the target address as PC + offset, commonly used for branch/jump instructions."},
+    {type:"mcq", q:"What is encapsulation in OOP?", options:["Bundling data and methods together while hiding internal details","Creating multiple classes","Inheriting properties from a parent","Overloading methods"], correct:0, explain:"Encapsulation groups related data (attributes) and methods together and hides internal implementation details using private access modifiers."},
+    {type:"mcq", q:"In OOP, what is inheritance?", options:["A class creating an object","A class deriving properties and methods from a parent class","A class with no methods","A type of loop"], correct:1, explain:"Inheritance allows a class (child/subclass) to inherit attributes and methods from another class (parent/superclass), promoting code reuse."},
+    {type:"truefalse", q:"Polymorphism allows objects of different types to respond to the same method call in different ways.", correct:true, explain:"Polymorphism means 'many forms' — different classes can implement the same method name with different behaviours."},
+    {type:"mcq", q:"In declarative programming, what is a fact?", options:["A question to be answered","A statement that is unconditionally true","A conditional rule","A variable assignment"], correct:1, explain:"A fact is a statement that is always true in the knowledge base, e.g., likes(john, mary)."},
+    {type:"mcq", q:"In declarative programming (e.g., Prolog), a rule has what structure?", options:["IF condition THEN conclusion","head :- body","WHILE condition DO action","CASE value OF"], correct:1, explain:"In Prolog, a rule has the form 'head :- body', meaning 'head is true if body is true'. The :- is read as 'if'."},
+    {type:"truefalse", q:"A goal in declarative programming is a query that the system tries to prove or satisfy.", correct:true, explain:"A goal is a question asked to the system. The system attempts to satisfy the goal using facts and rules in the knowledge base."},
+    {type:"mcq", q:"What is imperative programming?", options:["A style focused on describing WHAT to achieve","A style focused on HOW to achieve results using statements that change state","A programming paradigm using only functions","A paradigm using only classes"], correct:1, explain:"Imperative programming focuses on HOW to achieve results through sequences of statements that change program state (variables, assignments, loops)."},
+    {type:"truefalse", q:"Procedural programming is a type of imperative programming that uses procedures/functions.", correct:true, explain:"Procedural programming is a sub-type of imperative programming where code is organised into reusable procedures (functions/subroutines)."},
+    {type:"mcq", q:"What is the purpose of TRY-CATCH-THROW in exception handling?", options:["To optimise code performance","To gracefully handle runtime errors","To declare variables","To define classes"], correct:1, explain:"TRY-CATCH-THROW handles runtime errors gracefully: TRY contains risky code, CATCH handles exceptions, THROW raises custom exceptions."},
+    {type:"mcq", q:"What happens when an exception is thrown but not caught?", options:["The program continues normally","The program terminates abnormally","The exception is ignored","The exception is automatically fixed"], correct:1, explain:"If an exception is thrown and no CATCH block handles it, the program will terminate abnormally (crash)."},
+    {type:"truefalse", q:"File operations in programming typically follow the pattern: OPEN → READ/WRITE → CLOSE.", correct:true, explain:"The standard file operation pattern is: open the file, perform read/write operations, then close the file to release resources."},
+    {type:"mcq", q:"What is the difference between a text file and a binary file?", options:["Text files store human-readable characters; binary files store data in raw byte format","Text files are faster","Binary files can only store numbers","There is no difference"], correct:0, explain:"Text files store data as human-readable characters (e.g., .txt, .csv). Binary files store data in raw byte format (e.g., .exe, .dat)."},
+    {type:"mcq", q:"What does the LOAD instruction do in assembly language?", options:["Executes a program","Copies data from memory to a register","Copies data from a register to memory","Adds two numbers"], correct:1, explain:"LOAD copies data from a memory address into a CPU register. STORE does the opposite (register to memory)."},
+    {type:"truefalse", q:"In low-level programming, the STORE instruction copies data from a register to memory.", correct:true, explain:"STORE transfers data from a register to a specified memory location. The operands are register and memory address."},
+    {type:"mcq", q:"Which programming paradigm uses facts and rules rather than step-by-step instructions?", options:["Imperative","Procedural","Object-Oriented","Declarative (Logic)"], correct:3, explain:"Declarative (logic) programming as in Prolog uses facts and rules to define what is true, and the system deduces answers."},
+    {type:"truefalse", q:"In OOP, an object is an instance of a class.", correct:true, explain:"A class is a blueprint/template. An object is a specific instance created from that class, with its own state."},
+    {type:"mcq", q:"What is the advantage of using TRY-CATCH over traditional error checking?", options:["It is faster","It separates error-handling logic from normal code, making code cleaner","It prevents all errors","It doesn't require any code changes"], correct:1, explain:"TRY-CATCH separates normal program flow from error-handling logic, resulting in cleaner, more maintainable code."},
+    {type:"truefalse", q:"In indexed addressing, the index register value is subtracted from the base address.", correct:false, explain:"In indexed addressing, the index register value is typically added to the base address to compute the effective address."},
+    {type:"mcq", q:"Which of the following best describes the relationship between imperative and procedural programming?", options:["They are completely different","Procedural programming is a subset of imperative programming","Imperative is a subset of procedural","They are the same thing"], correct:1, explain:"Procedural programming is a subset of imperative programming that organises code into reusable procedures or functions."},
+  ];
+  let S = { questions: [], current: 0, score: 0, answers: [], answered: false };
+  function startQuiz() {
+    let pool = [...QB]; const typeFilter = document.getElementById('questionType').value;
+    if (typeFilter !== 'all') { pool = pool.filter(q => q.type === typeFilter); if (!pool.length) { alert('No questions of this type available.'); return; } }
+    for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+    let numQ = parseInt(document.getElementById('numQuestions').value);
+    if (numQ === 0 || numQ > pool.length) numQ = pool.length;
+    S.questions = pool.slice(0, numQ); S.current = 0; S.score = 0; S.answers = []; S.answered = false; showScreen('quizScreen'); renderQ();
+  }
+  function renderQ() {
+    const q = S.questions[S.current]; const total = S.questions.length; const idx = S.current;
+    document.getElementById('currentQ').textContent = idx + 1; document.getElementById('totalQ').textContent = total;
+    document.getElementById('scoreDisplay').textContent = S.score; document.getElementById('totalCorrect').textContent = total;
+    document.getElementById('progressFill').style.width = (idx / total * 100) + '%'; document.getElementById('qText').textContent = q.q;
+    document.getElementById('qTypeTag').textContent = q.type === 'truefalse' ? 'True / False' : 'Multiple Choice';
+    const container = document.getElementById('optionsList'); container.innerHTML = '';
+    if (q.type === 'truefalse') {
+      ['True','False'].forEach((text,i) => { const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerHTML = '<span class="opt-letter">'+(i===0?'T':'F')+'</span>'+text; btn.dataset.index = i; btn.addEventListener('click',()=>selectAns(i)); container.appendChild(btn); });
+    } else {
+      const letters = ['A','B','C','D']; q.options.forEach((text,i) => { const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerHTML = '<span class="opt-letter">'+letters[i]+'</span>'+text; btn.dataset.index = i; btn.addEventListener('click',()=>selectAns(i)); container.appendChild(btn); });
+    }
+    const fb = document.getElementById('feedbackArea'); fb.className = 'feedback-area'; fb.textContent = ''; document.getElementById('nextBtn').style.display = 'none'; S.answered = false;
+  }
+  function selectAns(index) {
+    if (S.answered) return; S.answered = true;
+    const q = S.questions[S.current]; const buttons = document.querySelectorAll('.option-btn'); const correct = (index === q.correct);
+    buttons.forEach((btn,i) => { btn.classList.add('disabled'); if (i === q.correct) btn.classList.add('correct'); if (i === index && !correct) btn.classList.add('incorrect'); if (i === index) btn.classList.add('selected'); });
+    if (correct) S.score++; document.getElementById('scoreDisplay').textContent = S.score;
+    const fb = document.getElementById('feedbackArea'); fb.className = 'feedback-area ' + (correct ? 'correct' : 'incorrect');
+    fb.innerHTML = '<span class="fb-label">' + (correct ? '✅ Correct!' : '❌ Incorrect.') + '</span> ' + q.explain;
+    S.answers.push({selected: index, correctIdx: q.correct, question: q, wasCorrect: correct});
+    const nextBtn = document.getElementById('nextBtn'); nextBtn.style.display = 'inline-flex'; nextBtn.textContent = (S.current === S.questions.length - 1) ? '📊 See Results' : 'Next →';
+  }
+  function nextQuestion() { if (S.current >= S.questions.length - 1) { showResults(); return; } S.current++; renderQ(); }
+  function showResults() {
+    showScreen('resultsScreen'); const total = S.questions.length; const correct = S.score; const incorrect = total - correct; const pct = total > 0 ? Math.round(correct/total*100) : 0;
+    document.getElementById('finalScore').textContent = pct+'%'; document.getElementById('rCorrect').textContent = correct; document.getElementById('rIncorrect').textContent = incorrect; document.getElementById('rTotal').textContent = total;
+    const maxH = 80; document.getElementById('correctBar').style.height = (total > 0 ? (correct/total)*maxH : 0) + 'px'; document.getElementById('incorrectBar').style.height = (total > 0 ? (incorrect/total)*maxH : 0) + 'px';
+    const msg = document.getElementById('resultsMsg'); msg.className = 'results-msg';
+    if (pct === 100) { msg.textContent = '🏆 Perfect! You\'ve mastered Further Programming!'; msg.classList.add('perfect'); }
+    else if (pct >= 80) { msg.textContent = '🌟 Excellent! Strong understanding of programming paradigms.'; msg.classList.add('great'); }
+    else if (pct >= 60) { msg.textContent = '👍 Good effort! Review the incorrect answers below.'; msg.classList.add('good'); }
+    else { msg.textContent = '📚 Keep studying! Review the presentation and try again.'; msg.classList.add('retry'); }
+    const rl = document.getElementById('reviewList'); rl.innerHTML = '<h3 style="font-size:0.92rem;color:#d080c0;margin-bottom:8px;">📋 Review Answers</h3>';
+    const letters = ['A','B','C','D']; S.answers.forEach((a,i) => {
+      const item = document.createElement('div'); item.className = 'review-item ' + (a.wasCorrect ? 'cr' : 'ir'); const q = a.question; const ya = q.type === 'truefalse' ? (a.selected===0?'True':'False') : letters[a.selected]; const ca = q.type === 'truefalse' ? 'True' : letters[a.correctIdx];
+      item.innerHTML = '<div class="rq">'+(i+1)+'. '+q.q+'</div><div class="ra">'+(a.wasCorrect ? '<span style="color:#8bc34a;">✅ Correct</span>' : '<span class="ya">❌ Your answer: '+ya+'</span> — <span class="ca">Correct: '+ca+'</span>')+'</div><div style="color:#5a9a8a;font-size:0.76rem;margin-top:3px;">'+q.explain+'</div>'; rl.appendChild(item);
+    });
+    saveResult(correct, total);
+  }
+  function resetQuiz() { S.current=0; S.score=0; S.answers=[]; S.answered=false; const pool=S.questions; for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];} showScreen('quizScreen'); renderQ(); }
+  function showSetup() { showScreen('setupScreen'); }
+  function showScreen(id) { ['setupScreen','quizScreen','resultsScreen'].forEach(s=>{const el=document.getElementById(s);if(el)el.style.display=(s===id?'block':'none');}); }
+
+  const QUIZ_TOPIC = 'Further Programming';
+  function getStorageKey(){return 'quiz9618_'+QUIZ_TOPIC.replace(/[^a-zA-Z0-9]/g,'_');}
+  function getStats(){try{const d=localStorage.getItem(getStorageKey());return d?JSON.parse(d):{best:null,attempts:[]};}catch(e){return{best:null,attempts:[]};}}
+  function saveResult(correct,total){try{const stats=getStats();const pct=Math.round(correct/total*100);const entry={date:new Date().toISOString(),correct,total,pct};stats.attempts.push(entry);if(stats.best===null||pct>stats.best.pct)stats.best=entry;localStorage.setItem(getStorageKey(),JSON.stringify(stats));loadStats();}catch(e){}}
+  function loadStats(){try{const stats=getStats();document.getElementById('bestScore').textContent=stats.best?stats.best.correct+'/'+stats.best.total+' ('+stats.best.pct+'%)':'—';document.getElementById('totalAttempts').textContent=stats.attempts.length;if(stats.attempts.length>0){const avg=Math.round(stats.attempts.reduce((s,a)=>s+a.pct,0)/stats.attempts.length);document.getElementById('avgScore').textContent=avg+'%';}else document.getElementById('avgScore').textContent='—';const hl=document.getElementById('historyList');const he=document.getElementById('historyEmpty');if(hl){hl.innerHTML='';if(stats.attempts.length===0){if(he)he.style.display='block';}else{if(he)he.style.display='none';[...stats.attempts].reverse().slice(0,30).forEach(a=>{const d=new Date(a.date);const ds=d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});const div=document.createElement('div');div.className='history-item';div.innerHTML='<span class="h-date">'+ds+'</span><span class="h-score">'+a.correct+'/'+a.total+'</span><span class="h-pct">'+a.pct+'%</span>';hl.appendChild(div);});}}}catch(e){}}
+  function toggleHistory(){document.getElementById('historySection').classList.toggle('open');}
+  function clearHistory(){try{if(confirm('Clear all saved quiz history for this topic?')){localStorage.removeItem(getStorageKey());loadStats();document.getElementById('historySection').classList.remove('open');}}catch(e){}}
+  document.addEventListener('DOMContentLoaded',loadStats);
+</script>
+</body>
+</html>

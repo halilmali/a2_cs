@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topic 18: Artificial Intelligence (AI) — Cambridge 9618</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #080c18;
+    color: #e0e8f0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+  .presentation { position: relative; width: 100vw; height: 100vh; }
+  .slide {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none;
+    flex-direction: column;
+    padding: 36px 50px;
+    background: linear-gradient(135deg, #0a0e1e 0%, #101838 50%, #0a0e1e 100%);
+    overflow-y: auto;
+  }
+  .slide.active { display: flex; }
+  .slide::-webkit-scrollbar { width: 6px; }
+  .slide::-webkit-scrollbar-track { background: #0a0e1e; }
+  .slide::-webkit-scrollbar-thumb { background: #1a5a6a; border-radius: 3px; }
+  h1 { font-size: 2.4rem; font-weight: 700; color: #f0f6ff; margin-bottom: 8px; letter-spacing: -0.5px; }
+  h2 { font-size: 1.6rem; font-weight: 600; color: #b8d4ff; margin-bottom: 6px; border-bottom: 2px solid #1a7a6a; padding-bottom: 4px; }
+  h3 { font-size: 1.2rem; font-weight: 600; color: #8bb8ff; margin-bottom: 5px; }
+  h4 { font-size: 1rem; font-weight: 600; color: #5ae0c0; margin-bottom: 4px; }
+  p, li { font-size: 1rem; line-height: 1.5; color: #d0dcec; margin-bottom: 4px; }
+  ul { padding-left: 20px; margin-bottom: 6px; }
+  li { margin-bottom: 2px; }
+  strong { color: #e8f0ff; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 0.88rem; }
+  th { background: #0e2840; color: #5ae0c0; font-weight: 600; padding: 7px 10px; text-align: left; border: 1px solid #1a5a6a; }
+  td { padding: 6px 10px; border: 1px solid #1a3a4a; color: #c8d8ec; }
+  tr:nth-child(even) td { background: #0a0e1e; }
+  tr:nth-child(odd) td { background: #0e1428; }
+  .code-block { font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; background: #080c18; border: 1px solid #1a5a6a; border-radius: 8px; padding: 10px 14px; font-size: 0.82rem; line-height: 1.5; color: #d4e4ff; overflow-x: auto; margin: 6px 0; white-space: pre; }
+  .inline-code { font-family: 'Cascadia Code', 'Consolas', monospace; background: #080c18; color: #5ae0c0; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; border: 1px solid #1a5a6a; }
+  .flex-row { display: flex; flex-direction: row; gap: 16px; }
+  .flex-col { display: flex; flex-direction: column; gap: 6px; }
+  .flex-1 { flex: 1; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
+  .mt-6 { margin-top: 6px; } .mt-8 { margin-top: 8px; } .mt-10 { margin-top: 10px; } .mt-12 { margin-top: 12px; }
+  .mb-6 { margin-bottom: 6px; } .mb-8 { margin-bottom: 8px; } .mb-10 { margin-bottom: 10px; }
+  .text-center { text-align: center; }
+  .card { background: #0a0e1e; border: 1px solid #1a5a6a; border-radius: 10px; padding: 10px 12px; transition: border-color 0.2s; }
+  .card:hover { border-color: #2ac8a0; }
+  .card h4 { color: #5ae0c0; margin-bottom: 3px; }
+  .diagram-box { background: #080c18; border: 1px solid #1a5a6a; border-radius: 10px; padding: 12px; margin: 8px 0; display: flex; flex-direction: column; align-items: center; }
+  .diagram-box svg { max-width: 100%; height: auto; }
+  .diagram-caption { margin-top: 5px; font-size: 0.78rem; color: #7ab8a8; font-style: italic; text-align: center; }
+  .callout { background: #0a0e1e; border-left: 4px solid #f78c6c; padding: 8px 12px; border-radius: 0 6px 6px 0; margin: 5px 0; font-size: 0.9rem; }
+  .callout.info { border-left-color: #2ac8a0; }
+  .callout.warn { border-left-color: #f78c6c; }
+  .callout.success { border-left-color: #8bc34a; }
+  .section-badge { display: inline-block; background: linear-gradient(135deg, #0a2840, #1a5a6a); color: #5ae0c0; padding: 3px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; margin-bottom: 6px; letter-spacing: 0.5px; text-transform: uppercase; border: 1px solid #2a9a8a; }
+  .objectives-list { list-style: none; padding: 0; }
+  .objectives-list li { padding: 6px 10px 6px 30px; background: #080c18; border-left: 3px solid #2ac8a0; margin-bottom: 6px; border-radius: 0 6px 6px 0; position: relative; }
+  .objectives-list li::before { content: "▸"; position: absolute; left: 10px; color: #2ac8a0; font-weight: bold; }
+  .worked-example { background: linear-gradient(135deg, #0c1a20, #0e2828); border: 1px solid #2a9a8a; border-radius: 10px; padding: 12px 16px; margin: 6px 0; }
+  .worked-example h4 { color: #f78c6c; margin-bottom: 5px; }
+  .key-term-box { background: linear-gradient(135deg, #1a0a2e, #2a0a4a); border: 1px solid #6a3aaa; border-radius: 10px; padding: 10px 14px; margin: 6px 0; }
+  .key-term-box h4 { color: #b080f0; } .key-term-box h4::before { content: "🔑 "; }
+  .exam-tip-box { background: linear-gradient(135deg, #1a1a0a, #2a2a0a); border: 1px solid #c8a020; border-radius: 10px; padding: 8px 14px; margin: 6px 0; }
+  .exam-tip-box h4 { color: #f0c040; } .exam-tip-box h4::before { content: "💡 "; }
+  .common-mistake-box { background: linear-gradient(135deg, #2a0a0a, #3a1a0a); border: 1px solid #c04040; border-radius: 10px; padding: 8px 14px; margin: 6px 0; }
+  .common-mistake-box h4 { color: #e06060; } .common-mistake-box h4::before { content: "⚠️ "; }
+  .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 8px 20px; background: rgba(8,12,24,0.94); backdrop-filter: blur(10px); border-top: 1px solid #1a3a4a; z-index: 100; }
+  .nav-bar button { background: #0e2840; border: 1px solid #1a5a6a; color: #5ae0c0; padding: 6px 16px; border-radius: 6px; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+  .nav-bar button:hover { background: #1a5a6a; }
+  .nav-bar button:disabled { opacity: 0.35; cursor: default; }
+  .nav-bar .slide-counter { color: #7ab8a8; font-size: 0.82rem; min-width: 80px; text-align: center; }
+  .nav-bar .progress-dots { display: flex; gap: 3px; flex-wrap: wrap; max-width: 400px; justify-content: center; }
+  .nav-bar .dot { width: 6px; height: 6px; border-radius: 50%; background: #1a3a4a; border: none; cursor: pointer; padding: 0; transition: background 0.2s; }
+  .nav-bar .dot.active { background: #2ac8a0; }
+  .nav-bar .dot:hover { background: #3aaa7a; }
+  .slide-number { position: absolute; bottom: 48px; right: 20px; color: #1a2a3a; font-size: 0.78rem; font-weight: 600; z-index: 1; }
+  .kbd-hint { position: fixed; bottom: 52px; right: 16px; color: #2a5a5a; font-size: 0.7rem; z-index: 90; }
+  .chip-group { display: flex; gap: 6px; flex-wrap: wrap; margin: 5px 0; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; background: #080c18; border: 1px solid #1a5a6a; border-radius: 20px; padding: 3px 10px; font-size: 0.78rem; color: #5ae0c0; }
+  .tag { display: inline-block; background: #0e2840; color: #5ae0c0; padding: 2px 10px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; border: 1px solid #1a5a6a; margin-right: 3px; }
+  @media (max-width: 900px) { .slide { padding: 20px 18px; } h1 { font-size: 1.6rem; } h2 { font-size: 1.2rem; } h3 { font-size: 1rem; } .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } .flex-row { flex-direction: column; } .nav-bar .progress-dots { max-width: 200px; } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .slide.active > * { animation: fadeIn 0.35s ease-out; }
+</style>
+</head>
+<body>
+<div class="presentation" id="presentation"></div>
+<div class="nav-bar">
+  <button id="prevBtn" onclick="changeSlide(-1)">◀ Prev</button>
+  <span class="slide-counter" id="slideCounter">1 / 1</span>
+  <div class="progress-dots" id="progressDots"></div>
+  <button id="nextBtn" onclick="changeSlide(1)">Next ▶</button>
+</div>
+<div class="kbd-hint">← → arrow keys to navigate</div>
+<script>
+const slides = [];
+function addSlide(html) { slides.push(html); }
+function renderSlides() {
+  const container = document.getElementById('presentation');
+  slides.forEach((html, i) => {
+    const div = document.createElement('div');
+    div.className = 'slide' + (i === 0 ? ' active' : '');
+    div.dataset.slide = i + 1;
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+  renderDots();
+  updateNav();
+}
+function renderDots() {
+  const dots = document.getElementById('progressDots');
+  if (!dots) return;
+  dots.innerHTML = '';
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'dot' + (i === currentSlide ? ' active' : '');
+    dot.onclick = () => goToSlide(i);
+    dots.appendChild(dot);
+  });
+}
+let currentSlide = 0;
+function changeSlide(dir) {
+  const next = currentSlide + dir;
+  if (next < 0 || next >= slides.length) return;
+  goToSlide(next);
+}
+function goToSlide(idx) {
+  const all = document.querySelectorAll('.slide');
+  all.forEach(s => s.classList.remove('active'));
+  all[idx].classList.add('active');
+  currentSlide = idx;
+  const counter = document.getElementById('slideCounter');
+  if (counter) counter.textContent = (idx + 1) + ' / ' + slides.length;
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === slides.length - 1;
+  renderDots();
+  all[idx].scrollTop = 0;
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+});
+function updateNav() {
+  const counter = document.getElementById('slideCounter');
+  if (counter) counter.textContent = '1 / ' + slides.length;
+  document.getElementById('prevBtn').disabled = true;
+  if (slides.length <= 1) document.getElementById('nextBtn').disabled = true;
+}
+// SLIDES START HERE
+
+// ==================================================================
+// SLIDE 1 – TITLE SLIDE
+// ==================================================================
+addSlide(`
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+    <div class="section-badge" style="margin-bottom:14px;">Cambridge International AS &amp; A Level — 9618</div>
+    <h1 style="font-size:3rem; margin-bottom:6px;">Topic 18</h1>
+    <h1 style="font-size:2.6rem; margin-bottom:8px; color:#5ae0c0;">Artificial Intelligence (AI)</h1>
+    <div style="width:80px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:18px;"></div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:700px;">
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Graph Search</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Dijkstra's Algorithm</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">A* Search</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Neural Networks</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Machine Learning</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Back Propagation</span>
+    </div>
+    <div style="margin-top:24px; text-align:left; max-width:650px;">
+      <h4 style="color:#b8d4ff; margin-bottom:8px;">Learning Objectives:</h4>
+      <ul>
+        <li>Understand how graphs can be used to aid AI</li>
+        <li>Understand the purpose and structure of a graph</li>
+        <li>Use A* and Dijkstra's algorithms to perform searches on a graph</li>
+        <li>Understand how ANNs have helped machine learning</li>
+        <li>Understand Deep Learning, ML, RL, supervised &amp; unsupervised learning</li>
+        <li>Understand back propagation of errors and regression methods</li>
+      </ul>
+    </div>
+    <p style="color:#3a6a6a; font-size:0.82rem; margin-top:20px;">Press <span class="inline-code">→</span> or click navigation to begin</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 2 – WHAT IS ARTIFICIAL INTELLIGENCE?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 AI</div>
+  <h2>What Is Artificial Intelligence?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Artificial Intelligence (AI)</strong> is the simulation of human intelligence by machines.</p>
+        <p style="margin-top:6px;">AI systems can <strong>learn, reason, perceive,</strong> and <strong>make decisions</strong>.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Real-World Applications</h4>
+        <ul>
+          <li>Self-driving cars (perception + decision making)</li>
+          <li>Speech recognition (Siri, Alexa)</li>
+          <li>Game playing (AlphaGo, chess engines)</li>
+          <li>Medical diagnosis</li>
+          <li>Recommendation systems (Netflix, YouTube)</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Artificial Intelligence (AI):</strong> The theory and development of computer systems able to perform tasks that normally require human intelligence.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 3 – HOW GRAPHS HELP AI
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Graphs in AI</div>
+  <h2>How Graphs Help AI</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Why Graphs?</h4>
+        <ul>
+          <li>Many AI problems involve <strong>finding paths</strong>, making decisions, or exploring possibilities</li>
+          <li><strong>Graphs</strong> are a natural way to represent these problems</li>
+          <li><strong>Nodes</strong> represent states, locations, or objects</li>
+          <li><strong>Edges</strong> represent possible actions or connections</li>
+          <li><strong>Weights</strong> on edges represent cost (time, distance, resources)</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Examples</h4>
+        <ul>
+          <li><strong>Route planning:</strong> nodes = cities, edges = roads, weights = distances</li>
+          <li><strong>Game AI:</strong> nodes = game states, edges = possible moves</li>
+          <li><strong>Robot navigation:</strong> nodes = positions, edges = possible movements</li>
+          <li><strong>Network routing:</strong> nodes = routers, edges = connections</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 4 – PURPOSE OF A GRAPH IN AI
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Graphs</div>
+  <h2>Purpose of a Graph in AI</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Why Use Graphs?</h4>
+      <ul>
+        <li><strong>Model relationships</strong> between objects in a structured way</li>
+        <li>Allow AI to <strong>search for optimal solutions</strong></li>
+        <li>Help represent complex problems in a <strong>structured, computable way</strong></li>
+        <li>Enable algorithms to find <strong>shortest paths, cheapest routes,</strong> or best sequences of actions</li>
+      </ul>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Graph:</strong> A data structure consisting of <strong>nodes</strong> (vertices) connected by <strong>edges</strong>. Edges may have <strong>weights</strong> representing cost, distance or time.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Note:</strong> Candidates will NOT be required to write algorithms to set up, access, or perform searches on graphs. Focus on <strong>conceptual understanding</strong>.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 5 – STRUCTURE OF A GRAPH
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Graphs</div>
+  <h2>Structure of a Graph</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Key Components</h4>
+        <ul>
+          <li><strong>Node (vertex):</strong> A state, location, or object</li>
+          <li><strong>Edge:</strong> A connection or relationship between nodes</li>
+          <li><strong>Weight:</strong> A numeric value on an edge (cost, distance, time)</li>
+          <li><strong>Directed edge:</strong> One-way connection</li>
+          <li><strong>Undirected edge:</strong> Two-way connection</li>
+          <li><strong>Path:</strong> A sequence of nodes connected by edges</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 300 140" style="width:100%; max-width:300px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Weighted Graph Example</text>
+          <circle cx="50" cy="50" r="18" fill="#0e2840" stroke="#2ac8a0" stroke-width="2"/>
+          <text x="42" y="55" fill="#5ae0c0" font-size="12" font-weight="700">A</text>
+          <circle cx="150" cy="50" r="18" fill="#0e2840" stroke="#2ac8a0" stroke-width="2"/>
+          <text x="142" y="55" fill="#5ae0c0" font-size="12" font-weight="700">B</text>
+          <circle cx="50" cy="110" r="18" fill="#0e2840" stroke="#2ac8a0" stroke-width="2"/>
+          <text x="42" y="115" fill="#5ae0c0" font-size="12" font-weight="700">C</text>
+          <circle cx="150" cy="110" r="18" fill="#0e2840" stroke="#2ac8a0" stroke-width="2"/>
+          <text x="142" y="115" fill="#5ae0c0" font-size="12" font-weight="700">D</text>
+          <line x1="68" y1="50" x2="132" y2="50" stroke="#4a7ac8" stroke-width="2"/>
+          <text x="90" y="44" fill="#f0c040" font-size="10">5</text>
+          <line x1="50" y1="68" x2="50" y2="92" stroke="#4a7ac8" stroke-width="2"/>
+          <text x="34" y="82" fill="#f0c040" font-size="10">3</text>
+          <line x1="68" y1="110" x2="132" y2="110" stroke="#4a7ac8" stroke-width="2"/>
+          <text x="90" y="104" fill="#f0c040" font-size="10">2</text>
+          <line x1="150" y1="68" x2="150" y2="92" stroke="#4a7ac8" stroke-width="2"/>
+          <text x="156" y="82" fill="#f0c040" font-size="10">8</text>
+        </svg>
+        <div class="diagram-caption">Nodes A-D with weighted edges. Path A→B→D has cost 13</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 6 – TYPES OF GRAPHS USED IN AI
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Graphs</div>
+  <h2>Types of Graphs Used in AI</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Graph Type</th><th>Description</th><th>Used By</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Weighted graph</strong></td><td>Edges have costs (importance, distance, time)</td><td>Dijkstra and A*</td></tr>
+      <tr><td><strong>Unweighted graph</strong></td><td>All edges have equal cost</td><td>BFS search</td></tr>
+      <tr><td><strong>Directed graph</strong></td><td>Edges have a direction (one-way)</td><td>State machines, some pathfinding</td></tr>
+      <tr><td><strong>Undirected graph</strong></td><td>Edges are bidirectional</td><td>Road networks, social networks</td></tr>
+      <tr><td><strong>Grid graph</strong></td><td>Nodes arranged in a grid pattern</td><td>Tile-based pathfinding (games)</td></tr>
+    </tbody>
+  </table>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>Know that Dijkstra and A* work on <strong>weighted graphs</strong>. The weights represent the cost of moving from one node to another.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 7 – INTRODUCTION TO DIJKSTRA'S ALGORITHM
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Dijkstra</div>
+  <h2>Introduction to Dijkstra's Algorithm</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Dijkstra's algorithm</strong> finds the shortest path from a start node to <strong>all other nodes</strong> in a weighted graph.</p>
+        <ul>
+          <li>It <strong>guarantees</strong> finding the shortest path</li>
+          <li>It works on graphs with <strong>non-negative</strong> edge weights</li>
+          <li>Named after computer scientist Edsger Dijkstra</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Dijkstra's algorithm:</strong> A graph search algorithm that finds the shortest path between nodes in a weighted graph. It guarantees the optimal path when edge weights are non-negative.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 8 – HOW DIJKSTRA'S ALGORITHM WORKS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Dijkstra</div>
+  <h2>How Dijkstra's Algorithm Works</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Step-by-Step Process</h4>
+    <ol>
+      <li>Set the distance to the <strong>start node as 0</strong>, all others as <strong>infinity</strong></li>
+      <li>Mark <strong>all nodes as unvisited</strong></li>
+      <li>Select the <strong>unvisited node with the smallest distance</strong></li>
+      <li>For each neighbour, calculate the distance through the current node</li>
+      <li>If this distance is <strong>smaller</strong> than the current recorded distance, <strong>update it</strong></li>
+      <li>Mark the current node as <strong>visited</strong></li>
+      <li><strong>Repeat</strong> until all nodes are visited or the target is reached</li>
+    </ol>
+  </div>
+  <div class="diagram-box mt-6">
+    <svg viewBox="0 0 360 60" style="width:100%; max-width:360px;">
+      <text x="8" y="14" fill="#b8d4ff" font-size="8" font-weight="600">Visual: Nodes A(start)→B→C→D(goal)</text>
+      <circle cx="40" cy="40" r="16" fill="#0e2840" stroke="#2ac8a0" stroke-width="2"/>
+      <text x="32" y="45" fill="#5ae0c0" font-size="10" font-weight="700">A</text>
+      <text x="18" y="24" fill="#7ab8a8" font-size="7">dist=0</text>
+      <line x1="56" y1="40" x2="94" y2="40" stroke="#4a7ac8" stroke-width="1.5"/>
+      <text x="68" y="36" fill="#f0c040" font-size="8">4</text>
+      <circle cx="110" cy="40" r="16" fill="#1a2840" stroke="#7ab8ff" stroke-width="2"/>
+      <text x="102" y="45" fill="#7ab8ff" font-size="10" font-weight="700">B</text>
+      <text x="96" y="24" fill="#7ab8a8" font-size="7">dist=∞→4</text>
+      <line x1="126" y1="40" x2="164" y2="40" stroke="#4a7ac8" stroke-width="1.5"/>
+      <text x="138" y="36" fill="#f0c040" font-size="8">3</text>
+      <circle cx="180" cy="40" r="16" fill="#1a2840" stroke="#7ab8ff" stroke-width="2"/>
+      <text x="172" y="45" fill="#7ab8ff" font-size="10" font-weight="700">C</text>
+      <text x="166" y="24" fill="#7ab8a8" font-size="7">dist=∞→7</text>
+      <line x1="196" y1="40" x2="234" y2="40" stroke="#4a7ac8" stroke-width="1.5"/>
+      <text x="210" y="36" fill="#f0c040" font-size="8">5</text>
+      <circle cx="250" cy="40" r="16" fill="#1a2840" stroke="#7ab8ff" stroke-width="2"/>
+      <text x="242" y="45" fill="#f0c040" font-size="10" font-weight="700">D</text>
+      <text x="236" y="24" fill="#7ab8a8" font-size="7">dist=∞→12</text>
+    </svg>
+    <div class="diagram-caption">Distances updated as algorithm explores nodes</div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 9 – DIJKSTRA'S ALGORITHM – WORKED EXAMPLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Dijkstra</div>
+  <h2>Dijkstra's Algorithm — Worked Example</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Graph: A(start), B, C, D(goal) — Edges: A-B:4, A-C:2, B-C:1, B-D:5, C-D:8</h4>
+    <table>
+      <thead>
+        <tr><th>Step</th><th>Current</th><th>Distances (A,B,C,D)</th><th>Visited</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>0</td><td>—</td><td>(0, ∞, ∞, ∞)</td><td>{}</td><td>Initialise start=0, others=∞</td></tr>
+        <tr><td>1</td><td><strong>A</strong></td><td>(0, 4, 2, ∞)</td><td>{A}</td><td>Update B via A, C via A</td></tr>
+        <tr><td>2</td><td><strong>C</strong></td><td>(0, <strong>3</strong>, 2, 10)</td><td>{A, C}</td><td>Via C: B improves to 2+1=3, D=2+8=10</td></tr>
+        <tr><td>3</td><td><strong>B</strong></td><td>(0, 3, 2, <strong>8</strong>)</td><td>{A, C, B}</td><td>Via B: D improves to 3+5=8</td></tr>
+        <tr><td>4</td><td><strong>D</strong></td><td>(0, 3, 2, 8)</td><td>{A, C, B, D}</td><td>Goal reached</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:6px;"><strong>Result:</strong> Shortest path from A to D is <strong>A → C → B → D</strong> with total cost <strong>8</strong>.</p>
+    <p>Note: Although the direct A → B edge is 4, the path via C (A→C=2, C→B=1) gives B a shorter distance of 3. Then B→D=5 gives D a total of 8. The direct A→B→D would cost 9 (4+5), and A→C→D costs 10 (2+8). Dijkstra correctly finds A → C → B → D as the shortest at cost 8.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 10 – BENEFITS AND LIMITATIONS OF DIJKSTRA
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Dijkstra</div>
+  <h2>Dijkstra's Algorithm — Benefits and Limitations</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>✅ Benefits</h4>
+      <ul>
+        <li><strong>Guarantees</strong> the shortest path</li>
+        <li>Works well for many <strong>real-world problems</strong></li>
+        <li>Relatively <strong>simple to understand</strong> and implement</li>
+        <li>Finds shortest paths to <strong>all nodes</strong>, not just one goal</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>❌ Limitations</h4>
+      <ul>
+        <li>Explores in <strong>all directions</strong>, which can be inefficient</li>
+        <li><strong>Slow for very large graphs</strong> (many nodes/edges)</li>
+        <li>Does <strong>not use a heuristic</strong> (no information about goal location)</li>
+        <li>Cannot handle <strong>negative edge weights</strong></li>
+      </ul>
+    </div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>Dijkstra's algorithm is <strong>guaranteed</strong> to find the shortest path, but it may explore many unnecessary nodes because it does <strong>not use a heuristic</strong> to guide the search.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 11 – INTRODUCTION TO A* ALGORITHM
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 A* Search</div>
+  <h2>Introduction to A* Algorithm</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>A* (A-star)</strong> is a graph search algorithm that finds the shortest path using a <strong>heuristic</strong> to guide the search.</p>
+        <ul>
+          <li>Combines benefits of <strong>Dijkstra</strong> and <strong>greedy best-first search</strong></li>
+          <li>Uses a <strong>heuristic</strong> to estimate distance to the goal</li>
+          <li>More <strong>efficient</strong> than Dijkstra for many problems</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>A* algorithm:</strong> A graph search algorithm that uses a heuristic to find the shortest path more efficiently than Dijkstra's algorithm.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 12 – THE A* COST FUNCTION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 A* Search</div>
+  <h2>The A* Cost Function</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>The A* Formula</h4>
+        <p style="font-size:1.6rem; text-align:center; padding:10px;"><span class="inline-code" style="font-size:1.3rem;">f(n) = g(n) + h(n)</span></p>
+        <ul>
+          <li><strong>f(n)</strong> = total estimated cost of the path through node n</li>
+          <li><strong>g(n)</strong> = actual cost from the <strong>start</strong> node to node n</li>
+          <li><strong>h(n)</strong> = heuristic estimate of the cost from node n to the <strong>goal</strong></li>
+        </ul>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>You need to know the formula <strong>f(n) = g(n) + h(n)</strong> and be able to explain each component. The heuristic must be <strong>admissible</strong> (never overestimate the true cost).</p>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Heuristic:</strong> A function that estimates the cost from a node to the goal. It must be <strong>admissible</strong> (never overestimates the true cost) to guarantee an optimal solution.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 13 – HOW A* ALGORITHM WORKS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 A* Search</div>
+  <h2>How A* Algorithm Works</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Step-by-Step Process</h4>
+    <ol>
+      <li>Add the start node to the <strong>open list</strong> with f = g + h</li>
+      <li><strong>While</strong> the open list is not empty:</li>
+      <ol style="padding-left:20px;">
+        <li>Select the node with the <strong>smallest f value</strong></li>
+        <li>If it is the <strong>goal</strong>, reconstruct the path and stop</li>
+        <li><strong>Move it</strong> to the closed list (already evaluated)</li>
+        <li>For each <strong>neighbour</strong>:</li>
+        <ul>
+          <li>Calculate g, h, and f</li>
+          <li>If not in open or closed, <strong>add it</strong></li>
+          <li>If in open list with a higher f, <strong>update it</strong></li>
+        </ul>
+      </ol>
+    </ol>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 14 – A* ALGORITHM – WORKED EXAMPLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 A* Search</div>
+  <h2>A* Algorithm — Worked Example</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Graph: Start=A, Goal=D — Edges: A-B:2, A-C:3, B-D:5, C-D:1</h4>
+    <p>Heuristic: h(B)=4, h(C)=2, h(D)=0</p>
+    <table>
+      <thead>
+        <tr><th>Step</th><th>Current</th><th>g(n)</th><th>h(n)</th><th>f(n)</th><th>Open List (node:g+h)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>0</td><td>—</td><td>—</td><td>—</td><td>—</td><td>A(0+?=?)</td></tr>
+        <tr><td>1</td><td><strong>A</strong></td><td>0</td><td>?</td><td>?</td><td>B(2+4=6), C(3+2=5)</td></tr>
+        <tr><td>2</td><td><strong>C</strong></td><td>3</td><td>2</td><td>5</td><td>B(2+4=6), D(4+0=4)</td></tr>
+        <tr><td>3</td><td><strong>D</strong></td><td>4</td><td>0</td><td>4</td><td>Goal reached!</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:6px;"><strong>Result:</strong> Shortest path <strong>A → C → D</strong> with total cost <strong>4</strong>.</p>
+    <p>Note: A* explored C first because h(C)=2 made f(C)=5 vs f(B)=6. The heuristic guided the search towards the goal.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 15 – COMPARING DIJKSTRA AND A*
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Algorithms</div>
+  <h2>Comparing Dijkstra and A*</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Dijkstra</th><th>A*</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Uses heuristic?</strong></td><td>No</td><td>Yes</td></tr>
+      <tr><td><strong>Search pattern</strong></td><td>Explores in all directions</td><td>Guided towards goal</td></tr>
+      <tr><td><strong>Efficiency</strong></td><td>Slower for large graphs</td><td>Faster with good heuristic</td></tr>
+      <tr><td><strong>Guarantees shortest path?</strong></td><td>Yes</td><td>Yes (with admissible heuristic)</td></tr>
+      <tr><td><strong>Best for</strong></td><td>Finding all shortest paths</td><td>Finding one shortest path to a goal</td></tr>
+      <tr><td><strong>Formula</strong></td><td>Distance from start only</td><td>f(n) = g(n) + h(n)</td></tr>
+    </tbody>
+  </table>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>A* is generally <strong>preferred</strong> for pathfinding in games and robotics because it is faster. Dijkstra is better when you need <strong>distances to all nodes</strong>.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 16 – WHEN TO USE EACH ALGORITHM
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Algorithms</div>
+  <h2>When to Use Each Algorithm</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Use Dijkstra's Algorithm When:</h4>
+      <ul>
+        <li>You need <strong>shortest paths to all nodes</strong></li>
+        <li>There is <strong>no clear goal</strong> location</li>
+        <li>The graph is <strong>small</strong></li>
+        <li>You cannot define a useful heuristic</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Use A* Algorithm When:</h4>
+      <ul>
+        <li>You have a <strong>specific goal</strong></li>
+        <li>You can define a <strong>good heuristic</strong></li>
+        <li>The graph is <strong>large</strong> and efficiency matters</li>
+        <li>You need <strong>real-time pathfinding</strong> (e.g., games)</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 17 – INTRODUCTION TO NEURAL NETWORKS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Neural Networks</div>
+  <h2>Introduction to Neural Networks</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is an Artificial Neural Network?</h4>
+        <p><strong>Artificial Neural Networks (ANNs)</strong> are computing systems inspired by the <strong>human brain</strong>.</p>
+        <ul>
+          <li>Consist of <strong>interconnected nodes</strong> (neurons) organised in layers</li>
+          <li>Can <strong>learn patterns</strong> from data</li>
+          <li>Foundation of modern <strong>machine learning</strong> and <strong>deep learning</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Artificial Neural Network (ANN):</strong> A computing system made up of interconnected nodes (neurons) that can learn to recognise patterns from data.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 18 – STRUCTURE OF A NEURAL NETWORK
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Neural Networks</div>
+  <h2>Structure of a Neural Network</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Three Types of Layer</h4>
+        <ul>
+          <li><strong>Input layer:</strong> receives the raw data (e.g., pixel values)</li>
+          <li><strong>Hidden layers:</strong> process the data (can be one or many)</li>
+          <li><strong>Output layer:</strong> produces the result (e.g., classification)</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Key Properties</h4>
+        <ul>
+          <li>Each neuron connects to neurons in the <strong>next layer</strong></li>
+          <li>Each connection has a <strong>weight</strong></li>
+          <li>Each neuron has a <strong>bias</strong></li>
+          <li>The weighted sum is passed through an <strong>activation function</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 300 160" style="width:100%; max-width:300px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Neural Network Structure</text>
+          <text x="10" y="36" fill="#5ae0c0" font-size="7">Input</text>
+          <text x="80" y="36" fill="#f0c040" font-size="7">Hidden</text>
+          <text x="170" y="36" fill="#80c8a0" font-size="7">Output</text>
+          <circle cx="20" cy="60" r="6" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+          <circle cx="20" cy="80" r="6" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+          <circle cx="20" cy="100" r="6" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+          <circle cx="95" cy="50" r="6" fill="#1a2840" stroke="#f0c040" stroke-width="1"/>
+          <circle cx="95" cy="70" r="6" fill="#1a2840" stroke="#f0c040" stroke-width="1"/>
+          <circle cx="95" cy="90" r="6" fill="#1a2840" stroke="#f0c040" stroke-width="1"/>
+          <circle cx="95" cy="110" r="6" fill="#1a2840" stroke="#f0c040" stroke-width="1"/>
+          <circle cx="180" cy="70" r="6" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+          <circle cx="180" cy="90" r="6" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+          <line x1="26" y1="60" x2="89" y2="50" stroke="#4a7ac8" stroke-width="0.5" opacity="0.5"/>
+          <line x1="26" y1="60" x2="89" y2="70" stroke="#4a7ac8" stroke-width="0.5" opacity="0.5"/>
+          <line x1="26" y1="80" x2="89" y2="70" stroke="#4a7ac8" stroke-width="0.5" opacity="0.5"/>
+          <line x1="26" y1="80" x2="89" y2="90" stroke="#4a7ac8" stroke-width="0.5" opacity="0.5"/>
+          <line x1="26" y1="100" x2="89" y2="90" stroke="#4a7ac8" stroke-width="0.5" opacity="0.5"/>
+          <line x1="101" y1="50" x2="174" y2="70" stroke="#4a7ac8" stroke-width="0.5" opacity="0.5"/>
+          <line x1="101" y1="50" x2="174" y2="90" stroke="#4a7ac8" stroke-width="0.5" opacity="0.5"/>
+          <line x1="101" y1="70" x2="174" y2="70" stroke="#4a7ac8" stroke-width="0.5" opacity="0.5"/>
+          <line x1="101" y1="70" x2="174" y2="90" stroke="#4a7ac8" stroke-width="0.5" opacity="0.5"/>
+          <line x1="101" y1="90" x2="174" y2="70" stroke="#4a7ac8" stroke-width="0.5" opacity="0.5"/>
+          <line x1="101" y1="90" x2="174" y2="90" stroke="#4a7ac8" stroke-width="0.5" opacity="0.5"/>
+        </svg>
+        <div class="diagram-caption">Input → Hidden → Output layers with weighted connections</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 19 – HOW NEURAL NETWORKS LEARN
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Neural Networks</div>
+  <h2>How Neural Networks Learn</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>The Learning Cycle</h4>
+    <ol>
+      <li><strong>Training data</strong> is fed into the network</li>
+      <li>The network makes a <strong>prediction</strong></li>
+      <li>The <strong>error</strong> (difference between prediction and actual) is calculated</li>
+      <li>The network <strong>adjusts its weights</strong> to reduce the error</li>
+      <li>This process is <strong>repeated many times</strong> (epochs)</li>
+    </ol>
+  </div>
+  <div class="key-term-box mt-6">
+    <h4>Key Term</h4>
+    <p><strong>Training:</strong> The process of adjusting weights in a neural network to minimise the error between predictions and actual values.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 20 – HOW NEURAL NETWORKS HELP MACHINE LEARNING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Neural Networks</div>
+  <h2>How Neural Networks Help Machine Learning</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Key Contributions</h4>
+        <ul>
+          <li>Can learn <strong>complex patterns</strong> that are difficult to program manually</li>
+          <li>Handle <strong>high-dimensional data</strong> (images, audio, text)</li>
+          <li>Can <strong>generalise</strong> to new, unseen data</li>
+          <li>Foundation for <strong>deep learning</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Breakthrough Applications</h4>
+        <ul>
+          <li><strong>Image recognition</strong> — identifying objects in photos</li>
+          <li><strong>Speech recognition</strong> — transcribing spoken words</li>
+          <li><strong>Natural language processing</strong> — translation, chatbots</li>
+          <li><strong>Game playing</strong> — AlphaGo, chess engines</li>
+          <li><strong>Medical diagnosis</strong> — detecting disease from scans</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 21 – WHAT IS MACHINE LEARNING?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Machine Learning</div>
+  <h2>What Is Machine Learning?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Machine Learning (ML)</strong> is a <strong>subset of AI</strong> where systems learn from data to improve performance on a task.</p>
+        <ul>
+          <li>ML algorithms <strong>build models</strong> from training data</li>
+          <li>The model can then <strong>make predictions or decisions</strong> without being explicitly programmed for every scenario</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Machine Learning (ML):</strong> A subset of artificial intelligence where algorithms improve automatically through experience by learning patterns from data.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Key distinction:</strong> Traditional programming = rules + data → answers. ML = data + answers → rules (the algorithm learns the rules).
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 22 – WHAT IS DEEP LEARNING?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Deep Learning</div>
+  <h2>What Is Deep Learning?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Deep Learning</strong> is a <strong>subset of machine learning</strong> that uses neural networks with <strong>many hidden layers</strong> (deep neural networks).</p>
+        <ul>
+          <li>Can learn <strong>very complex patterns</strong></li>
+          <li>Requires <strong>large amounts of data</strong> and computing power</li>
+          <li>Each layer learns <strong>increasingly abstract features</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Deep Learning:</strong> A subset of machine learning using multi-layered neural networks to learn hierarchical representations of data.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Analogy:</strong> In image recognition, early layers detect edges → middle layers detect shapes → final layers detect objects (faces, cars, animals).
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 23 – ML VS DEEP LEARNING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 ML vs DL</div>
+  <h2>Machine Learning vs Deep Learning — Comparison</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Machine Learning</th><th>Deep Learning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Data size</strong></td><td>Works with smaller datasets</td><td>Requires large datasets</td></tr>
+      <tr><td><strong>Feature extraction</strong></td><td>Manual feature engineering</td><td>Automatic feature learning</td></tr>
+      <tr><td><strong>Model complexity</strong></td><td>Simpler models</td><td>Complex multi-layer networks</td></tr>
+      <tr><td><strong>Computing power</strong></td><td>Less required</td><td>More required (GPUs often needed)</td></tr>
+      <tr><td><strong>Performance on complex tasks</strong></td><td>Good</td><td>Excellent</td></tr>
+      <tr><td><strong>Interpretability</strong></td><td>More interpretable</td><td>Less interpretable ("black box")</td></tr>
+    </tbody>
+  </table>
+`);
+
+// ==================================================================
+// SLIDE 24 – WHAT IS REINFORCEMENT LEARNING?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 RL</div>
+  <h2>What Is Reinforcement Learning?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Reinforcement Learning (RL)</strong> is a type of machine learning where an <strong>agent</strong> learns by <strong>interacting with an environment</strong>.</p>
+        <ul>
+          <li>The agent receives <strong>rewards or penalties</strong> for its actions</li>
+          <li>The goal is to <strong>maximise cumulative reward</strong> over time</li>
+          <li>The agent learns optimal behaviour through <strong>trial and error</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Reinforcement Learning (RL):</strong> A machine learning method where an agent learns to make decisions by interacting with an environment and receiving rewards or penalties.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 25 – HOW REINFORCEMENT LEARNING WORKS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 RL</div>
+  <h2>How Reinforcement Learning Works</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>The RL Cycle</h4>
+    <ol>
+      <li>Agent <strong>observes</strong> the current state of the environment</li>
+      <li>Agent takes an <strong>action</strong></li>
+      <li>Environment <strong>transitions</strong> to a new state</li>
+      <li>Agent receives a <strong>reward</strong> (positive or negative)</li>
+      <li>Agent <strong>updates its policy</strong> to improve future decisions</li>
+      <li><strong>Repeat</strong> until the agent learns the optimal behaviour</li>
+    </ol>
+  </div>
+  <div class="card mt-6">
+    <h4>Examples</h4>
+    <ul>
+      <li><strong>Game playing:</strong> Agent learns chess by winning (reward) or losing (penalty)</li>
+      <li><strong>Robot navigation:</strong> Robot learns to avoid obstacles (penalty) and reach goals (reward)</li>
+      <li><strong>Self-driving cars:</strong> Learn to drive safely through simulation</li>
+    </ul>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 26 – REASONS FOR USING DIFFERENT METHODS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 ML Methods</div>
+  <h2>Reasons for Using Different Methods</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-3">
+    <div class="card">
+      <h4>🧠 Machine Learning</h4>
+      <ul>
+        <li>When you have <strong>structured data</strong> (tables, CSV files)</li>
+        <li>When <strong>interpretability</strong> is important</li>
+        <li>When you have <strong>limited data</strong></li>
+        <li>When simpler models are sufficient</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>🤖 Deep Learning</h4>
+      <ul>
+        <li>When you have <strong>large amounts of data</strong></li>
+        <li>When dealing with <strong>unstructured data</strong> (images, audio, text)</li>
+        <li>When <strong>accuracy</strong> is the top priority</li>
+        <li>When automatic feature extraction is needed</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>🎮 Reinforcement Learning</h4>
+      <ul>
+        <li>When <strong>learning through interaction</strong></li>
+        <li>When there is <strong>no labelled data</strong></li>
+        <li>When the optimal solution is <strong>not known in advance</strong></li>
+        <li>For <strong>sequential decision-making</strong> problems</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 27 – SUPERVISED LEARNING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Supervised Learning</div>
+  <h2>Supervised Learning</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Supervised learning</strong> uses <strong>labelled training data</strong> — each example has input features and a known output label.</p>
+        <ul>
+          <li>The model learns to <strong>map inputs to outputs</strong></li>
+          <li>Evaluated on its ability to <strong>predict labels</strong> for new, unseen data</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Supervised Learning:</strong> A machine learning category where the model is trained on labelled data (input-output pairs).</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Examples</h4>
+        <ul>
+          <li><strong>Classification:</strong> Email spam detection, image recognition, medical diagnosis</li>
+          <li><strong>Regression:</strong> House price prediction, temperature forecasting</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 28 – SUPERVISED LEARNING EXAMPLES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Supervised Learning</div>
+  <h2>Supervised Learning — Examples</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>📋 Classification (Predict a Category)</h4>
+      <ul>
+        <li><strong>Email spam detection</strong> — spam / not spam</li>
+        <li><strong>Image recognition</strong> — cat / dog / bird</li>
+        <li><strong>Medical diagnosis</strong> — disease / no disease</li>
+        <li><strong>Sentiment analysis</strong> — positive / negative / neutral</li>
+      </ul>
+      <p style="margin-top:4px;">Common algorithms: Decision trees, SVM, neural networks</p>
+    </div>
+    <div class="card">
+      <h4>📈 Regression (Predict a Number)</h4>
+      <ul>
+        <li><strong>House price prediction</strong> — price based on size, location</li>
+        <li><strong>Temperature forecasting</strong> — tomorrow's temperature</li>
+        <li><strong>Stock price prediction</strong> — future value</li>
+        <li><strong>Demand forecasting</strong> — expected sales</li>
+      </ul>
+      <p style="margin-top:4px;">Common algorithms: Linear regression, neural networks</p>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 29 – UNSUPERVISED LEARNING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Unsupervised Learning</div>
+  <h2>Unsupervised Learning</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Unsupervised learning</strong> uses <strong>unlabelled data</strong> — there is no known output label.</p>
+        <ul>
+          <li>The model <strong>finds patterns, groups, or structures</strong> in the data</li>
+          <li>The model <strong>discovers hidden relationships</strong></li>
+          <li>No "correct answer" to check against</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Unsupervised Learning:</strong> A machine learning category where the model finds patterns in unlabelled data without predefined outputs.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 30 – UNSUPERVISED LEARNING EXAMPLES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Unsupervised Learning</div>
+  <h2>Unsupervised Learning — Examples</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>📊 Clustering</h4>
+      <ul>
+        <li><strong>Customer segmentation</strong> — group customers by behaviour</li>
+        <li><strong>Document clustering</strong> — group articles by topic</li>
+        <li><strong>Image segmentation</strong> — separate objects in an image</li>
+        <li><strong>Anomaly detection</strong> — find unusual patterns</li>
+      </ul>
+      <p style="margin-top:4px;">Common algorithm: K-means clustering</p>
+    </div>
+    <div class="card">
+      <h4>📉 Dimensionality Reduction</h4>
+      <ul>
+        <li><strong>Data visualisation</strong> — reduce to 2D or 3D for plotting</li>
+        <li><strong>Noise reduction</strong> — remove irrelevant features</li>
+        <li><strong>Feature extraction</strong> — identify most important variables</li>
+      </ul>
+      <p style="margin-top:4px;">Common algorithm: Principal Component Analysis (PCA)</p>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 31 – SUPERVISED VS UNSUPERVISED
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Learning Types</div>
+  <h2>Supervised vs Unsupervised Learning — Comparison</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Supervised Learning</th><th>Unsupervised Learning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Data</strong></td><td>Labelled (input + output)</td><td>Unlabelled (input only)</td></tr>
+      <tr><td><strong>Goal</strong></td><td>Predict output for new inputs</td><td>Find hidden patterns / groups</td></tr>
+      <tr><td><strong>Evaluation</strong></td><td>Compare predictions to known labels</td><td>No ground truth for evaluation</td></tr>
+      <tr><td><strong>Complexity</strong></td><td>Easier to evaluate</td><td>Harder to evaluate</td></tr>
+      <tr><td><strong>Examples</strong></td><td>Classification, regression</td><td>Clustering, dimensionality reduction</td></tr>
+      <tr><td><strong>Data required</strong></td><td>Less data often needed</td><td>More data often needed</td></tr>
+    </tbody>
+  </table>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>Know the difference: <strong>supervised = labelled data</strong>, <strong>unsupervised = unlabelled data</strong>. Be able to give examples of each.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 32 – WHAT IS BACK PROPAGATION?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Back Propagation</div>
+  <h2>What Is Back Propagation?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Back propagation (backprop)</strong> is an algorithm for training neural networks.</p>
+        <ul>
+          <li>It calculates the <strong>gradient of the error</strong> with respect to each weight</li>
+          <li>It <strong>propagates the error backwards</strong> through the network</li>
+          <li>It enables the network to <strong>adjust weights</strong> to reduce error</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Back Propagation:</strong> An algorithm that computes the gradient of the loss function with respect to the weights in a neural network, enabling weight updates during training.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 33 – WHY BACK PROPAGATION IS NEEDED
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Back Propagation</div>
+  <h2>Why Back Propagation Is Needed</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>The Problem It Solves</h4>
+        <ul>
+          <li>Neural networks have <strong>many weights</strong> (potentially millions)</li>
+          <li>We need to know how much <strong>each weight contributed</strong> to the error</li>
+          <li><strong>Back propagation</strong> efficiently calculates this</li>
+          <li>Without it, training deep networks would be <strong>impractical</strong></li>
+          <li>Uses the <strong>chain rule</strong> from calculus</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="callout info">
+        <strong>Analogy:</strong> Imagine adjusting many dials on a machine to get the best output. Back propagation tells you which dial to turn, in which direction, and by how much — all in one efficient calculation.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 34 – HOW BACK PROPAGATION WORKS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Back Propagation</div>
+  <h2>How Back Propagation Works</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>The Training Cycle with Back Propagation</h4>
+    <ol>
+      <li><strong>Forward pass:</strong> Input data passes through the network to produce an output</li>
+      <li><strong>Calculate error:</strong> Compare the output to the expected output using a <strong>loss function</strong></li>
+      <li><strong>Backward pass:</strong> Calculate the gradient of the error with respect to each weight, starting from the <strong>output layer and moving backwards</strong></li>
+      <li><strong>Update weights:</strong> Adjust each weight in the direction that <strong>reduces the error</strong></li>
+      <li><strong>Repeat</strong> for many iterations (epochs)</li>
+    </ol>
+  </div>
+  <div class="diagram-box mt-6">
+    <svg viewBox="0 0 350 70" style="width:100%; max-width:350px;">
+      <text x="8" y="14" fill="#b8d4ff" font-size="8" font-weight="600">Forward Pass (green) → Error → Backward Pass (red) → Weight Update</text>
+      <text x="8" y="36" fill="#5ae0c0" font-size="8">Input</text>
+      <text x="48" y="36" fill="#4a7ac8" font-size="10">→</text>
+      <text x="62" y="36" fill="#80c8a0" font-size="8">Network</text>
+      <text x="122" y="36" fill="#4a7ac8" font-size="10">→</text>
+      <text x="136" y="36" fill="#f0c040" font-size="8">Output</text>
+      <text x="186" y="36" fill="#4a7ac8" font-size="10">→</text>
+      <text x="200" y="36" fill="#e06060" font-size="8">Error</text>
+      <text x="8" y="58" fill="#e06060" font-size="8">Weight Update ←</text>
+      <text x="106" y="58" fill="#f78c6c" font-size="10">←</text>
+      <text x="120" y="58" fill="#e06060" font-size="8">Gradient</text>
+      <text x="180" y="58" fill="#f78c6c" font-size="10">←</text>
+      <text x="194" y="58" fill="#e06060" font-size="8">Error</text>
+    </svg>
+    <div class="diagram-caption">Error flows backwards to calculate gradients for weight updates</div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 35 – THE ROLE OF THE LOSS FUNCTION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Back Propagation</div>
+  <h2>The Role of the Loss Function</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is a Loss Function?</h4>
+        <ul>
+          <li>The <strong>loss function</strong> measures how wrong the network's prediction is</li>
+          <li>The goal of training is to <strong>minimise the loss</strong></li>
+          <li>Back propagation calculates how to change weights to reduce the loss</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Common Loss Functions</h4>
+        <table>
+          <tr><th>Task</th><th>Loss Function</th><th>Purpose</th></tr>
+          <tr><td>Regression</td><td>Mean Squared Error (MSE)</td><td>Measures average squared difference</td></tr>
+          <tr><td>Classification</td><td>Cross-entropy loss</td><td>Measures difference between probability distributions</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Loss Function:</strong> A function that measures the difference between the predicted output and the actual output. Training aims to minimise this value.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 36 – BENEFITS AND LIMITATIONS OF BACK PROPAGATION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Back Propagation</div>
+  <h2>Back Propagation — Benefits and Limitations</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>✅ Benefits</h4>
+      <ul>
+        <li><strong>Efficiently trains</strong> multi-layer neural networks</li>
+        <li>Makes <strong>deep learning feasible</strong></li>
+        <li>Works with various <strong>network architectures</strong></li>
+        <li><strong>Well understood</strong> and widely used</li>
+        <li>Uses the <strong>chain rule</strong> for efficient gradient calculation</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>❌ Limitations</h4>
+      <ul>
+        <li>Can get stuck in <strong>local minima</strong></li>
+        <li>Requires <strong>differentiable activation functions</strong></li>
+        <li>Can be <strong>slow</strong> for very large networks</li>
+        <li>May <strong>overfit</strong> if not regularised properly</li>
+        <li>Requires <strong>large amounts of labelled data</strong> for supervised tasks</li>
+      </ul>
+    </div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>Back propagation is the <strong>standard method</strong> for training neural networks. It computes gradients using the chain rule, then updates weights to reduce error.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 37 – WHAT IS REGRESSION?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Regression</div>
+  <h2>What Is Regression?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Regression</strong> is a <strong>supervised learning</strong> method used to predict a <strong>continuous numerical value</strong>.</p>
+        <ul>
+          <li>Models the <strong>relationship</strong> between input variables and a continuous output</li>
+          <li>The output is a <strong>real number</strong>, not a category</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Regression:</strong> A supervised learning technique used to predict continuous numerical values based on input data.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 38 – LINEAR REGRESSION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Regression</div>
+  <h2>Linear Regression</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Simple Linear Regression</h4>
+        <p>Models the relationship as a <strong>straight line</strong>:</p>
+        <p style="font-size:1.3rem; text-align:center; padding:8px;"><span class="inline-code">y = mx + c</span></p>
+        <ul>
+          <li><strong>y</strong> = predicted output (dependent variable)</li>
+          <li><strong>x</strong> = input variable (independent variable)</li>
+          <li><strong>m</strong> = slope (weight)</li>
+          <li><strong>c</strong> = intercept (bias)</li>
+        </ul>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Example:</strong> Predicting exam score (y) from hours studied (x). The line shows the expected score for any given study time.
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 250 160" style="width:100%; max-width:250px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Linear Regression</text>
+          <line x1="30" y1="140" x2="230" y2="140" stroke="#4a7ac8" stroke-width="1.5"/>
+          <text x="230" y="138" fill="#4a7ac8" font-size="8">x</text>
+          <line x1="30" y1="140" x2="30" y2="10" stroke="#4a7ac8" stroke-width="1.5"/>
+          <text x="8" y="14" fill="#4a7ac8" font-size="8">y</text>
+          <line x1="30" y1="120" x2="210" y2="30" stroke="#f0c040" stroke-width="2"/>
+          <text x="160" y="28" fill="#f0c040" font-size="8">y = mx + c</text>
+          <circle cx="60" cy="110" r="3" fill="#5ae0c0"/>
+          <circle cx="90" cy="95" r="3" fill="#5ae0c0"/>
+          <circle cx="110" cy="80" r="3" fill="#5ae0c0"/>
+          <circle cx="140" cy="70" r="3" fill="#5ae0c0"/>
+          <circle cx="170" cy="55" r="3" fill="#5ae0c0"/>
+          <circle cx="190" cy="45" r="3" fill="#5ae0c0"/>
+        </svg>
+        <div class="diagram-caption">Scatter plot with line of best fit</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 39 – MULTIPLE LINEAR REGRESSION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Regression</div>
+  <h2>Multiple Linear Regression</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Multiple Input Variables</h4>
+        <p>Uses <strong>more than one input variable</strong> to predict the output:</p>
+        <p style="font-size:1rem; text-align:center; padding:8px;"><span class="inline-code">y = w₁x₁ + w₂x₂ + ... + wₙxₙ + b</span></p>
+        <ul>
+          <li>Each input has its <strong>own weight</strong> (importance)</li>
+          <li>The model learns the <strong>best weights</strong> from training data</li>
+          <li><strong>b</strong> = bias (intercept)</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Examples</h4>
+        <ul>
+          <li>Predicting <strong>house price</strong> based on: size, number of bedrooms, location, age</li>
+          <li>Predicting <strong>exam score</strong> based on: hours studied, attendance, previous grades</li>
+          <li>Predicting <strong>car fuel efficiency</strong> based on: engine size, weight, age</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 40 – REGRESSION IN MACHINE LEARNING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Regression</div>
+  <h2>Regression in Machine Learning</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How Regression Is Used in ML</h4>
+        <ul>
+          <li>Regression is a key tool in <strong>supervised learning</strong></li>
+          <li>Neural networks can perform regression using a <strong>single output neuron</strong> with a linear activation function</li>
+          <li>The network learns to <strong>minimise the error</strong> between predicted and actual values</li>
+          <li><strong>Back propagation</strong> is used to train the network for regression tasks</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Examples of Regression Problems</h4>
+        <ul>
+          <li>Weather forecasting (temperature)</li>
+          <li>Stock market prediction</li>
+          <li>Demand forecasting</li>
+          <li>Energy consumption prediction</li>
+          <li>Insurance cost estimation</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 41 – REGRESSION VS CLASSIFICATION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Regression vs Classification</div>
+  <h2>Regression vs Classification</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Regression</th><th>Classification</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Output</strong></td><td>Continuous numerical value</td><td>Discrete category / label</td></tr>
+      <tr><td><strong>Example</strong></td><td>Predict temperature (25°C)</td><td>Predict weather (sunny / rainy)</td></tr>
+      <tr><td><strong>Loss function</strong></td><td>Mean Squared Error (MSE)</td><td>Cross-entropy loss</td></tr>
+      <tr><td><strong>Output activation</strong></td><td>Linear (no activation)</td><td>Softmax / Sigmoid</td></tr>
+      <tr><td><strong>Evaluation metric</strong></td><td>R-squared, RMSE</td><td>Accuracy, precision, recall</td></tr>
+    </tbody>
+  </table>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>Know that <strong>regression</strong> predicts numbers (continuous values), <strong>classification</strong> predicts categories. Both are <strong>supervised learning</strong>.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 42 – TOPIC SUMMARY
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Summary</div>
+  <h2>Topic 18 — Summary</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:10px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Graph Search Algorithms</h4>
+      <ul>
+        <li><strong>Graphs</strong> model relationships: nodes, edges, weights</li>
+        <li><strong>Dijkstra's algorithm</strong> finds shortest paths but explores in all directions (no heuristic)</li>
+        <li><strong>A* algorithm</strong> uses a heuristic: f(n) = g(n) + h(n) — more efficient</li>
+        <li>Dijkstra is best when you need distances to all nodes; A* is best when you have a specific goal</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Machine Learning</h4>
+      <ul>
+        <li><strong>Neural networks</strong> have input, hidden, and output layers</li>
+        <li><strong>Back propagation</strong> trains neural networks by propagating error backwards</li>
+        <li><strong>Supervised</strong> = labelled data (classification &amp; regression)</li>
+        <li><strong>Unsupervised</strong> = unlabelled data (clustering)</li>
+        <li><strong>Reinforcement learning</strong> = learning through rewards/penalties</li>
+        <li><strong>Deep learning</strong> = neural networks with many hidden layers</li>
+        <li><strong>Regression</strong> predicts continuous values; <strong>classification</strong> predicts categories</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 43 – EXAM PRACTICE QUESTIONS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Exam Practice</div>
+  <h2>Exam Practice Questions</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:10px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card"><h4>Q1 [3 marks]</h4><p>Describe the <strong>purpose and structure</strong> of a graph in AI.</p></div>
+      <div class="card mt-6"><h4>Q2 [4 marks]</h4><p>Explain how <strong>Dijkstra's algorithm</strong> finds the shortest path in a weighted graph.</p></div>
+      <div class="card mt-6"><h4>Q3 [4 marks]</h4><p><strong>Compare</strong> Dijkstra's algorithm and A* algorithm.</p></div>
+      <div class="card mt-6"><h4>Q4 [2 marks]</h4><p>Explain the role of a <strong>heuristic</strong> in the A* algorithm.</p></div>
+      <div class="card mt-6"><h4>Q5 [3 marks]</h4><p>Describe how an <strong>artificial neural network</strong> is structured.</p></div>
+      <div class="card mt-6"><h4>Q6 [3 marks]</h4><p>Explain how neural networks have <strong>helped machine learning</strong>.</p></div>
+    </div>
+    <div>
+      <div class="card"><h4>Q7 [3 marks]</h4><p><strong>Distinguish</strong> between machine learning and deep learning.</p></div>
+      <div class="card mt-6"><h4>Q8 [4 marks]</h4><p>Explain how <strong>reinforcement learning</strong> works.</p></div>
+      <div class="card mt-6"><h4>Q9 [4 marks]</h4><p><strong>Compare</strong> supervised learning and unsupervised learning.</p></div>
+      <div class="card mt-6"><h4>Q10 [3 marks]</h4><p>Explain the purpose of <strong>back propagation</strong> in training neural networks.</p></div>
+      <div class="card mt-6"><h4>Q11 [2 marks]</h4><p>Describe what <strong>regression</strong> is and give an example.</p></div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 44 – FINAL EXAM TIPS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">18.1 Exam Focus</div>
+  <h2>Final Exam Tips — Topic 18</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:10px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="exam-tip-box"><h4>Dijkstra vs A*</h4><p>Know the difference: Dijkstra has <strong>no heuristic</strong>, A* uses <strong>f(n) = g(n) + h(n)</strong>. Both guarantee the shortest path.</p></div>
+      <div class="exam-tip-box mt-6"><h4>Neural Network Structure</h4><p>Neural networks have <strong>input, hidden, and output layers</strong>. Each connection has a weight; each neuron has a bias.</p></div>
+      <div class="exam-tip-box mt-6"><h4>Back Propagation</h4><p>Back propagation uses the <strong>chain rule</strong> to calculate gradients. It propagates error <strong>backwards</strong> from output to input.</p></div>
+    </div>
+    <div>
+      <div class="exam-tip-box"><h4>Supervised vs Unsupervised</h4><p><strong>Supervised</strong> = labelled data (input + expected output). <strong>Unsupervised</strong> = unlabelled data (find patterns).</p></div>
+      <div class="exam-tip-box mt-6"><h4>Regression vs Classification</h4><p><strong>Regression</strong> predicts numbers (continuous). <strong>Classification</strong> predicts categories (discrete).</p></div>
+      <div class="exam-tip-box mt-6"><h4>Reinforcement Learning</h4><p>RL uses <strong>rewards and penalties</strong>. An agent learns through interaction with an environment.</p></div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 45 – END SLIDE
+// ==================================================================
+addSlide(`
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+    <div class="section-badge" style="margin-bottom:16px;">Cambridge International AS &amp; A Level — 9618</div>
+    <h1 style="font-size:2.8rem; margin-bottom:8px; color:#5ae0c0;">18 Artificial Intelligence (AI)</h1>
+    <div style="width:80px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:18px;"></div>
+    <p style="font-size:1.1rem; color:#7ab8a8; margin-bottom:24px;">Ready for Exam Practice!</p>
+    <div class="grid-2" style="max-width:600px;">
+      <div class="card"><h4>📊 Understand Graph Search</h4><p style="font-size:0.85rem;">Dijkstra vs A* — know the heuristic difference</p></div>
+      <div class="card"><h4>🧠 Neural Network Structure</h4><p style="font-size:0.85rem;">Input, hidden, output layers with weighted connections</p></div>
+      <div class="card"><h4>📋 ML Categories</h4><p style="font-size:0.85rem;">Supervised, unsupervised, reinforcement — know examples</p></div>
+      <div class="card"><h4>📈 Back Propagation &amp; Regression</h4><p style="font-size:0.85rem;">How error propagates; regression predicts continuous values</p></div>
+    </div>
+    <p style="color:#3a6a6a; font-size:0.85rem; margin-top:24px;">Good luck with your revision!</p>
+  </div>
+`);
+</script>
+<script>renderSlides();</script>
+</body>
+</html>

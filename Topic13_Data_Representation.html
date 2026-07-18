@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topic 13: Data Representation — Cambridge 9618</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #080c18;
+    color: #e0e8f0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+  .presentation { position: relative; width: 100vw; height: 100vh; }
+  .slide {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none;
+    flex-direction: column;
+    padding: 36px 50px;
+    background: linear-gradient(135deg, #0a0e1e 0%, #101838 50%, #0a0e1e 100%);
+    overflow-y: auto;
+  }
+  .slide.active { display: flex; }
+  .slide::-webkit-scrollbar { width: 6px; }
+  .slide::-webkit-scrollbar-track { background: #0a0e1e; }
+  .slide::-webkit-scrollbar-thumb { background: #1a5a6a; border-radius: 3px; }
+  h1 { font-size: 2.4rem; font-weight: 700; color: #f0f6ff; margin-bottom: 8px; letter-spacing: -0.5px; }
+  h2 { font-size: 1.6rem; font-weight: 600; color: #b8d4ff; margin-bottom: 6px; border-bottom: 2px solid #1a7a6a; padding-bottom: 4px; }
+  h3 { font-size: 1.2rem; font-weight: 600; color: #8bb8ff; margin-bottom: 5px; }
+  h4 { font-size: 1rem; font-weight: 600; color: #5ae0c0; margin-bottom: 4px; }
+  p, li { font-size: 1rem; line-height: 1.5; color: #d0dcec; margin-bottom: 4px; }
+  ul { padding-left: 20px; margin-bottom: 6px; }
+  li { margin-bottom: 2px; }
+  strong { color: #e8f0ff; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 0.88rem; }
+  th { background: #0e2840; color: #5ae0c0; font-weight: 600; padding: 7px 10px; text-align: left; border: 1px solid #1a5a6a; }
+  td { padding: 6px 10px; border: 1px solid #1a3a4a; color: #c8d8ec; }
+  tr:nth-child(even) td { background: #0a0e1e; }
+  tr:nth-child(odd) td { background: #0e1428; }
+  .code-block { font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; background: #080c18; border: 1px solid #1a5a6a; border-radius: 8px; padding: 10px 14px; font-size: 0.82rem; line-height: 1.5; color: #d4e4ff; overflow-x: auto; margin: 6px 0; white-space: pre; }
+  .inline-code { font-family: 'Cascadia Code', 'Consolas', monospace; background: #080c18; color: #5ae0c0; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; border: 1px solid #1a5a6a; }
+  .flex-row { display: flex; flex-direction: row; gap: 16px; }
+  .flex-col { display: flex; flex-direction: column; gap: 6px; }
+  .flex-1 { flex: 1; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
+  .mt-6 { margin-top: 6px; } .mt-8 { margin-top: 8px; } .mt-10 { margin-top: 10px; } .mt-12 { margin-top: 12px; }
+  .mb-6 { margin-bottom: 6px; } .mb-8 { margin-bottom: 8px; } .mb-10 { margin-bottom: 10px; }
+  .text-center { text-align: center; }
+  .card { background: #0a0e1e; border: 1px solid #1a5a6a; border-radius: 10px; padding: 10px 12px; transition: border-color 0.2s; }
+  .card:hover { border-color: #2ac8a0; }
+  .card h4 { color: #5ae0c0; margin-bottom: 3px; }
+  .diagram-box { background: #080c18; border: 1px solid #1a5a6a; border-radius: 10px; padding: 12px; margin: 8px 0; display: flex; flex-direction: column; align-items: center; }
+  .diagram-box svg { max-width: 100%; height: auto; }
+  .diagram-caption { margin-top: 5px; font-size: 0.78rem; color: #7ab8a8; font-style: italic; text-align: center; }
+  .callout { background: #0a0e1e; border-left: 4px solid #f78c6c; padding: 8px 12px; border-radius: 0 6px 6px 0; margin: 5px 0; font-size: 0.9rem; }
+  .callout.info { border-left-color: #2ac8a0; }
+  .callout.warn { border-left-color: #f78c6c; }
+  .callout.success { border-left-color: #8bc34a; }
+  .section-badge { display: inline-block; background: linear-gradient(135deg, #0a2840, #1a5a6a); color: #5ae0c0; padding: 3px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; margin-bottom: 6px; letter-spacing: 0.5px; text-transform: uppercase; border: 1px solid #2a9a8a; }
+  .objectives-list { list-style: none; padding: 0; }
+  .objectives-list li { padding: 6px 10px 6px 30px; background: #080c18; border-left: 3px solid #2ac8a0; margin-bottom: 6px; border-radius: 0 6px 6px 0; position: relative; }
+  .objectives-list li::before { content: "\25B8"; position: absolute; left: 10px; color: #2ac8a0; font-weight: bold; }
+  .worked-example { background: linear-gradient(135deg, #0c1a20, #0e2828); border: 1px solid #2a9a8a; border-radius: 10px; padding: 12px 16px; margin: 6px 0; }
+  .worked-example h4 { color: #f78c6c; margin-bottom: 5px; }
+  .key-term-box { background: linear-gradient(135deg, #1a0a2e, #2a0a4a); border: 1px solid #6a3aaa; border-radius: 10px; padding: 10px 14px; margin: 6px 0; }
+  .key-term-box h4 { color: #b080f0; } .key-term-box h4::before { content: "\1F511 "; }
+  .exam-tip-box { background: linear-gradient(135deg, #1a1a0a, #2a2a0a); border: 1px solid #c8a020; border-radius: 10px; padding: 8px 14px; margin: 6px 0; }
+  .exam-tip-box h4 { color: #f0c040; } .exam-tip-box h4::before { content: "\1F4A1 "; }
+  .common-mistake-box { background: linear-gradient(135deg, #2a0a0a, #3a1a0a); border: 1px solid #c04040; border-radius: 10px; padding: 8px 14px; margin: 6px 0; }
+  .common-mistake-box h4 { color: #e06060; } .common-mistake-box h4::before { content: "\26A0 "; }
+  .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 8px 20px; background: rgba(8,12,24,0.94); backdrop-filter: blur(10px); border-top: 1px solid #1a3a4a; z-index: 100; }
+  .nav-bar button { background: #0e2840; border: 1px solid #1a5a6a; color: #5ae0c0; padding: 6px 16px; border-radius: 6px; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+  .nav-bar button:hover { background: #1a5a6a; }
+  .nav-bar button:disabled { opacity: 0.35; cursor: default; }
+  .nav-bar .slide-counter { color: #7ab8a8; font-size: 0.82rem; min-width: 80px; text-align: center; }
+  .nav-bar .progress-dots { display: flex; gap: 3px; flex-wrap: wrap; max-width: 400px; justify-content: center; }
+  .nav-bar .dot { width: 6px; height: 6px; border-radius: 50%; background: #1a3a4a; border: none; cursor: pointer; padding: 0; transition: background 0.2s; }
+  .nav-bar .dot.active { background: #2ac8a0; }
+  .nav-bar .dot:hover { background: #3aaa7a; }
+  .kbd-hint { position: fixed; bottom: 52px; right: 16px; color: #2a5a5a; font-size: 0.7rem; z-index: 90; }
+  .chip-group { display: flex; gap: 6px; flex-wrap: wrap; margin: 5px 0; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; background: #080c18; border: 1px solid #1a5a6a; border-radius: 20px; padding: 3px 10px; font-size: 0.78rem; color: #5ae0c0; }
+  .tag { display: inline-block; background: #0e2840; color: #5ae0c0; padding: 2px 10px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; border: 1px solid #1a5a6a; margin-right: 3px; }
+  @media (max-width: 900px) { .slide { padding: 20px 18px; } h1 { font-size: 1.6rem; } h2 { font-size: 1.2rem; } h3 { font-size: 1rem; } .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } .flex-row { flex-direction: column; } .nav-bar .progress-dots { max-width: 200px; } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .slide.active > * { animation: fadeIn 0.35s ease-out; }
+</style>
+</head>
+<body>
+<div class="presentation" id="presentation"></div>
+<div class="nav-bar">
+  <button id="prevBtn" onclick="changeSlide(-1)">&#9664; Prev</button>
+  <span class="slide-counter" id="slideCounter">1 / 1</span>
+  <div class="progress-dots" id="progressDots"></div>
+  <button id="nextBtn" onclick="changeSlide(1)">Next &#9654;</button>
+</div>
+<div class="kbd-hint">&#8592; &#8594; arrow keys to navigate</div>
+<script>
+const slides = [];
+function addSlide(html) { slides.push(html); }
+function renderSlides() {
+  const container = document.getElementById('presentation');
+  slides.forEach((html, i) => {
+    const div = document.createElement('div');
+    div.className = 'slide' + (i === 0 ? ' active' : '');
+    div.dataset.slide = i + 1;
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+  renderDots();
+  updateNav();
+}
+function renderDots() {
+  const dots = document.getElementById('progressDots');
+  if (!dots) return;
+  dots.innerHTML = '';
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'dot' + (i === currentSlide ? ' active' : '');
+    dot.onclick = () => goToSlide(i);
+    dots.appendChild(dot);
+  });
+}
+let currentSlide = 0;
+function changeSlide(dir) {
+  const next = currentSlide + dir;
+  if (next < 0 || next >= slides.length) return;
+  goToSlide(next);
+}
+function goToSlide(idx) {
+  const all = document.querySelectorAll('.slide');
+  all.forEach(s => s.classList.remove('active'));
+  all[idx].classList.add('active');
+  currentSlide = idx;
+  const counter = document.getElementById('slideCounter');
+  if (counter) counter.textContent = (idx + 1) + ' / ' + slides.length;
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === slides.length - 1;
+  renderDots();
+  all[idx].scrollTop = 0;
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+});
+function updateNav() {
+  const counter = document.getElementById('slideCounter');
+  if (counter) counter.textContent = '1 / ' + slides.length;
+  document.getElementById('prevBtn').disabled = true;
+  if (slides.length <= 1) document.getElementById('nextBtn').disabled = true;
+}
+// SLIDES START HERE
+
+// ==================================================================
+// SLIDE 1 – TITLE SLIDE
+// ==================================================================
+addSlide(`
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+    <div class="section-badge" style="margin-bottom:14px;">Cambridge International AS &amp; A Level — 9618</div>
+    <h1 style="font-size:3rem; margin-bottom:6px;">Topic 13</h1>
+    <h1 style="font-size:2.6rem; margin-bottom:8px; color:#5ae0c0;">Data Representation</h1>
+    <div style="width:80px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:18px;"></div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:700px;">
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">User-Defined Types</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">File Organisation</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Hashing</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Floating-Point</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Normalisation</span>
+    </div>
+    <div style="margin-top:24px; text-align:left; max-width:680px;">
+      <h4 style="color:#b8d4ff; margin-bottom:8px;">Learning Objectives:</h4>
+      <ul>
+        <li>Understand user-defined types: enumerated, pointer, record, set, class</li>
+        <li>Understand file organisation: serial, sequential, indexed sequential, random</li>
+        <li>Understand hashing algorithms for file access</li>
+        <li>Describe binary floating-point format (mantissa + exponent)</li>
+        <li>Convert between binary floating-point and denary</li>
+        <li>Normalise floating-point numbers</li>
+        <li>Understand rounding errors, underflow, and overflow</li>
+      </ul>
+    </div>
+    <p style="color:#3a6a6a; font-size:0.82rem; margin-top:20px;">Press <span class="inline-code">\u2192</span> or click navigation to begin</p>
+  </div>
+`);
+
+// ==================================================================
+// ===== SECTION 2: USER-DEFINED DATA TYPES =====
+// ==================================================================
+
+// ==================================================================
+// SLIDE 2 – WHY USER-DEFINED TYPES ARE NECESSARY
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.1 User-Defined Types</div>
+  <h2>Why User-Defined Types Are Necessary</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>The Problem</h4>
+        <p>Built-in types (INTEGER, REAL, STRING, CHAR, BOOLEAN, DATE) are sufficient for <strong>simple</strong> problems.</p>
+        <p>But <strong>complex problems</strong> require data types that <strong>model real-world entities</strong>.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Examples</h4>
+        <ul>
+          <li>A <strong>Student</strong> has a name, ID, date of birth, and grades</li>
+          <li>An <strong>Inventory item</strong> has a code, description, price, quantity</li>
+          <li>A <strong>Bank account</strong> has an account number, balance, overdraft limit</li>
+          <li>None of these can be properly represented by built-in types alone</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>User-defined data type:</strong> A data type derived from one or more existing data types, used to extend built-in types to meet specific problem requirements.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 3 – BENEFITS OF USER-DEFINED TYPES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.1 User-Defined Types</div>
+  <h2>Benefits of User-Defined Types</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Closer to the Real World</h4>
+      <p>Model complex data structures that align with real-world entities. Makes the program more intuitive.</p>
+    </div>
+    <div class="card">
+      <h4>Better Data Representation</h4>
+      <p>Encapsulate both data and operations. Data is stored in a logical, structured way.</p>
+    </div>
+    <div class="card">
+      <h4>Improves Program Design</h4>
+      <p>Makes code more <strong>modular, maintainable, and scalable</strong>. Changes are easier to manage.</p>
+    </div>
+    <div class="card">
+      <h4>Better Memory Management</h4>
+      <p>Custom structures can reduce memory wastage compared to using generic built-in types inappropriately.</p>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 4 – NON-COMPOSITE: ENUMERATED TYPE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.1 User-Defined Types</div>
+  <h2>Non-Composite Types — Enumerated</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p>An <strong>enumerated type</strong> is a user-defined type with a <strong>fixed set of named values</strong>.</p>
+        <ul>
+          <li>Values are <strong>ordered</strong> and can be compared</li>
+          <li>Improves <strong>code readability</strong></li>
+          <li>Prevents <strong>invalid values</strong></li>
+          <li>A <strong>non-composite</strong> type (not built from other types)</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>Example: Days of the Week</h4>
+        <div class="code-block">TYPE<br>    DayOfWeek = (Monday, Tuesday,<br>                 Wednesday, Thursday,<br>                 Friday, Saturday, Sunday)<br>ENDTYPE<br><br>DECLARE today : DayOfWeek<br>today &larr; Wednesday<br>IF today > Monday THEN<br>    // This is true<br>ENDIF</div>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>Enumerated types are <strong>ordered</strong>. In Cambridge pseudocode, Monday < Tuesday < Wednesday, etc. You can use <strong>comparison operators</strong> on enumerated values.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 5 – NON-COMPOSITE: POINTER TYPE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.1 User-Defined Types</div>
+  <h2>Non-Composite Types — Pointer</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p>A <strong>pointer</strong> is a variable that stores the <strong>memory address</strong> of another variable.</p>
+        <ul>
+          <li>Can be used to create <strong>dynamic data structures</strong> (linked lists, trees)</li>
+          <li>Allows indirect access to data</li>
+          <li>Can be <strong>dereferenced</strong> to access the value at the pointed address</li>
+          <li>A <strong>non-composite</strong> type (stores a single address)</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>Example</h4>
+        <div class="code-block">TYPE<br>    NodePointer = ^Node  // Pointer to a Node<br>ENDTYPE<br><br>// Node contains data and a pointer<br>TYPE<br>    Node = RECORD<br>        data : INTEGER<br>        next : NodePointer<br>    ENDRECORD<br>ENDTYPE</div>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Pointer:</strong> A variable that stores the memory address of another variable, allowing indirect access to data.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 6 – COMPOSITE: RECORD TYPE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.1 User-Defined Types</div>
+  <h2>Composite Types — Record</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p>A <strong>record</strong> is a composite data type that groups together <strong>related data items</strong> (fields) of possibly different types.</p>
+        <ul>
+          <li>Fields can be of <strong>different types</strong></li>
+          <li>Fields are accessed using <strong>dot notation</strong></li>
+          <li>Ideal for representing a <strong>single entity</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>Example: Student Record</h4>
+        <div class="code-block">TYPE<br>    Student = RECORD<br>        name : STRING<br>        studentID : INTEGER<br>        dateOfBirth : DATE<br>        grades : ARRAY[1:10] OF INTEGER<br>    ENDRECORD<br>ENDTYPE<br><br>DECLARE student1 : Student<br>student1.name &larr; "Alice"<br>student1.studentID &larr; 1001<br>OUTPUT student1.name</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 7 – COMPOSITE: SET TYPE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.1 User-Defined Types</div>
+  <h2>Composite Types — Set</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p>A <strong>set</strong> is a composite type that stores an <strong>unordered collection</strong> of distinct values of the same base type.</p>
+        <ul>
+          <li>Each element can appear at most <strong>once</strong></li>
+          <li>Order is <strong>not guaranteed</strong></li>
+          <li>Supports set operations: <strong>union, intersection, difference</strong></li>
+          <li>Can use operators: <strong>IN, NOT IN</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>Example</h4>
+        <div class="code-block">TYPE<br>    DayOfWeek = (Mon, Tue, Wed, Thu,<br>                 Fri, Sat, Sun)<br>    Weekend = SET OF DayOfWeek<br>ENDTYPE<br><br>DECLARE weekendDays : Weekend<br>weekendDays &larr; [Sat, Sun]<br><br>IF Mon IN weekendDays THEN<br>    // false - Mon is not in the set<br>ENDIF</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 8 – COMPOSITE: CLASS TYPE (OOP)
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.1 User-Defined Types</div>
+  <h2>Composite Types — Class</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p>A <strong>class</strong> is a composite type that bundles <strong>data (attributes)</strong> and <strong>methods (behaviours)</strong> together.</p>
+        <ul>
+          <li>Supports <strong>encapsulation</strong> (public/private)</li>
+          <li>Supports <strong>inheritance</strong> (INHERITS keyword)</li>
+          <li>Objects are <strong>instances</strong> of a class</li>
+          <li>Created using the <strong>NEW</strong> keyword</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>Example: Class Definition</h4>
+        <div class="code-block">CLASS Student<br>    PRIVATE name : STRING<br>    PRIVATE id : INTEGER<br><br>    PUBLIC METHOD Init(n, i)<br>        name &larr; n<br>        id &larr; i<br>    ENDMETHOD<br><br>    PUBLIC METHOD GetName()<br>        RETURN name<br>    ENDMETHOD<br>ENDCLASS<br><br>// Creating an object<br>alice &larr; NEW Student("Alice", 1001)</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 9 – USER-DEFINED TYPES COMPARISON
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.1 User-Defined Types</div>
+  <h2>User-Defined Types — Comparison</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Type</th><th>Composite?</th><th>Description</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Enumerated</strong></td><td>No</td><td>Fixed set of named values, ordered</td><td>TYPE Colour = (Red, Green, Blue)</td></tr>
+      <tr><td><strong>Pointer</strong></td><td>No</td><td>Stores memory address of another variable</td><td>TYPE NodePtr = ^Node</td></tr>
+      <tr><td><strong>Record</strong></td><td>Yes</td><td>Groups related fields of different types</td><td>RECORD ... ENDRECORD</td></tr>
+      <tr><td><strong>Set</strong></td><td>Yes</td><td>Unordered collection of distinct values</td><td>SET OF DayOfWeek</td></tr>
+      <tr><td><strong>Class</strong></td><td>Yes</td><td>Bundles data + methods, supports OOP</td><td>CLASS ... ENDCLASS</td></tr>
+    </tbody>
+  </table>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>You need to know the <strong>difference</strong> between non-composite (enumerated, pointer) and composite (record, set, class) types. Non-composite types hold a single value; composite types hold multiple values.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 10 – CHOOSING AND DESIGNING USER-DEFINED TYPES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.1 User-Defined Types</div>
+  <h2>Choosing and Designing User-Defined Types</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>How to Choose the Right Type</h4>
+    <div class="grid-2">
+      <div>
+        <h4>Scenario: Represent a Playing Card</h4>
+        <ul>
+          <li>Suit: {Hearts, Diamonds, Clubs, Spades} &rarr; <strong>Enumerated</strong></li>
+          <li>Rank: {2..10, Jack, Queen, King, Ace} &rarr; <strong>Enumerated</strong></li>
+          <li>Card = Suit + Rank &rarr; <strong>Record</strong></li>
+          <li>Hand of cards &rarr; <strong>Set</strong> or <strong>Array of Record</strong></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Design Process</h4>
+        <ol>
+          <li>Identify the <strong>real-world entity</strong></li>
+          <li>List its <strong>attributes</strong> and their types</li>
+          <li>Choose the <strong>appropriate structure</strong></li>
+          <li>Define the type using <strong>TYPE...ENDTYPE</strong></li>
+          <li>Test by <strong>declaring variables</strong> of that type</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>You may be asked to <strong>design a user-defined type</strong> for a given scenario. Justify your choice of type (record, enumerated, set, class). Think about what data needs to be stored and what operations need to be performed.</p>
+  </div>
+`);
+
+// ==================================================================
+// ===== SECTION 3: FILE ORGANISATION AND ACCESS =====
+// ==================================================================
+
+// ==================================================================
+// SLIDE 11 – FILE ORGANISATION OVERVIEW
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.2 File Organisation</div>
+  <h2>File Organisation and Access — Overview</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Key Concepts</h4>
+        <p><strong>File organisation</strong> refers to how records are <strong>physically arranged</strong> on a storage device.</p>
+        <p><strong>File access</strong> refers to how records are <strong>retrieved</strong> from a file.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Four Methods of Organisation</h4>
+        <ol>
+          <li><strong>Serial</strong> — records stored in no particular order</li>
+          <li><strong>Sequential</strong> — records stored in key order</li>
+          <li><strong>Indexed Sequential</strong> — sequential + index for faster access</li>
+          <li><strong>Random (Direct)</strong> — records accessed directly using a key</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 12 – SERIAL FILE ORGANISATION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.2 File Organisation</div>
+  <h2>Serial File Organisation</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How It Works</h4>
+        <ul>
+          <li>Records are stored in the <strong>order they were added</strong></li>
+          <li>New records are appended to the <strong>end</strong> of the file</li>
+          <li>There is <strong>no key order</strong></li>
+          <li>Simplest method of file organisation</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Access Method</h4>
+        <ul>
+          <li>Records can only be accessed <strong>serially</strong> (one after another)</li>
+          <li>To find a record, you must read from the <strong>beginning</strong></li>
+          <li>Can be slow for large files</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Uses</h4>
+        <ul>
+          <li><strong>Log files</strong> (transaction logs, error logs)</li>
+          <li>Data that is only ever <strong>appended</strong> and rarely searched</li>
+          <li><strong>Backup files</strong></li>
+          <li>When the order of entry is important</li>
+        </ul>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Serial File:</strong> A file where records are stored in the order they are added, with no ordering by key field.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 13 – SEQUENTIAL FILE ORGANISATION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.2 File Organisation</div>
+  <h2>Sequential File Organisation</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How It Works</h4>
+        <ul>
+          <li>Records are stored in <strong>key order</strong> (e.g., ascending by ID)</li>
+          <li>A <strong>key field</strong> determines the order</li>
+          <li>New records must be inserted in the <strong>correct position</strong></li>
+          <li>Often requires creating a <strong>new file</strong> for updates</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Access Method</h4>
+        <ul>
+          <li>Records are accessed <strong>sequentially</strong> in key order</li>
+          <li>To find a record, read until the key is found or passed</li>
+          <li>Binary search is <strong>not possible</strong> on tape/stream-based storage</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Uses</h4>
+        <ul>
+          <li><strong>Magnetic tape</strong> storage</li>
+          <li>Batch processing (e.g., payroll)</li>
+          <li>Reports that need data in order</li>
+          <li>When most records need to be processed</li>
+        </ul>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>Sequential access reads records from <strong>start to finish</strong>. To insert a new record, the file must be <strong>rewritten</strong> because there is no space between existing records.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 14 – INDEXED SEQUENTIAL FILE ORGANISATION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.2 File Organisation</div>
+  <h2>Indexed Sequential File Organisation</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How It Works</h4>
+        <ul>
+          <li>Records are stored in <strong>key order</strong> (like sequential)</li>
+          <li>An <strong>index</strong> is maintained that maps keys to record positions</li>
+          <li>The index provides <strong>faster access</strong> than pure sequential</li>
+          <li>Also called <strong>ISAM</strong> (Indexed Sequential Access Method)</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Access Methods</h4>
+        <ul>
+          <li><strong>Sequential access:</strong> read records in key order</li>
+          <li><strong>Direct access via index:</strong> use index to find a specific record quickly</li>
+          <li>The index can have <strong>multiple levels</strong> (e.g., cylinder index, track index)</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 320 100" style="width:100%; max-width:320px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Indexed Sequential</text>
+          <rect x="10" y="24" width="70" height="60" fill="#0a2840" stroke="#2ac8a0" stroke-width="1.5" rx="4"/>
+          <text x="18" y="42" fill="#5ae0c0" font-size="8">Index</text>
+          <text x="18" y="56" fill="#b080f0" font-size="7">Key &rarr; Addr</text>
+          <text x="18" y="70" fill="#7ab8a8" font-size="7">102 &rarr; 500</text>
+          <line x1="85" y1="54" x2="110" y2="54" stroke="#f0c040" stroke-width="1.5"/>
+          <rect x="115" y="24" width="90" height="60" fill="#1a2840" stroke="#f0c040" stroke-width="1.5" rx="4"/>
+          <text x="120" y="42" fill="#f0c040" font-size="8">Data File (sorted)</text>
+          <text x="120" y="56" fill="#d0dcec" font-size="7">Rec 101: Alice</text>
+          <text x="120" y="68" fill="#d0dcec" font-size="7">Rec 102: Bob</text>
+          <text x="120" y="80" fill="#d0dcec" font-size="7">Rec 103: Carol</text>
+        </svg>
+        <div class="diagram-caption">Index maps key values to record positions</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 15 – RANDOM (DIRECT) FILE ORGANISATION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.2 File Organisation</div>
+  <h2>Random (Direct) File Organisation</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How It Works</h4>
+        <ul>
+          <li>Records can be accessed <strong>directly</strong> using a key value</li>
+          <li>A <strong>hashing algorithm</strong> converts the key to a record address</li>
+          <li>Records do <strong>not</strong> need to be in key order</li>
+          <li>Very fast for <strong>individual record access</strong></li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Access Method</h4>
+        <ul>
+          <li><strong>Direct access:</strong> go straight to the record using the hash</li>
+          <li>No need to read other records</li>
+          <li>Fast for lookups, updates, inserts, deletes</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Uses</h4>
+        <ul>
+          <li>Customer databases (lookup by account number)</li>
+          <li>Stock control systems</li>
+          <li>Any system requiring fast <strong>random access</strong> by key</li>
+        </ul>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Random (Direct) File:</strong> A file where records are accessed directly using a key, typically using a hashing algorithm to calculate the record address.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 16 – FILE ORGANISATION COMPARISON
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.2 File Organisation</div>
+  <h2>File Organisation — Comparison</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Serial</th><th>Sequential</th><th>Indexed Sequential</th><th>Random</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Record order</strong></td><td>Added order</td><td>Key order</td><td>Key order</td><td>Not ordered</td></tr>
+      <tr><td><strong>Access speed</strong></td><td>Slow (must scan)</td><td>Slow (must scan)</td><td>Fast (via index)</td><td>Very fast (direct)</td></tr>
+      <tr><td><strong>Storage utilisation</strong></td><td>Good</td><td>Good</td><td>Moderate (+ index)</td><td>Moderate (may have gaps)</td></tr>
+      <tr><td><strong>Insert new record</strong></td><td>Easy (append)</td><td>Difficult (rewrite)</td><td>Moderate (update index)</td><td>Easy (hash to address)</td></tr>
+      <tr><td><strong>Best for</strong></td><td>Log files</td><td>Batch processing</td><td>Mixed sequential/direct</td><td>Fast direct lookups</td></tr>
+    </tbody>
+  </table>
+`);
+
+// ==================================================================
+// SLIDE 17 – HASHING ALGORITHMS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.2 Hashing</div>
+  <h2>Hashing Algorithms</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is Hashing?</h4>
+        <p><strong>Hashing</strong> is a method of converting a <strong>key value</strong> into a <strong>record address</strong> for direct file access.</p>
+        <ul>
+          <li>The hashing algorithm takes the key and produces a <strong>hash value</strong></li>
+          <li>The hash value is used as the <strong>record address</strong> (or file offset)</li>
+          <li>A good hashing algorithm distributes records <strong>evenly</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>Common Hashing Methods</h4>
+        <ul>
+          <li><strong>Division method:</strong> key MOD tableSize</li>
+          <li><strong>Digit extraction:</strong> select specific digits from the key</li>
+          <li><strong>Folding:</strong> split key into parts and add them</li>
+          <li><strong>Mid-square:</strong> square the key, extract middle digits</li>
+        </ul>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Hashing:</strong> A technique that converts a key value into a storage address, enabling direct access to records in a random file.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 18 – HASHING WORKED EXAMPLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.2 Hashing</div>
+  <h2>Hashing — Worked Example</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Division Hashing Method</h4>
+    <p>Hash function: <strong>address = key MOD tableSize</strong></p>
+    <div class="grid-2 mt-6">
+      <div>
+        <p>Given tableSize = 10:</p>
+        <table>
+          <tr><th>Key</th><th>Calculation</th><th>Address</th></tr>
+          <tr><td>101</td><td>101 MOD 10</td><td>1</td></tr>
+          <tr><td>205</td><td>205 MOD 10</td><td>5</td></tr>
+          <tr><td>318</td><td>318 MOD 10</td><td>8</td></tr>
+          <tr><td>410</td><td>410 MOD 10</td><td>0</td></tr>
+        </table>
+      </div>
+      <div>
+        <h4>Handling Collisions</h4>
+        <p>A <strong>collision</strong> occurs when two keys hash to the same address.</p>
+        <p>Example: 205 and 315 both give address 5 (when tableSize=10).</p>
+        <p>Solutions:</p>
+        <ul>
+          <li><strong>Open addressing:</strong> find next free slot</li>
+          <li><strong>Separate chaining:</strong> store multiple records at one address</li>
+          <li><strong>Rehashing:</strong> apply a second hash function</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>You may be asked to <strong>calculate hash values</strong> for given keys, or to <strong>explain how collisions</strong> are resolved. Remember: choosing a good table size (e.g., a prime number) helps reduce collisions.</p>
+  </div>
+`);
+
+// ==================================================================
+// ===== SECTION 4: FLOATING-POINT NUMBERS =====
+// ==================================================================
+
+// ==================================================================
+// SLIDE 19 – FLOATING-POINT INTRODUCTION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.3 Floating-Point</div>
+  <h2>Floating-Point Numbers — Introduction</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>The Problem</h4>
+        <p>Fixed-point binary can only represent a <strong>limited range</strong> of values.</p>
+        <p>Floating-point representation allows both <strong>very large</strong> and <strong>very small</strong> numbers to be stored.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Format</h4>
+        <p>A floating-point number consists of:</p>
+        <ul>
+          <li><strong>Mantissa:</strong> the significant digits (the value)</li>
+          <li><strong>Exponent:</strong> indicates where the binary point is placed</li>
+        </ul>
+        <p style="margin-top:4px;"><span class="inline-code">Value = mantissa &times; 2<sup>exponent</sup></span></p>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Floating-Point Number:</strong> A number represented using a mantissa and an exponent, allowing a wide range of values to be stored with a fixed number of bits.</p>
+      </div>
+      <div class="diagram-box mt-6">
+        <svg viewBox="0 0 300 50" style="width:100%; max-width:300px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Floating-Point Bit Allocation</text>
+          <rect x="10" y="22" width="160" height="22" fill="#0a2840" stroke="#2ac8a0" stroke-width="1.5" rx="3"/>
+          <text x="50" y="37" fill="#5ae0c0" font-size="10">Mantissa (e.g., 8 bits)</text>
+          <rect x="175" y="22" width="80" height="22" fill="#1a2840" stroke="#f0c040" stroke-width="1.5" rx="3"/>
+          <text x="190" y="37" fill="#f0c040" font-size="10">Exponent (e.g., 8 bits)</text>
+        </svg>
+        <div class="diagram-caption">Fixed total bits split between mantissa and exponent</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 20 – FLOATING-POINT FORMAT
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.3 Floating-Point</div>
+  <h2>Floating-Point Format</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="card">
+    <h4>Key Notation</h4>
+    <p style="font-size:1.2rem; text-align:center; padding:8px;"><strong>Value = Mantissa &times; 2<sup>Exponent</sup></strong></p>
+  </div>
+  <div class="grid-2 mt-6">
+    <div class="card">
+      <h4>How It Works</h4>
+      <ul>
+        <li>The <strong>mantissa</strong> holds the significant bits of the number</li>
+        <li>The <strong>exponent</strong> shifts the binary point left or right</li>
+        <li>Positive exponent = shift right (makes number larger)</li>
+        <li>Negative exponent = shift left (makes number smaller)</li>
+        <li>Both mantissa and exponent use <strong>two's complement</strong> representation</li>
+      </ul>
+    </div>
+    <div class="worked-example">
+      <h4>Example: 8-bit mantissa, 4-bit exponent</h4>
+      <p>Mantissa: <span class="inline-code">0110 1000</span><br>Exponent: <span class="inline-code">0011</span> (decimal 3)</p>
+      <p style="margin-top:4px;">Value = 0.1101000 &times; 2<sup>3</sup></p>
+      <p>= 0.1101000 shift right 3 places</p>
+      <p>= <strong>0110.1000</strong></p>
+      <p>= 6.5 in denary</p>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 21 – CONVERTING BINARY FLOATING-POINT TO DENARY
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.3 Floating-Point</div>
+  <h2>Converting Binary Floating-Point to Denary</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Step-by-Step Process</h4>
+    <ol>
+      <li>Write the <strong>mantissa</strong> as a binary number with an implied binary point after the first bit</li>
+      <li>Note the <strong>exponent</strong> value (convert from two's complement if negative)</li>
+      <li>Shift the binary point: <strong>right</strong> if exponent is positive, <strong>left</strong> if negative</li>
+      <li>Convert the resulting binary number to denary</li>
+    </ol>
+    <div class="grid-2 mt-6">
+      <div>
+        <h4>Example 1: Positive Exponent</h4>
+        <p>Mantissa: <span class="inline-code">0.101 0000</span> (8 bits)<br>Exponent: <span class="inline-code">0011</span> (4 bits, = +3)</p>
+        <p>Shift right 3: <span class="inline-code">0101.000</span></p>
+        <p>= 4 + 1 = <strong>5.0</strong></p>
+      </div>
+      <div>
+        <h4>Example 2: Negative Exponent</h4>
+        <p>Mantissa: <span class="inline-code">0.110 0000</span> (8 bits)<br>Exponent: <span class="inline-code">1101</span> (4 bits, = -3)</p>
+        <p>Shift left 3: <span class="inline-code">0.00011</span></p>
+        <p>= 1/8 + 1/16 = <strong>0.1875</strong></p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 22 – CONVERTING DENARY TO BINARY FLOATING-POINT
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.3 Floating-Point</div>
+  <h2>Converting Denary to Binary Floating-Point</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Step-by-Step: Convert 10.75 to floating-point (8-bit mantissa, 4-bit exponent)</h4>
+    <ol>
+      <li><strong>Convert to fixed-point binary:</strong> 10.75 = 1010.11</li>
+      <li><strong>Normalise:</strong> shift the binary point so the first digit is after the leading bit<br>1010.11 &rarr; 0.101011 &times; 2<sup>4</sup> (shifted right 4 places)</li>
+      <li><strong>Mantissa:</strong> 0.1010110 (pad to 8 bits: 0101 0110)</li>
+      <li><strong>Exponent:</strong> 4 in binary = 0100</li>
+    </ol>
+    <p style="margin-top:8px;"><strong>Result:</strong> Mantissa = <span class="inline-code">0101 0110</span>, Exponent = <span class="inline-code">0100</span></p>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>The <strong>mantissa is always normalised</strong> so the first two bits are different (01 for positive, 10 for negative). This maximises precision by using all available bits meaningfully.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 23 – NORMALISATION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.3 Floating-Point</div>
+  <h2>Normalisation of Floating-Point Numbers</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is Normalisation?</h4>
+        <p>Normalisation ensures the mantissa is in a <strong>standard form</strong> where:</p>
+        <ul>
+          <li>For <strong>positive</strong> numbers: the first bit is 0 and the second bit is 1</li>
+          <li>For <strong>negative</strong> numbers: the first bit is 1 and the second bit is 0</li>
+          <li>This means the first <strong>two bits are different</strong></li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Why Normalise?</h4>
+        <ul>
+          <li><strong>Maximises precision</strong> for a given number of bits</li>
+          <li>Ensures a <strong>unique representation</strong> for each value</li>
+          <li>Makes <strong>comparison</strong> of floating-point numbers consistent</li>
+        </ul>
+      </div>
+    </div>
+    <div class="worked-example">
+      <h4>Normalisation Example</h4>
+      <p>Normalise: 00110100 (8-bit mantissa)</p>
+      <p>The first two bits are <strong>00</strong> &rarr; not normalised.</p>
+      <p style="margin-top:4px;">Shift left until the first two bits are 01:</p>
+      <ul>
+        <li>Shift 1: 01101000, exponent -= 1</li>
+        <li>First two bits are now <strong>01</strong> &rarr; normalised!</li>
+      </ul>
+      <p style="margin-top:4px;">So: 0.0110100 &times; 2<sup>e</sup> becomes 0.1101000 &times; 2<sup>e-1</sup></p>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 24 – NORMALISATION WORKED EXAMPLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.3 Floating-Point</div>
+  <h2>Normalisation — Worked Example</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Example: Normalise a Positive Number</h4>
+    <p>Mantissa: <span class="inline-code">0001 0110</span>, Exponent: <span class="inline-code">0100</span> (8+4 bits)</p>
+    <p>First two bits = <strong>00</strong> &rarr; not normalised.</p>
+    <table>
+      <tr><th>Step</th><th>Action</th><th>Mantissa</th><th>Exponent</th></tr>
+      <tr><td>Start</td><td>—</td><td>0001 0110</td><td>0100 (4)</td></tr>
+      <tr><td>1</td><td>Shift left 1</td><td>0010 1100</td><td>0011 (3)</td></tr>
+      <tr><td>2</td><td>Shift left 1</td><td>0101 1000</td><td>0010 (2)</td></tr>
+      <tr><td><strong>Done</strong></td><td>First two bits = 01</td><td><strong>0101 1000</strong></td><td><strong>0010 (2)</strong></td></tr>
+    </table>
+    <p style="margin-top:6px;">Normalised: Mantissa = <span class="inline-code">0101 1000</span>, Exponent = <span class="inline-code">0010</span></p>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>To normalise: <strong>shift left</strong> until the first two bits differ (01 or 10). Each left shift <strong>decreases</strong> the exponent by 1. For negative numbers, the mantissa starts with 1, and you shift left until you get 10...</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 25 – ROUNDING ERRORS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.3 Floating-Point</div>
+  <h2>Rounding Errors</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Causes Rounding Errors?</h4>
+        <ul>
+          <li>The mantissa has a <strong>fixed number of bits</strong></li>
+          <li>Some values cannot be represented <strong>exactly</strong></li>
+          <li>The least significant bits must be <strong>truncated or rounded</strong></li>
+          <li>Similar to 1/3 = 0.333... in decimal</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Example</h5>
+        <p>Represent 0.1 in 8-bit binary mantissa:</p>
+        <p>0.1 in binary = 0.0001100110011... (repeating)</p>
+        <p>With 8 bits: <span class="inline-code">0.0001100</span></p>
+        <p>This is an <strong>approximation</strong>, not exact.</p>
+      </div>
+    </div>
+    <div class="card">
+      <h4>Consequences</h4>
+      <ul>
+        <li>Accumulation of rounding errors can affect <strong>large calculations</strong></li>
+        <li>Comparing floating-point numbers for <strong>equality</strong> can be unreliable</li>
+        <li>Financial calculations may use <strong>fixed-point</strong> instead for precision</li>
+        <li>Using a <strong>larger mantissa</strong> reduces but does not eliminate rounding errors</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 26 – UNDERFLOW AND OVERFLOW
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.3 Floating-Point</div>
+  <h2>Underflow and Overflow</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Overflow</h4>
+      <p>Occurs when a number is <strong>too large</strong> to be represented within the available number of bits.</p>
+      <ul>
+        <li>The exponent becomes too large for its allocated bits</li>
+        <li>Example: Trying to store 2<sup>20</sup> with a 4-bit exponent (max = 2<sup>7</sup>)</li>
+        <li>Result: <strong>Error</strong> or the number wraps to an unexpected value</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Underflow</h4>
+      <p>Occurs when a number is <strong>too small</strong> to be represented.</p>
+      <ul>
+        <li>The exponent becomes too negative for its allocated bits</li>
+        <li>The number is closer to zero than the smallest representable value</li>
+        <li>Example: Trying to store 2<sup>-10</sup> with a 4-bit exponent (min = 2<sup>-7</sup>)</li>
+        <li>Result: The value is treated as <strong>zero</strong></li>
+      </ul>
+    </div>
+  </div>
+  <div class="diagram-box mt-6">
+    <svg viewBox="0 0 400 50" style="width:100%; max-width:400px;">
+      <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Number Line</text>
+      <line x1="20" y1="32" x2="380" y2="32" stroke="#4a7ac8" stroke-width="2"/>
+      <text x="15" y="46" fill="#e06060" font-size="8">Underflow</text>
+      <text x="360" y="46" fill="#e06060" font-size="8">Overflow</text>
+      <rect x="100" y="24" width="200" height="16" fill="#0a2840" stroke="#2ac8a0" stroke-width="1" rx="3"/>
+      <text x="155" y="36" fill="#5ae0c0" font-size="8">Representable Range</text>
+    </svg>
+    <div class="diagram-caption">Values outside the representable range cause underflow or overflow</div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 27 – FLOATING-POINT ERRORS COMPARISON
+// ==================================================================
+addSlide(`
+  <div class="section-badge">13.3 Floating-Point</div>
+  <h2>Floating-Point Errors — Comparison</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Issue</th><th>Cause</th><th>Result</th><th>How to Reduce</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Rounding error</strong></td><td>Number cannot be exactly represented in available bits</td><td>Small inaccuracy in stored value</td><td>Use more mantissa bits; use fixed-point for exact values</td></tr>
+      <tr><td><strong>Overflow</strong></td><td>Number is too large for the exponent range</td><td>Error / unexpected value</td><td>Use more exponent bits; use a larger data type</td></tr>
+      <tr><td><strong>Underflow</strong></td><td>Number is too small for the exponent range</td><td>Value treated as zero</td><td>Use more exponent bits; use a larger data type</td></tr>
+      <tr><td><strong>Loss of significance</strong></td><td>Subtracting nearly equal numbers</td><td>Leading zeros reduce effective precision</td><td>Restructure calculation to avoid cancellation</td></tr>
+    </tbody>
+  </table>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>Know the <strong>difference</strong> between underflow and overflow. Overflow = number too large. Underflow = number too small (close to zero). Both relate to the <strong>exponent</strong> being out of range.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 28 – TOPIC 13 SUMMARY
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Topic Summary</div>
+  <h2>Topic 13 — Key Takeaways</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-3">
+    <div class="card">
+      <h4>13.1 User-Defined Types</h4>
+      <ul>
+        <li><strong>Non-composite:</strong> enumerated, pointer</li>
+        <li><strong>Composite:</strong> record, set, class</li>
+        <li>Enumerated = fixed set of named values</li>
+        <li>Record = groups fields of different types</li>
+        <li>Set = unordered distinct values</li>
+        <li>Class = data + methods (OOP)</li>
+        <li>Pointer = stores a memory address</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>13.2 File Organisation</h4>
+      <ul>
+        <li><strong>Serial:</strong> added order, append only</li>
+        <li><strong>Sequential:</strong> key order, batch processing</li>
+        <li><strong>Indexed Sequential:</strong> key order + index for faster access</li>
+        <li><strong>Random:</strong> direct access via hashing</li>
+        <li><strong>Hashing:</strong> key &rarr; address, collisions resolved by open addressing or chaining</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>13.3 Floating-Point</h4>
+      <ul>
+        <li>Value = Mantissa &times; 2<sup>Exponent</sup></li>
+        <li>Both mantissa and exponent use two's complement</li>
+        <li><strong>Normalisation:</strong> first two bits differ (01 or 10)</li>
+        <li><strong>Rounding error:</strong> finite mantissa bits</li>
+        <li><strong>Overflow:</strong> number too large</li>
+        <li><strong>Underflow:</strong> number too small (treated as 0)</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 29 – EXAM PRACTICE QUESTIONS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Exam Practice</div>
+  <h2>Exam Practice Questions</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>13.1 User-Defined Types</h4>
+      <ol style="padding-left:16px;">
+        <li>Define a <strong>user-defined data type</strong>. [2]</li>
+        <li>Explain the difference between non-composite and composite types. [3]</li>
+        <li>Design a <strong>record</strong> type to store information about a book. [4]</li>
+        <li>Describe an <strong>enumerated</strong> type and give an example. [3]</li>
+        <li>Explain the purpose of a <strong>pointer</strong> type. [2]</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h4>13.2 File Organisation</h4>
+      <ol style="padding-left:16px;">
+        <li>Compare <strong>serial</strong> and <strong>sequential</strong> file organisation. [3]</li>
+        <li>Explain how <strong>indexed sequential</strong> access works. [4]</li>
+        <li>Describe a <strong>hashing algorithm</strong> used in random file access. [3]</li>
+        <li>Explain what a <strong>collision</strong> is and how it can be resolved. [3]</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h4>13.3 Floating-Point</h4>
+      <ol style="padding-left:16px;">
+        <li>Convert floating-point 0.1101000 &times; 2<sup>0011</sup> to denary. [3]</li>
+        <li>Convert 13.25 to floating-point (8-bit mantissa, 4-bit exponent). [4]</li>
+        <li><strong>Normalise</strong> the mantissa 00011010, adjusting the exponent. [3]</li>
+        <li>Explain the difference between <strong>overflow</strong> and <strong>underflow</strong>. [3]</li>
+        <li>Explain what causes <strong>rounding errors</strong> in floating-point. [2]</li>
+      </ol>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 30 – FINAL EXAM TIPS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Exam Tips</div>
+  <h2>Final Exam Tips</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>For User-Defined Types</h4>
+      <ul>
+        <li>Use <strong>TYPE ... ENDTYPE</strong> syntax in pseudocode</li>
+        <li>For records: use <strong>RECORD ... ENDRECORD</strong></li>
+        <li>Remember dot notation for field access: <strong>variable.field</strong></li>
+        <li>Enumerated types are <strong>ordered</strong> — can use comparisons</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>For File Organisation</h4>
+      <ul>
+        <li>Know the <strong>four methods</strong>: serial, sequential, indexed sequential, random</li>
+        <li>Remember: serial = no order, sequential = key order</li>
+        <li>Hashing converts a key to an address</li>
+        <li>Collisions are inevitable — know how to handle them</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>For Floating-Point</h4>
+      <ul>
+        <li>Always <strong>normalise</strong> your answers (first two bits differ)</li>
+        <li>Check the <strong>exponent</strong> is in two's complement</li>
+        <li>When converting to denary, shift the binary point by the exponent value</li>
+        <li>Rounding errors happen because the mantissa has <strong>finite bits</strong></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>General Tips</h4>
+      <ul>
+        <li>Show <strong>all steps</strong> in floating-point conversions for partial marks</li>
+        <li>Use the correct <strong>syntax</strong> for type definitions</li>
+        <li>Label your answers clearly (mantissa, exponent, etc.)</li>
+        <li>Practise past paper questions on normalisation</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 31 – END SLIDE
+// ==================================================================
+addSlide(`
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+    <div class="section-badge" style="margin-bottom:14px;">Cambridge International AS &amp; A Level — 9618</div>
+    <h1 style="font-size:2.8rem; margin-bottom:8px; color:#5ae0c0;">Data Representation</h1>
+    <div style="width:80px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:18px;"></div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:600px; margin-bottom:20px;">
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Know type definitions</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Compare file methods</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Normalise mantissas</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Practise conversions</span>
+    </div>
+    <div class="card" style="max-width:500px;">
+      <h4>Ready for Exam Practice</h4>
+      <ul>
+        <li>Practise designing user-defined types</li>
+        <li>Know advantages of each file organisation method</li>
+        <li>Master floating-point normalisation steps</li>
+        <li>Use mark schemes to check wording</li>
+      </ul>
+    </div>
+    <p style="color:#3a6a6a; font-size:0.82rem; margin-top:20px;">\u2190 Revise again | Use the navigation bar \u2192</p>
+  </div>
+`);
+
+// ==================================================================
+// RENDER ALL SLIDES
+// ==================================================================
+renderSlides();
+</script></body>
+</html>

@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cambridge 9618 — AS &amp; A Level Computer Science</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #080c18;
+    color: #e0e8f0;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(10,40,64,0.4) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(26,90,106,0.2) 0%, transparent 50%);
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px 60px; }
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, rgba(10,14,30,0.8), rgba(16,24,56,0.6));
+    border: 1px solid #1a5a6a;
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, rgba(42,200,160,0.06), transparent 50%);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #0a2840, #1a5a6a);
+    color: #5ae0c0;
+    padding: 5px 18px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border: 1px solid #2a9a8a;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: #f0f6ff;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+  h1 span { color: #5ae0c0; }
+  .subtitle {
+    font-size: 1.1rem;
+    color: #7ab8a8;
+    margin-bottom: 16px;
+  }
+  .divider {
+    width: 60px;
+    height: 3px;
+    background: #2ac8a0;
+    border-radius: 2px;
+    margin: 16px auto;
+  }
+  header p { color: #8bb8ff; font-size: 0.95rem; max-width: 600px; margin: 0 auto; line-height: 1.6; }
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #5ae0c0;
+  }
+  .stat-label {
+    font-size: 0.78rem;
+    color: #3a6a6a;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .section-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #b8d4ff;
+    margin: 36px 0 16px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #1a5a6a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title .count {
+    background: #0e2840;
+    color: #5ae0c0;
+    font-size: 0.72rem;
+    padding: 1px 10px;
+    border-radius: 12px;
+    border: 1px solid #1a5a6a;
+    font-weight: 600;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: linear-gradient(135deg, #0a0e1e, #0e1428);
+    border: 1px solid #1a3a4a;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.25s ease;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 36px;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: transparent;
+    transition: background 0.25s ease;
+  }
+  .card:hover {
+    border-color: #2ac8a0;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(42,200,160,0.12);
+  }
+  .card:hover::before {
+    background: #2ac8a0;
+  }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .card-number {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #2a9a8a;
+    background: rgba(42,200,160,0.1);
+    padding: 2px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(42,200,160,0.2);
+  }
+  .card-slides {
+    font-size: 0.72rem;
+    color: #3a6a6a;
+  }
+  .card-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #e8f0ff;
+    margin-bottom: 6px;
+    line-height: 1.3;
+    transition: color 0.2s;
+  }
+  .card:hover .card-title { color: #5ae0c0; }
+  .card-subtitle {
+    font-size: 0.82rem;
+    color: #5ae0c0;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .card-desc {
+    font-size: 0.82rem;
+    color: #8898b0;
+    line-height: 1.5;
+    flex: 1;
+    transition: color 0.2s;
+  }
+  .card:hover .card-desc { color: #a0b0c8; }
+  .card-tags {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .tag {
+    display: inline-block;
+    background: #0a1828;
+    color: #7ab8a8;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.68rem;
+    border: 1px solid #1a3a4a;
+  }
+  .card-arrow {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    color: #1a5a6a;
+    font-size: 1.2rem;
+    transition: color 0.2s, transform 0.2s;
+  }
+  .card:hover .card-arrow {
+    color: #2ac8a0;
+    transform: translateX(3px);
+  }
+  footer {
+    text-align: center;
+    padding: 32px 20px;
+    color: #2a4a4a;
+    font-size: 0.78rem;
+    border-top: 1px solid #0e1e2e;
+    margin-top: 32px;
+  }
+  @media (max-width: 700px) {
+    .container { padding: 20px 12px; }
+    h1 { font-size: 1.8rem; }
+    .stats { gap: 20px; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="badge">Cambridge International AS &amp; A Level</div>
+    <h1>Computer Science <span>9618</span></h1>
+    <div class="divider"></div>
+    <p class="subtitle">Exam-focused interactive slide presentations for Topics 13–20</p>
+    <p>Comprehensive revision slides covering data representation, hardware, system software, security, AI, algorithms, and programming paradigms — designed for 16&ndash;18 year old A Level students.</p>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">8</div>
+        <div class="stat-label">Topics</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">339+</div>
+        <div class="stat-label">Slides</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">&larr; &rarr;</div>
+        <div class="stat-label">Navigate</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="section-title">
+    A Level Topics (9618)
+    <span class="count">8</span>
+  </div>
+  <div class="grid">
+
+    <a href="Topic13_Data_Representation.html" class="card">
+      <div class="card-top">
+        <span class="card-number">Topic 13</span>
+        <span class="card-slides">31 slides</span>
+      </div>
+      <div class="card-title">Data Representation</div>
+      <div class="card-subtitle">User-Defined Types &middot; File Organisation &middot; Floating-Point</div>
+      <div class="card-desc">Enumerated, pointer, record, set and class types. Serial, sequential, indexed sequential and random file access. Hashing algorithms. Binary floating-point format, normalisation, rounding errors, underflow and overflow.</div>
+      <div class="card-tags">
+        <span class="tag">User-Defined Types</span>
+        <span class="tag">File Organisation</span>
+        <span class="tag">Hashing</span>
+        <span class="tag">Floating-Point</span>
+        <span class="tag">Normalisation</span>
+      </div>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a href="Chapter_Communication_Internet_Technologies.html" class="card">
+      <div class="card-top">
+        <span class="card-number">Topic 14</span>
+        <span class="card-slides">Multi-slide</span>
+      </div>
+      <div class="card-title">Communication &amp; Internet Technologies</div>
+      <div class="card-subtitle">Protocols &middot; Networking &middot; Data Transmission</div>
+      <div class="card-desc">Comprehensive chapter covering communication protocols, the TCP/IP stack, network topologies, data transmission methods, error detection (parity, checksum, check digit), and internet technologies.</div>
+      <div class="card-tags">
+        <span class="tag">TCP/IP</span>
+        <span class="tag">Protocols</span>
+        <span class="tag">Error Detection</span>
+        <span class="tag">Networking</span>
+      </div>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a href="Topic15_Hardware_Virtual_Machines.html" class="card">
+      <div class="card-top">
+        <span class="card-number">Topic 15</span>
+        <span class="card-slides">62 slides</span>
+      </div>
+      <div class="card-title">Hardware and Virtual Machines</div>
+      <div class="card-subtitle">Processors &middot; Parallel Processing &middot; Boolean Algebra &middot; Logic Circuits</div>
+      <div class="card-desc">RISC vs CISC processors, pipelining, interrupt handling. Flynn&rsquo;s taxonomy (SISD, SIMD, MISD, MIMD). Virtual machines. Truth tables, half/full adders, SR/JK flip-flops, Boolean algebra, De Morgan&rsquo;s laws, Karnaugh maps.</div>
+      <div class="card-tags">
+        <span class="tag">RISC/CISC</span>
+        <span class="tag">Pipelining</span>
+        <span class="tag">Flynn</span>
+        <span class="tag">Flip-Flops</span>
+        <span class="tag">K-Maps</span>
+      </div>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a href="Topic16_System_Software.html" class="card">
+      <div class="card-top">
+        <span class="card-number">Topic 16</span>
+        <span class="card-slides">41 slides</span>
+      </div>
+      <div class="card-title">System Software</div>
+      <div class="card-subtitle">Operating Systems &middot; Translation Software</div>
+      <div class="card-desc">Process management, scheduling (round robin, SJF, FCFS, SRT), virtual memory, paging, segmentation, disk thrashing. Interpreters, compilation stages (lexical analysis, syntax analysis, code generation), BNF, syntax diagrams, RPN.</div>
+      <div class="card-tags">
+        <span class="tag">OS</span>
+        <span class="tag">Scheduling</span>
+        <span class="tag">Paging</span>
+        <span class="tag">Compilation</span>
+        <span class="tag">BNF</span>
+        <span class="tag">RPN</span>
+      </div>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a href="Topic17_Security.html" class="card">
+      <div class="card-top">
+        <span class="card-number">Topic 17</span>
+        <span class="card-slides">45 slides</span>
+      </div>
+      <div class="card-title">Security</div>
+      <div class="card-subtitle">Encryption &middot; Protocols &middot; Digital Certificates</div>
+      <div class="card-desc">Symmetric and asymmetric key cryptography, public/private key pairs. Digital signatures, SSL/TLS handshake, digital certificates and certificate authorities (CAs). Quantum cryptography and secure key distribution.</div>
+      <div class="card-tags">
+        <span class="tag">Encryption</span>
+        <span class="tag">SSL/TLS</span>
+        <span class="tag">Certificates</span>
+        <span class="tag">Digital Signatures</span>
+        <span class="tag">Quantum Crypto</span>
+      </div>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a href="Topic18_Artificial_Intelligence.html" class="card">
+      <div class="card-top">
+        <span class="card-number">Topic 18</span>
+        <span class="card-slides">45 slides</span>
+      </div>
+      <div class="card-title">Artificial Intelligence</div>
+      <div class="card-subtitle">Graph Search &middot; Neural Networks &middot; Machine Learning</div>
+      <div class="card-desc">Graphs in AI, Dijkstra&rsquo;s algorithm (shortest path), A* algorithm with heuristics f(n)=g(n)+h(n). Neural network structure, deep learning, supervised/unsupervised/reinforcement learning, back propagation, regression methods.</div>
+      <div class="card-tags">
+        <span class="tag">Graph Search</span>
+        <span class="tag">Dijkstra</span>
+        <span class="tag">A* Search</span>
+        <span class="tag">Neural Networks</span>
+        <span class="tag">ML/DL/RL</span>
+      </div>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a href="Topic19_Computational_Thinking.html" class="card">
+      <div class="card-top">
+        <span class="card-number">Topic 19</span>
+        <span class="card-slides">43 slides</span>
+      </div>
+      <div class="card-title">Computational Thinking &amp; Problem-Solving</div>
+      <div class="card-subtitle">Algorithms &middot; Recursion</div>
+      <div class="card-desc">Linear/binary search, bubble/insertion sort with trace tables. Abstract Data Types (stack, queue, list, dictionary, set). Big O notation and algorithm comparison. Recursion, base/recursive cases, call stack visualisation, recursion vs iteration.</div>
+      <div class="card-tags">
+        <span class="tag">Searching</span>
+        <span class="tag">Sorting</span>
+        <span class="tag">ADTs</span>
+        <span class="tag">Big O</span>
+        <span class="tag">Recursion</span>
+      </div>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a href="Topic20_Further_Programming.html" class="card">
+      <div class="card-top">
+        <span class="card-number">Topic 20</span>
+        <span class="card-slides">41 slides</span>
+      </div>
+      <div class="card-title">Further Programming</div>
+      <div class="card-subtitle">Paradigms &middot; File Processing &middot; Exception Handling</div>
+      <div class="card-desc">Low-level programming (5 addressing modes: immediate, direct, indirect, indexed, relative), imperative/procedural, OOP (encapsulation, inheritance, polymorphism), declarative (facts, rules, goals). File operations, TRY-CATCH-THROW exception handling.</div>
+      <div class="card-tags">
+        <span class="tag">Addressing Modes</span>
+        <span class="tag">OOP</span>
+        <span class="tag">Declarative</span>
+        <span class="tag">File I/O</span>
+        <span class="tag">TRY-CATCH</span>
+      </div>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+  </div>
+
+  <div class="section-title">
+    Quizzes &amp; Practice
+    <span class="count">9</span>
+  </div>
+  <div class="grid">
+
+    <a href="Quiz_Data_Representation.html" class="card">
+      <div class="card-top">
+        <span class="card-number">Topic 13</span>
+        <span class="card-slides">25 questions</span>
+      </div>
+      <div class="card-title">Data Representation Quiz</div>
+      <div class="card-subtitle">Types &middot; Files &middot; Floating-Point</div>
+      <div class="card-desc">Exam-style questions covering user-defined types (enumerated, pointer, record, set, class), file organisation (serial, sequential, indexed sequential, random), hashing algorithms, and floating-point representation.</div>
+      <div class="card-tags">
+        <span class="tag">Quiz</span>
+        <span class="tag">User-Defined Types</span>
+        <span class="tag">Floating-Point</span>
+      </div>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a href="Quiz_Communication_Internet.html" class="card">
+      <div class="card-top">
+        <span class="card-number">Topic 14</span>
+        <span class="card-slides">28 questions</span>
+      </div>
+      <div class="card-title">Communication &amp; Internet Quiz</div>
+      <div class="card-subtitle">Protocols &middot; TCP/IP &middot; Switching</div>
+      <div class="card-desc">Exam-style questions covering communication protocols, TCP/IP layers, HTTP/HTTPS, FTP, email protocols (SMTP/POP3/IMAP), BitTorrent, circuit and packet switching, and routing.</div>
+      <div class="card-tags">
+        <span class="tag">Quiz</span>
+        <span class="tag">Protocols</span>
+        <span class="tag">TCP/IP</span>
+      </div>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a href="Quiz_Hardware_Virtual_Machines.html" class="card">
+      <div class="card-top">
+        <span class="card-number">Topic 15</span>
+        <span class="card-slides">25 questions</span>
+      </div>
+      <div class="card-title">Hardware &amp; Virtual Machines Quiz</div>
+      <div class="card-subtitle">Processors &middot; Logic &middot; Boolean Algebra</div>
+      <div class="card-desc">Exam-style questions covering RISC vs CISC, pipelining, interrupt handling, Flynn's taxonomy, virtual machines, Boolean algebra, De Morgan's laws, flip-flops, and Karnaugh maps.</div>
+      <div class="card-tags">
+        <span class="tag">Quiz</span>
+        <span class="tag">RISC/CISC</span>
+        <span class="tag">Logic</span>
+      </div>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a href="Quiz_System_Software.html" class="card">
+      <div class="card-top">
+        <span class="card-number">Topic 16</span>
+        <span class="card-slides">25 questions</span>
+      </div>
+      <div class="card-title">System Software Quiz</div>
+      <div class="card-subtitle">OS &middot; Scheduling &middot; Compilation</div>
+      <div class="card-desc">Exam-style questions covering operating systems, process scheduling (round robin, SJF, FCFS, SRT), virtual memory, paging, compilation stages, BNF notation, syntax diagrams, and RPN.</div>
+      <div class="card-tags">
+        <span class="tag">Quiz</span>
+        <span class="tag">Operating Systems</span>
+        <span class="tag">BNF</span>
+      </div>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a href="Quiz_Security.html" class="card">
+      <div class="card-top">
+        <span class="card-number">Topic 17</span>
+        <span class="card-slides">25 questions</span>
+      </div>
+      <div class="card-title">Security Quiz</div>
+      <div class="card-subtitle">Encryption &middot; SSL/TLS &middot; Certificates</div>
+      <div class="card-desc">Exam-style questions covering symmetric and asymmetric encryption, public/private key pairs, digital signatures, SSL/TLS handshake, digital certificates, certificate authorities, and quantum cryptography.</div>
+      <div class="card-tags">
+        <span class="tag">Quiz</span>
+        <span class="tag">Encryption</span>
+        <span class="tag">Certificates</span>
+      </div>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a href="Quiz_Artificial_Intelligence.html" class="card">
+      <div class="card-top">
+        <span class="card-number">Topic 18</span>
+        <span class="card-slides">25 questions</span>
+      </div>
+      <div class="card-title">Artificial Intelligence Quiz</div>
+      <div class="card-subtitle">Graph Search &middot; Neural Networks &middot; ML</div>
+      <div class="card-desc">Exam-style questions covering graph search algorithms, Dijkstra's shortest path, A* with heuristic f(n)=g(n)+h(n), neural network structure, deep learning, supervised/unsupervised/reinforcement learning, and back propagation.</div>
+      <div class="card-tags">
+        <span class="tag">Quiz</span>
+        <span class="tag">Dijkstra</span>
+        <span class="tag">Neural Networks</span>
+      </div>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a href="Quiz_Computational_Thinking.html" class="card">
+      <div class="card-top">
+        <span class="card-number">Topic 19</span>
+        <span class="card-slides">25 questions</span>
+      </div>
+      <div class="card-title">Computational Thinking Quiz</div>
+      <div class="card-subtitle">Algorithms &middot; ADTs &middot; Recursion</div>
+      <div class="card-desc">Exam-style questions covering linear/binary search, bubble/insertion sort, abstract data types (stack, queue, list, dictionary, set), Big O notation, algorithm comparison, recursion, and the call stack.</div>
+      <div class="card-tags">
+        <span class="tag">Quiz</span>
+        <span class="tag">Searching</span>
+        <span class="tag">Recursion</span>
+      </div>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a href="Quiz_Further_Programming.html" class="card">
+      <div class="card-top">
+        <span class="card-number">Topic 20</span>
+        <span class="card-slides">25 questions</span>
+      </div>
+      <div class="card-title">Further Programming Quiz</div>
+      <div class="card-subtitle">Paradigms &middot; OOP &middot; Exception Handling</div>
+      <div class="card-desc">Exam-style questions covering low-level addressing modes (immediate, direct, indirect, indexed, relative), imperative/procedural/OOP/declarative programming, file operations, and TRY-CATCH-THROW exception handling.</div>
+      <div class="card-tags">
+        <span class="tag">Quiz</span>
+        <span class="tag">OOP</span>
+        <span class="tag">Addressing Modes</span>
+      </div>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+  </div>
+
+  <footer>
+    Cambridge International AS &amp; A Level Computer Science 9618 &mdash; Exam-focused revision slides
+    <br>Use <strong>&larr; &rarr;</strong> arrow keys to navigate within each presentation
+  </footer>
+</div>
+</body>
+</html>

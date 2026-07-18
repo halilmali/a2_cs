@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AS & A Level 9618 — Communication & Internet Technologies Quiz</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0a0e1a;
+    color: #d0e4ec;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bg-grid {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      linear-gradient(rgba(42, 200, 176, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(42, 200, 176, 0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: 0; pointer-events: none;
+  }
+
+  .header {
+    position: relative; z-index: 1;
+    text-align: center; padding: 28px 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .header h1 { font-size: 1.5rem; font-weight: 700; color: #f0faff; }
+  .header h1 span { background: linear-gradient(135deg, #2ac8b0, #80e0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .header .badge { display: inline-block; background: #0a2a24; border: 1px solid #1a8a7a; color: #7ae8d4; padding: 2px 14px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; margin-bottom: 6px; }
+  .header p { font-size: 0.85rem; color: #5a9a8a; margin-top: 4px; }
+
+  .main { position: relative; z-index: 1; max-width: 780px; width: 100%; margin: 0 auto; padding: 20px; flex: 1; display: flex; flex-direction: column; }
+
+  /* Setup */
+  #setupScreen { animation: fadeIn 0.4s ease-out; }
+  .setup-card { background: rgba(10,14,26,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 20px 24px; backdrop-filter: blur(10px); margin-bottom: 16px; }
+  .setup-card h2 { font-size: 1.05rem; font-weight: 600; color: #7ae8d4; margin-bottom: 10px; }
+  .setup-card p { font-size: 0.88rem; color: #5a9a8a; line-height: 1.5; }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(135deg, #0a3a32, #1a6a5a);
+    border: 1px solid #1a8a7a; color: #7ae8d4;
+    padding: 12px 32px; border-radius: 10px;
+    font-size: 1rem; font-weight: 600; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { background: linear-gradient(135deg, #1a5a4a, #2a8a7a); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(42,200,176,0.2); }
+  .btn-secondary {
+    background: rgba(10,14,26,0.6); border: 1px solid #1a4a42;
+    color: #5a9a8a; padding: 10px 24px; border-radius: 8px;
+    font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: #2ac8b0; color: #7ae8d4; }
+  .btn-small { font-size:0.82rem; padding:6px 16px; }
+  .stats-section { background:rgba(10,14,26,0.5); border:1px solid rgba(255,255,255,0.04); border-radius:10px; padding:14px 18px; margin-bottom:10px; display:flex; flex-wrap:wrap; gap:20px; align-items:center; }
+  .stats-section .stat-item { display:flex; align-items:center; gap:8px; font-size:0.85rem; }
+  .stats-section .stat-item .stat-num { font-size:1.2rem; font-weight:700; color:#f0faff; }
+  .stats-section .stat-item .stat-label { color:#5a9a8a; }
+  .history-section { max-height:0; overflow:hidden; transition:max-height 0.35s ease; }
+  .history-section.open { max-height:420px; overflow-y:auto; }
+  .history-item { display:flex; justify-content:space-between; padding:7px 10px; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.82rem; }
+  .history-item:last-child { border-bottom:none; }
+  .history-item .h-date { color:#5a9a8a; }
+  .history-item .h-score { font-weight:600; color:#d0e4ec; }
+  .history-item .h-pct { color:#8bc34a; font-weight:600; }
+
+  .quiz-options { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .quiz-options label { font-size: 0.88rem; color: #5a9a8a; }
+  .quiz-options select {
+    background: #0a0f1e; border: 1px solid #1a4a42; border-radius: 6px;
+    color: #d0e4ec; padding: 6px 10px; font-size: 0.88rem;
+  }
+  .quiz-options select:focus { outline: none; border-color: #2ac8b0; }
+
+  /* Topic chips */
+  .topic-chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+  .topic-chip { display: inline-block; background: #0a2a24; border: 1px solid #1a4a42; border-radius: 16px; padding: 4px 12px; font-size: 0.75rem; color: #7ae8d4; }
+
+  /* Quiz header */
+  .quiz-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
+  }
+  .quiz-progress { font-size: 0.85rem; color: #5a9a8a; }
+  .quiz-progress strong { color: #d0e4ec; }
+  .quiz-score { font-size: 0.85rem; color: #8bc34a; }
+  .q-type-tag { display: inline-block; padding: 1px 10px; border-radius: 10px; font-size: 0.68rem; font-weight: 600; background: rgba(42,200,176,0.15); color: #7ae8d4; }
+
+  /* Progress */
+  .progress-bar-wrap { width: 100%; height: 5px; background: #0a0f1e; border-radius: 3px; overflow: hidden; margin-bottom: 16px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #2ac8b0, #80e0ff); transition: width 0.4s ease; border-radius: 3px; }
+
+  /* Question */
+  .question-card { background: rgba(10,14,26,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 24px; backdrop-filter: blur(10px); }
+
+  .question-text { font-size: 1.1rem; font-weight: 600; color: #f0faff; line-height: 1.5; margin-bottom: 18px; }
+
+  .options-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .option-btn {
+    display: block; width: 100%; text-align: left;
+    padding: 12px 16px; border-radius: 10px;
+    background: rgba(10,14,26,0.4); border: 1px solid rgba(255,255,255,0.06);
+    color: #c0d8e0; font-size: 0.95rem; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .option-btn:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.02); }
+  .option-btn.selected { border-color: #2ac8b0; background: rgba(42,200,176,0.1); }
+  .option-btn.correct { border-color: #8bc34a; background: rgba(139,195,74,0.1); color: #c3e88d; }
+  .option-btn.incorrect { border-color: #e57373; background: rgba(229,115,115,0.1); color: #ffb8b8; }
+  .option-btn.disabled { cursor: default; pointer-events: none; }
+  .option-btn .opt-letter { display: inline-block; width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.04); text-align: center; line-height: 26px; font-size: 0.78rem; font-weight: 600; margin-right: 10px; }
+
+  .feedback-area {
+    padding: 12px 16px; border-radius: 10px;
+    margin-bottom: 14px; display: none;
+    font-size: 0.88rem; line-height: 1.5;
+  }
+  .feedback-area.correct { display: block; background: rgba(139,195,74,0.08); border: 1px solid rgba(139,195,74,0.2); color: #b8d8a0; }
+  .feedback-area.incorrect { display: block; background: rgba(229,115,115,0.08); border: 1px solid rgba(229,115,115,0.2); color: #e0b0b0; }
+  .feedback-area .fb-label { font-weight: 700; }
+
+  .q-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+  /* Results */
+  .results-card { background: rgba(10,14,26,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 28px 24px; backdrop-filter: blur(10px); text-align: center; }
+  .results-score { font-size: 3.5rem; font-weight: 800; background: linear-gradient(135deg, #2ac8b0, #80e0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
+  .results-label { font-size: 1rem; color: #5a9a8a; margin-top: 4px; }
+  .results-details { display: flex; gap: 20px; justify-content: center; margin: 14px 0; flex-wrap: wrap; }
+  .results-stat { text-align: center; }
+  .results-stat .num { font-size: 1.3rem; font-weight: 700; color: #f0faff; }
+  .results-stat .desc { font-size: 0.76rem; color: #5a7a7a; }
+
+  .results-msg { font-size: 0.95rem; padding: 10px; border-radius: 8px; margin: 14px 0; }
+  .results-msg.perfect { background: rgba(255,215,0,0.08); color: #ffd700; border: 1px solid rgba(255,215,0,0.15); }
+  .results-msg.great { background: rgba(139,195,74,0.08); color: #8bc34a; border: 1px solid rgba(139,195,74,0.15); }
+  .results-msg.good { background: rgba(240,160,48,0.08); color: #f0a030; border: 1px solid rgba(240,160,48,0.15); }
+  .results-msg.retry { background: rgba(229,115,115,0.08); color: #e57373; border: 1px solid rgba(229,115,115,0.15); }
+
+  .results-chart { display: flex; gap: 8px; justify-content: center; margin: 14px 0; }
+  .results-chart .bar { width: 36px; border-radius: 4px 4px 0 0; transition: height 0.6s ease; }
+  .results-chart .bar.cb { background: #8bc34a; }
+  .results-chart .bar.ib { background: #e57373; }
+
+  .review-list { margin-top: 14px; text-align: left; }
+  .review-item { padding: 10px 14px; border-radius: 8px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.04); }
+  .review-item.cr { border-left: 3px solid #8bc34a; }
+  .review-item.ir { border-left: 3px solid #e57373; }
+  .review-item .rq { font-size: 0.85rem; color: #d0e4ec; margin-bottom: 3px; }
+  .review-item .ra { font-size: 0.8rem; }
+  .review-item .ra .ya { color: #e57373; }
+  .review-item .ra .ca { color: #8bc34a; }
+
+  .footer { position: relative; z-index: 1; text-align: center; padding: 14px; color: #3a5a5a; font-size: 0.72rem; border-top: 1px solid rgba(255,255,255,0.04); }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  @media (max-width: 600px) {
+    .header h1 { font-size: 1.2rem; }
+    .setup-card { padding: 14px; }
+    .question-card { padding: 16px; }
+    .question-text { font-size: 1rem; }
+    .results-score { font-size: 2.5rem; }
+    .quiz-options { flex-direction: column; align-items: stretch; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+
+<header class="header">
+  <div class="badge">Cambridge AS &amp; A Level 9618</div>
+  <h1>📡 <span>Communication &amp; Internet Technologies</span></h1>
+  <p>Interactive Quiz — Protocols, TCP/IP, Switching &amp; Routing</p>
+</header>
+
+<div class="main">
+
+  <!-- SETUP -->
+  <div id="setupScreen">
+    <div class="setup-card">
+      <h2>🎯 Topic Coverage</h2>
+      <p>This quiz tests your knowledge of protocols, the TCP/IP 4-layer stack, application layer protocols (HTTP, FTP, SMTP, POP3, IMAP, BitTorrent), circuit switching, packet switching, and routing.</p>
+      <div class="topic-chips">
+        <span class="topic-chip">Protocols</span>
+        <span class="topic-chip">TCP/IP Stack</span>
+        <span class="topic-chip">HTTP/HTTPS</span>
+        <span class="topic-chip">FTP</span>
+        <span class="topic-chip">Email (SMTP/POP3/IMAP)</span>
+        <span class="topic-chip">BitTorrent</span>
+        <span class="topic-chip">Circuit Switching</span>
+        <span class="topic-chip">Packet Switching</span>
+        <span class="topic-chip">Routers</span>
+      </div>
+    </div>
+
+    <div class="setup-card">
+      <h2>⚙️ Quiz Settings</h2>
+      <div class="quiz-options">
+        <label>Questions: <select id="numQuestions">
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+          <option value="0">All (28)</option>
+        </select></label>
+        <label>Type: <select id="questionType">
+          <option value="all" selected>Mixed</option>
+          <option value="mcq">Multiple Choice</option>
+          <option value="truefalse">True / False</option>
+        </select></label>
+      </div>
+    </div>
+
+    <div class="setup-card">
+      <h2>📈 Your Progress</h2>
+      <div class="stats-section" id="statsSection">
+        <div class="stat-item">🏆 Best: <span class="stat-num" id="bestScore">—</span></div>
+        <div class="stat-item">📝 Attempts: <span class="stat-num" id="totalAttempts">0</span></div>
+        <div class="stat-item">📊 Average: <span class="stat-num" id="avgScore">—</span></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-secondary btn-small" onclick="toggleHistory()">📜 History</button>
+        <button class="btn-secondary btn-small" onclick="clearHistory()">🗑️ Clear Data</button>
+      </div>
+      <div class="history-section" id="historySection">
+        <div id="historyList"></div>
+        <p id="historyEmpty" style="color:#5a9a8a;font-size:0.82rem;padding:10px;text-align:center;">No attempts yet. Complete a quiz to see your history!</p>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <button class="btn-primary" onclick="startQuiz()">🚀 Start Quiz</button>
+    </div>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="quizScreen" style="display:none;">
+    <div class="quiz-header">
+      <div>
+        <span class="quiz-progress">Question <strong id="currentQ">1</strong> of <strong id="totalQ">10</strong></span>
+      </div>
+      <span class="quiz-score">✅ <span id="scoreDisplay">0</span>/<span id="totalCorrect">10</span></span>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+    <div class="question-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span class="q-type-tag" id="qTypeTag">MCQ</span>
+      </div>
+      <div class="question-text" id="qText">Loading question...</div>
+      <div class="options-list" id="optionsList"></div>
+      <div class="feedback-area" id="feedbackArea"></div>
+      <div class="q-actions">
+        <button class="btn-secondary" id="nextBtn" style="display:none;" onclick="nextQuestion()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="resultsScreen" style="display:none;">
+    <div class="results-card">
+      <div class="results-score" id="finalScore">0%</div>
+      <div class="results-label">Final Score</div>
+      <div class="results-details">
+        <div class="results-stat"><span class="num" id="rCorrect">0</span><div class="desc">Correct</div></div>
+        <div class="results-stat"><span class="num" id="rIncorrect">0</span><div class="desc">Incorrect</div></div>
+        <div class="results-stat"><span class="num" id="rTotal">0</span><div class="desc">Total</div></div>
+      </div>
+      <div class="results-chart" id="resultsChart">
+        <div class="bar cb" id="correctBar" style="height:40px;"></div>
+        <div class="bar ib" id="incorrectBar" style="height:20px;"></div>
+      </div>
+      <div class="results-msg" id="resultsMsg">Great job!</div>
+      <div class="review-list" id="reviewList"></div>
+      <div class="results-actions" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px;">
+        <button class="btn-primary" onclick="resetQuiz()">🔄 Try Again</button>
+        <button class="btn-secondary" onclick="showSetup()">⚙️ Settings</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer">Cambridge AS &amp; A Level 9618 &bull; Communication &amp; Internet Technologies &bull; Interactive Quiz</footer>
+
+<script>
+  // ========================================================================
+  // QUESTION BANK — 28 questions specific to Communication & Internet Tech
+  // ========================================================================
+  const QB = [
+    // === PROTOCOLS / GENERAL ===
+    {type:"mcq", q:"What is a protocol in computer networking?",
+      options:[
+        "A piece of hardware that connects devices",
+        "A set of rules governing data communication",
+        "A type of software for web browsing",
+        "A security device that blocks hackers"
+      ], correct:1, explain:"A protocol is an agreed set of rules that defines how data is formatted, transmitted, and received between devices."},
+
+    {type:"truefalse", q:"Without a protocol, two devices can still communicate as long as they use the same cable type.",
+      correct:false, explain:"Protocols define data format, speed, error checking, and start/end detection — without them, devices cannot reliably communicate even if physically connected."},
+
+    {type:"mcq", q:"Which of the following is a problem that occurs WITHOUT a protocol?",
+      options:[
+        "Data format mismatch between sender and receiver",
+        "The internet becomes faster",
+        "All devices automatically use the same language",
+        "Security is improved"
+      ], correct:0, explain:"Without a protocol, devices may interpret data differently (e.g., one uses ASCII, another uses EBCDIC), leading to corrupted communication."},
+
+    // === TCP/IP STACK ===
+    {type:"mcq", q:"How many layers does the TCP/IP protocol suite have?",
+      options:["4","5","7","3"], correct:0, explain:"TCP/IP has 4 layers: Application, Transport, Internet, and Link."},
+
+    {type:"mcq", q:"Which layer of the TCP/IP stack is responsible for adding port numbers?",
+      options:["Application Layer","Transport Layer","Internet Layer","Link Layer"], correct:1, explain:"The Transport Layer adds port numbers to identify which application the data is destined for."},
+
+    {type:"truefalse", q:"The Internet Layer adds source and destination MAC addresses to data packets.",
+      correct:false, explain:"The Internet Layer adds IP addresses, not MAC addresses. MAC addresses are added by the Link Layer."},
+
+    {type:"mcq", q:"Which layer of the TCP/IP stack handles physical addressing (MAC addresses)?",
+      options:["Application Layer","Transport Layer","Internet Layer","Link Layer"], correct:3, explain:"The Link Layer handles MAC (physical) addresses and transmission over physical media like Ethernet or Wi-Fi."},
+
+    {type:"mcq", q:"Encapsulation is the process where each layer ______.",
+      options:[
+        "removes a header when receiving data",
+        "adds its own header when sending data",
+        "encrypts the data for security",
+        "compresses the data to save bandwidth"
+      ], correct:1, explain:"Encapsulation: each layer wraps the data from the layer above by adding its own header before passing it down."},
+
+    {type:"truefalse", q:"The Application Layer in TCP/IP corresponds to the Application, Presentation, and Session layers of the OSI model.",
+      correct:true, explain:"TCP/IP combines OSI layers 5-7 (Session, Presentation, Application) into a single Application Layer."},
+
+    // === HTTP / HTTPS ===
+    {type:"mcq", q:"What is the default port number for HTTP?",
+      options:["21","25","80","443"], correct:2, explain:"HTTP uses port 80. HTTPS uses port 443."},
+
+    {type:"mcq", q:"How does HTTPS differ from HTTP?",
+      options:[
+        "HTTPS is faster than HTTP",
+        "HTTPS uses SSL/TLS encryption for secure data transfer",
+        "HTTPS uses a different protocol stack",
+        "HTTPS only works with fibre optic cables"
+      ], correct:1, explain:"HTTPS (HyperText Transfer Protocol Secure) encrypts data with SSL/TLS, protecting it from eavesdropping."},
+
+    {type:"truefalse", q:"HTTP follows a client-server request/response model.",
+      correct:true, explain:"The client (browser) sends an HTTP request to the server, and the server responds with the requested resource (e.g., HTML page)."},
+
+    // === FTP ===
+    {type:"mcq", q:"How many separate connections does FTP use?",
+      options:["One connection for everything","Two connections — control and data","Three connections — setup, transfer, teardown","Four connections — one per file"], correct:1, explain:"FTP uses a control connection (port 21) for commands and a separate data connection (port 20) for transferring files."},
+
+    // === EMAIL PROTOCOLS ===
+    {type:"mcq", q:"Which protocol is used to SEND email from a client to a mail server?",
+      options:["POP3","IMAP","SMTP","HTTP"], correct:2, explain:"SMTP (Simple Mail Transfer Protocol) is used to send email. POP3 and IMAP are used to receive/retrieve email."},
+
+    {type:"mcq", q:"Which email protocol synchronises emails across multiple devices and keeps them on the server?",
+      options:["SMTP","POP3","IMAP","FTP"], correct:2, explain:"IMAP keeps emails on the server and synchronises across all devices. POP3 downloads to one device and deletes from the server."},
+
+    {type:"truefalse", q:"POP3 is better than IMAP for users who need full offline access to their emails on a single device.",
+      correct:true, explain:"POP3 downloads emails to the local device, giving full offline access. IMAP requires internet access to view emails (unless cached)."},
+
+    // === BIT TORRENT ===
+    {type:"mcq", q:"What type of network architecture does BitTorrent use?",
+      options:["Client-Server","Peer-to-Peer (P2P)","Centralised","Star topology"], correct:1, explain:"BitTorrent is a peer-to-peer (P2P) protocol — peers download and upload file pieces directly from/to each other without a central server."},
+
+    {type:"mcq", q:"In BitTorrent, what is a 'seeder'?",
+      options:[
+        "A peer that has the complete file and is uploading it",
+        "A peer that has no pieces of the file",
+        "A central server that stores the entire file",
+        "A peer that deletes file pieces after downloading"
+      ], correct:0, explain:"A seeder has the complete file and uploads it to others. A leecher is still downloading pieces (and simultaneously uploading what they have)."},
+
+    {type:"truefalse", q:"In BitTorrent, the more peers that join a swarm, the slower the download becomes.",
+      correct:false, explain:"BitTorrent is more efficient with more peers — more uploaders means faster download speeds for everyone."},
+
+    // === CIRCUIT SWITCHING ===
+    {type:"mcq", q:"Which of the following is an example of circuit switching?",
+      options:["Web browsing","Sending an email","Traditional telephone call","Streaming video"], correct:2, explain:"Circuit switching establishes a dedicated path for the entire communication — traditional telephone calls are the classic example."},
+
+    {type:"truefalse", q:"In circuit switching, bandwidth is used efficiently even when no data is being transmitted.",
+      correct:false, explain:"Circuit switching wastes bandwidth when the line is idle — the dedicated circuit remains reserved but may be unused."},
+
+    {type:"mcq", q:"What is a benefit of circuit switching?",
+      options:[
+        "Efficient use of bandwidth for bursty traffic",
+        "Guaranteed bandwidth and low latency",
+        "Resilient — reroutes around failures",
+        "No setup time required"
+      ], correct:1, explain:"Circuit switching guarantees bandwidth and has consistent low latency once the circuit is established — ideal for voice calls."},
+
+    // === PACKET SWITCHING ===
+    {type:"mcq", q:"In packet switching, how are packets reassembled at the destination?",
+      options:["By the router","Using sequence numbers in the packet header","By sorting them alphabetically","By the size of each packet"], correct:1, explain:"Sequence numbers in each packet's header allow the receiver to reorder packets that arrived out of order."},
+
+    {type:"truefalse", q:"Packet switching requires a dedicated path to be established before data can be sent.",
+      correct:false, explain:"Packet switching is connectionless — each packet is sent independently and may take a different route. No dedicated path is needed."},
+
+    {type:"mcq", q:"What is a drawback of packet switching?",
+      options:[
+        "Bandwidth is wasted when no data is sent",
+        "Packets may arrive out of order, requiring reassembly",
+        "If a link fails, the entire connection is dropped",
+        "It cannot scale to large networks"
+      ], correct:1, explain:"Packets can take different routes and arrive out of order. The receiver must use sequence numbers to reassemble them, adding complexity."},
+
+    // === ROUTERS ===
+    {type:"mcq", q:"What information does a router examine to forward a packet?",
+      options:["The MAC address","The destination IP address","The port number","The payload data"], correct:1, explain:"A router examines the destination IP address in the packet header and uses its routing table to determine the best next hop."},
+
+    {type:"truefalse", q:"Different packets from the same message may travel via different routes through the internet.",
+      correct:true, explain:"In packet switching, each packet is routed independently. Network congestion may cause different packets from the same message to take different paths."},
+
+    // === COMPARISON ===
+    {type:"mcq", q:"Which switching method is used by the Internet?",
+      options:["Circuit switching","Message switching","Packet switching","Line switching"], correct:2, explain:"The Internet uses packet switching — data is split into packets and routed independently, making efficient use of shared network infrastructure."},
+  ];
+
+  // ========================================================================
+  // STATE
+  // ========================================================================
+  let S = {
+    questions: [],
+    current: 0,
+    score: 0,
+    answers: [],
+    answered: false
+  };
+
+  // ========================================================================
+  // QUIZ LOGIC
+  // ========================================================================
+  function startQuiz() {
+    let pool = [...QB];
+
+    const typeFilter = document.getElementById('questionType').value;
+    if (typeFilter !== 'all') {
+      pool = pool.filter(q => q.type === typeFilter);
+      if (!pool.length) { alert('No questions of this type available.'); return; }
+    }
+
+    // Shuffle
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+
+    let numQ = parseInt(document.getElementById('numQuestions').value);
+    if (numQ === 0 || numQ > pool.length) numQ = pool.length;
+
+    S.questions = pool.slice(0, numQ);
+    S.current = 0;
+    S.score = 0;
+    S.answers = [];
+    S.answered = false;
+
+    showScreen('quizScreen');
+    renderQ();
+  }
+
+  function renderQ() {
+    const q = S.questions[S.current];
+    const total = S.questions.length;
+    const idx = S.current;
+
+    document.getElementById('currentQ').textContent = idx + 1;
+    document.getElementById('totalQ').textContent = total;
+    document.getElementById('scoreDisplay').textContent = S.score;
+    document.getElementById('totalCorrect').textContent = total;
+    document.getElementById('progressFill').style.width = ((idx) / total * 100) + '%';
+    document.getElementById('qText').textContent = q.q;
+    document.getElementById('qTypeTag').textContent = q.type === 'truefalse' ? 'True / False' : 'Multiple Choice';
+
+    const container = document.getElementById('optionsList');
+    container.innerHTML = '';
+
+    if (q.type === 'truefalse') {
+      ['True', 'False'].forEach((text, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = '<span class="opt-letter">' + (i === 0 ? 'T' : 'F') + '</span>' + text;
+        btn.dataset.index = i;
+        btn.addEventListener('click', () => selectAns(i));
+        container.appendChild(btn);
+      });
+    } else {
+      const letters = ['A','B','C','D'];
+      q.options.forEach((text, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = '<span class="opt-letter">' + letters[i] + '</span>' + text;
+        btn.dataset.index = i;
+        btn.addEventListener('click', () => selectAns(i));
+        container.appendChild(btn);
+      });
+    }
+
+    const fb = document.getElementById('feedbackArea');
+    fb.className = 'feedback-area';
+    fb.textContent = '';
+    document.getElementById('nextBtn').style.display = 'none';
+    S.answered = false;
+  }
+
+  function selectAns(index) {
+    if (S.answered) return;
+    S.answered = true;
+
+    const q = S.questions[S.current];
+    const buttons = document.querySelectorAll('.option-btn');
+    const correct = (index === q.correct);
+
+    buttons.forEach((btn, i) => {
+      btn.classList.add('disabled');
+      if (i === q.correct) btn.classList.add('correct');
+      if (i === index && !correct) btn.classList.add('incorrect');
+      if (i === index) btn.classList.add('selected');
+    });
+
+    if (correct) S.score++;
+    document.getElementById('scoreDisplay').textContent = S.score;
+
+    const fb = document.getElementById('feedbackArea');
+    fb.className = 'feedback-area ' + (correct ? 'correct' : 'incorrect');
+    fb.innerHTML = '<span class="fb-label">' + (correct ? '✅ Correct!' : '❌ Incorrect.') + '</span> ' + q.explain;
+
+    S.answers.push({selected: index, correctIdx: q.correct, question: q, wasCorrect: correct});
+
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.style.display = 'inline-flex';
+    nextBtn.textContent = (S.current === S.questions.length - 1) ? '📊 See Results' : 'Next →';
+  }
+
+  function nextQuestion() {
+    if (S.current >= S.questions.length - 1) { showResults(); return; }
+    S.current++;
+    renderQ();
+  }
+
+  function showResults() {
+    showScreen('resultsScreen');
+    const total = S.questions.length;
+    const correct = S.score;
+    const incorrect = total - correct;
+    const pct = total > 0 ? Math.round(correct / total * 100) : 0;
+
+    document.getElementById('finalScore').textContent = pct + '%';
+    document.getElementById('rCorrect').textContent = correct;
+    document.getElementById('rIncorrect').textContent = incorrect;
+    document.getElementById('rTotal').textContent = total;
+
+    const maxH = 80;
+    document.getElementById('correctBar').style.height = (total > 0 ? (correct / total) * maxH : 0) + 'px';
+    document.getElementById('incorrectBar').style.height = (total > 0 ? (incorrect / total) * maxH : 0) + 'px';
+
+    const msg = document.getElementById('resultsMsg');
+    msg.className = 'results-msg';
+    if (pct === 100) { msg.textContent = '🏆 Perfect! You\'ve mastered Communication & Internet Technologies!'; msg.classList.add('perfect'); }
+    else if (pct >= 80) { msg.textContent = '🌟 Excellent! Strong understanding of protocols and switching.'; msg.classList.add('great'); }
+    else if (pct >= 60) { msg.textContent = '👍 Good effort! Review the incorrect answers below.'; msg.classList.add('good'); }
+    else { msg.textContent = '📚 Keep studying! Review the presentation and try again.'; msg.classList.add('retry'); }
+
+    const rl = document.getElementById('reviewList');
+    rl.innerHTML = '<h3 style="font-size:0.92rem;color:#7ae8d4;margin-bottom:8px;">📋 Review Answers</h3>';
+    const letters = ['A','B','C','D'];
+    S.answers.forEach((a, i) => {
+      const item = document.createElement('div');
+      item.className = 'review-item ' + (a.wasCorrect ? 'cr' : 'ir');
+      const q = a.question;
+      const ya = q.type === 'truefalse' ? (a.selected === 0 ? 'True' : 'False') : letters[a.selected];
+      const ca = q.type === 'truefalse' ? 'True' : letters[a.correctIdx];
+      item.innerHTML = '<div class="rq">' + (i+1) + '. ' + q.q + '</div>' +
+        '<div class="ra">' +
+        (a.wasCorrect ? '<span style="color:#8bc34a;">✅ Correct</span>' : '<span class="ya">❌ Your answer: ' + ya + '</span> — <span class="ca">Correct: ' + ca + '</span>') +
+        '</div><div style="color:#5a9a8a;font-size:0.76rem;margin-top:3px;">' + q.explain + '</div>';
+      rl.appendChild(item);
+    });
+    saveResult(correct, total);
+  }
+
+  function resetQuiz() {
+    S.current = 0; S.score = 0; S.answers = []; S.answered = false;
+    const pool = S.questions;
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    showScreen('quizScreen');
+    renderQ();
+  }
+
+  function showSetup() { showScreen('setupScreen'); }
+
+  function showScreen(id) {
+    ['setupScreen','quizScreen','resultsScreen'].forEach(s => {
+      const el = document.getElementById(s);
+      if (el) el.style.display = (s === id ? 'block' : 'none');
+    });
+  }
+
+  // ========================================================================
+  // LOCALSTORAGE PERSISTENCE — track scores over time
+  // ========================================================================
+  const QUIZ_TOPIC = 'Communication and Internet Technologies';
+  function getStorageKey() { return 'quiz9618_' + QUIZ_TOPIC.replace(/[^a-zA-Z0-9]/g,'_'); }
+  function getStats() { try { const d = localStorage.getItem(getStorageKey()); return d ? JSON.parse(d) : { best: null, attempts: [] }; } catch(e) { return { best: null, attempts: [] }; } }
+  function saveResult(correct, total) {
+    try {
+      const stats = getStats();
+      const pct = Math.round(correct/total*100);
+      const entry = { date: new Date().toISOString(), correct, total, pct };
+      stats.attempts.push(entry);
+      if (stats.best === null || pct > stats.best.pct) stats.best = entry;
+      localStorage.setItem(getStorageKey(), JSON.stringify(stats));
+      loadStats();
+    } catch(e) { /* localStorage unavailable */ }
+  }
+  function loadStats() {
+    try {
+      const stats = getStats();
+      document.getElementById('bestScore').textContent = stats.best ? stats.best.correct+'/'+stats.best.total+' ('+stats.best.pct+'%)' : '—';
+      document.getElementById('totalAttempts').textContent = stats.attempts.length;
+      if (stats.attempts.length > 0) {
+        const avg = Math.round(stats.attempts.reduce((s,a) => s+a.pct, 0) / stats.attempts.length);
+        document.getElementById('avgScore').textContent = avg+'%';
+      } else document.getElementById('avgScore').textContent = '—';
+      const hl = document.getElementById('historyList');
+      const he = document.getElementById('historyEmpty');
+      if (hl) {
+        hl.innerHTML = '';
+        if (stats.attempts.length === 0) { if(he) he.style.display = 'block'; }
+        else {
+          if(he) he.style.display = 'none';
+          [...stats.attempts].reverse().slice(0,30).forEach(a => {
+            const d = new Date(a.date);
+            const ds = d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+            const div = document.createElement('div'); div.className = 'history-item';
+            div.innerHTML = '<span class="h-date">'+ds+'</span><span class="h-score">'+a.correct+'/'+a.total+'</span><span class="h-pct">'+a.pct+'%</span>';
+            hl.appendChild(div);
+          });
+        }
+      }
+    } catch(e) { /* ignore */ }
+  }
+  function toggleHistory() { document.getElementById('historySection').classList.toggle('open'); }
+  function clearHistory() {
+    try {
+      if (confirm('Clear all saved quiz history for this topic?')) {
+        localStorage.removeItem(getStorageKey());
+        loadStats();
+        document.getElementById('historySection').classList.remove('open');
+      }
+    } catch(e) { /* ignore */ }
+  }
+  document.addEventListener('DOMContentLoaded', loadStats);
+</script>
+</body>
+</html>

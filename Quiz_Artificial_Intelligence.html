@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AS & A Level 9618 — Artificial Intelligence Quiz</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0a0e1a; color: #d0e4ec; min-height: 100vh; display: flex; flex-direction: column; }
+  .bg-grid { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-image: linear-gradient(rgba(0, 180, 200, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 180, 200, 0.04) 1px, transparent 1px); background-size: 60px 60px; z-index: 0; pointer-events: none; }
+  .header { position: relative; z-index: 1; text-align: center; padding: 28px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .header h1 { font-size: 1.5rem; font-weight: 700; color: #f0faff; }
+  .header h1 span { background: linear-gradient(135deg, #00b4c8, #60e0f0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .header .badge { display: inline-block; background: #0a2a2e; border: 1px solid #1a7a8a; color: #60d4e0; padding: 2px 14px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; margin-bottom: 6px; }
+  .header p { font-size: 0.85rem; color: #5a8a9a; margin-top: 4px; }
+  .main { position: relative; z-index: 1; max-width: 780px; width: 100%; margin: 0 auto; padding: 20px; flex: 1; display: flex; flex-direction: column; }
+  #setupScreen { animation: fadeIn 0.4s ease-out; }
+  .setup-card { background: rgba(10,14,26,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 20px 24px; backdrop-filter: blur(10px); margin-bottom: 16px; }
+  .setup-card h2 { font-size: 1.05rem; font-weight: 600; color: #60d4e0; margin-bottom: 10px; }
+  .setup-card p { font-size: 0.88rem; color: #5a8a9a; line-height: 1.5; }
+  .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #0a3a40, #1a5a6a); border: 1px solid #1a8a9a; color: #60d4e0; padding: 12px 32px; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-primary:hover { background: linear-gradient(135deg, #1a5a60, #2a7a8a); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,180,200,0.2); }
+  .btn-secondary { background: rgba(10,14,26,0.6); border: 1px solid #1a3a42; color: #5a8a9a; padding: 10px 24px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; }
+  .btn-secondary:hover { border-color: #00b4c8; color: #60d4e0; }
+  .btn-small { font-size:0.82rem; padding:6px 16px; }
+  .stats-section { background:rgba(10,14,26,0.5); border:1px solid rgba(255,255,255,0.04); border-radius:10px; padding:14px 18px; margin-bottom:10px; display:flex; flex-wrap:wrap; gap:20px; align-items:center; }
+  .stats-section .stat-item { display:flex; align-items:center; gap:8px; font-size:0.85rem; }
+  .stats-section .stat-item .stat-num { font-size:1.2rem; font-weight:700; color:#f0faff; }
+  .stats-section .stat-item .stat-label { color:#5a8a9a; }
+  .history-section { max-height:0; overflow:hidden; transition:max-height 0.35s ease; }
+  .history-section.open { max-height:420px; overflow-y:auto; }
+  .history-item { display:flex; justify-content:space-between; padding:7px 10px; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.82rem; }
+  .history-item:last-child { border-bottom:none; }
+  .history-item .h-date { color:#5a8a9a; }
+  .history-item .h-score { font-weight:600; color:#d0e4ec; }
+  .history-item .h-pct { color:#8bc34a; font-weight:600; }
+  .quiz-options { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .quiz-options label { font-size: 0.88rem; color: #5a8a9a; }
+  .quiz-options select { background: #0a0f1e; border: 1px solid #1a3a42; border-radius: 6px; color: #d0e4ec; padding: 6px 10px; font-size: 0.88rem; }
+  .quiz-options select:focus { outline: none; border-color: #00b4c8; }
+  .topic-chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+  .topic-chip { display: inline-block; background: #0a2a2e; border: 1px solid #1a3a42; border-radius: 16px; padding: 4px 12px; font-size: 0.75rem; color: #60d4e0; }
+  .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+  .quiz-progress { font-size: 0.85rem; color: #5a8a9a; }
+  .quiz-progress strong { color: #d0e4ec; }
+  .quiz-score { font-size: 0.85rem; color: #8bc34a; }
+  .q-type-tag { display: inline-block; padding: 1px 10px; border-radius: 10px; font-size: 0.68rem; font-weight: 600; background: rgba(0,180,200,0.15); color: #60d4e0; }
+  .progress-bar-wrap { width: 100%; height: 5px; background: #0a0f1e; border-radius: 3px; overflow: hidden; margin-bottom: 16px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #00b4c8, #60e0f0); transition: width 0.4s ease; border-radius: 3px; }
+  .question-card { background: rgba(10,14,26,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 24px; backdrop-filter: blur(10px); }
+  .question-text { font-size: 1.1rem; font-weight: 600; color: #f0faff; line-height: 1.5; margin-bottom: 18px; }
+  .options-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .option-btn { display: block; width: 100%; text-align: left; padding: 12px 16px; border-radius: 10px; background: rgba(10,14,26,0.4); border: 1px solid rgba(255,255,255,0.06); color: #c0d8e0; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
+  .option-btn:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.02); }
+  .option-btn.selected { border-color: #00b4c8; background: rgba(0,180,200,0.1); }
+  .option-btn.correct { border-color: #8bc34a; background: rgba(139,195,74,0.1); color: #c3e88d; }
+  .option-btn.incorrect { border-color: #e57373; background: rgba(229,115,115,0.1); color: #ffb8b8; }
+  .option-btn.disabled { cursor: default; pointer-events: none; }
+  .option-btn .opt-letter { display: inline-block; width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.04); text-align: center; line-height: 26px; font-size: 0.78rem; font-weight: 600; margin-right: 10px; }
+  .feedback-area { padding: 12px 16px; border-radius: 10px; margin-bottom: 14px; display: none; font-size: 0.88rem; line-height: 1.5; }
+  .feedback-area.correct { display: block; background: rgba(139,195,74,0.08); border: 1px solid rgba(139,195,74,0.2); color: #b8d8a0; }
+  .feedback-area.incorrect { display: block; background: rgba(229,115,115,0.08); border: 1px solid rgba(229,115,115,0.2); color: #e0b0b0; }
+  .feedback-area .fb-label { font-weight: 700; }
+  .q-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .results-card { background: rgba(10,14,26,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 28px 24px; backdrop-filter: blur(10px); text-align: center; }
+  .results-score { font-size: 3.5rem; font-weight: 800; background: linear-gradient(135deg, #00b4c8, #60e0f0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
+  .results-label { font-size: 1rem; color: #5a8a9a; margin-top: 4px; }
+  .results-details { display: flex; gap: 20px; justify-content: center; margin: 14px 0; flex-wrap: wrap; }
+  .results-stat { text-align: center; }
+  .results-stat .num { font-size: 1.3rem; font-weight: 700; color: #f0faff; }
+  .results-stat .desc { font-size: 0.76rem; color: #5a7a7a; }
+  .results-msg { font-size: 0.95rem; padding: 10px; border-radius: 8px; margin: 14px 0; }
+  .results-msg.perfect { background: rgba(255,215,0,0.08); color: #ffd700; border: 1px solid rgba(255,215,0,0.15); }
+  .results-msg.great { background: rgba(139,195,74,0.08); color: #8bc34a; border: 1px solid rgba(139,195,74,0.15); }
+  .results-msg.good { background: rgba(240,160,48,0.08); color: #f0a030; border: 1px solid rgba(240,160,48,0.15); }
+  .results-msg.retry { background: rgba(229,115,115,0.08); color: #e57373; border: 1px solid rgba(229,115,115,0.15); }
+  .results-chart { display: flex; gap: 8px; justify-content: center; margin: 14px 0; }
+  .results-chart .bar { width: 36px; border-radius: 4px 4px 0 0; transition: height 0.6s ease; }
+  .results-chart .bar.cb { background: #8bc34a; }
+  .results-chart .bar.ib { background: #e57373; }
+  .review-list { margin-top: 14px; text-align: left; }
+  .review-item { padding: 10px 14px; border-radius: 8px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.04); }
+  .review-item.cr { border-left: 3px solid #8bc34a; }
+  .review-item.ir { border-left: 3px solid #e57373; }
+  .review-item .rq { font-size: 0.85rem; color: #d0e4ec; margin-bottom: 3px; }
+  .review-item .ra { font-size: 0.8rem; }
+  .review-item .ra .ya { color: #e57373; }
+  .review-item .ra .ca { color: #8bc34a; }
+  .footer { position: relative; z-index: 1; text-align: center; padding: 14px; color: #3a5a5a; font-size: 0.72rem; border-top: 1px solid rgba(255,255,255,0.04); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 600px) {
+    .header h1 { font-size: 1.2rem; } .setup-card { padding: 14px; } .question-card { padding: 16px; } .question-text { font-size: 1rem; } .results-score { font-size: 2.5rem; } .quiz-options { flex-direction: column; align-items: stretch; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<header class="header">
+  <div class="badge">Cambridge AS & A Level 9618</div>
+  <h1>🤖 <span>Artificial Intelligence</span></h1>
+  <p>Interactive Quiz — Graph Search, Dijkstra, A*, Neural Networks & Machine Learning</p>
+</header>
+<div class="main">
+  <div id="setupScreen">
+    <div class="setup-card">
+      <h2>🎯 Topic Coverage</h2>
+      <p>This quiz tests your knowledge of graph search algorithms, Dijkstra's shortest path, A* with heuristic f(n)=g(n)+h(n), neural network structure, deep learning, supervised/unsupervised/reinforcement learning, and back propagation.</p>
+      <div class="topic-chips">
+        <span class="topic-chip">Graph Search</span>
+        <span class="topic-chip">Dijkstra</span>
+        <span class="topic-chip">A* Algorithm</span>
+        <span class="topic-chip">Heuristics</span>
+        <span class="topic-chip">Neural Networks</span>
+        <span class="topic-chip">Deep Learning</span>
+        <span class="topic-chip">Supervised Learning</span>
+        <span class="topic-chip">Reinforcement Learning</span>
+        <span class="topic-chip">Back Propagation</span>
+      </div>
+    </div>
+    <div class="setup-card">
+      <h2>⚙️ Quiz Settings</h2>
+      <div class="quiz-options">
+        <label>Questions: <select id="numQuestions">
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+          <option value="0">All (25)</option>
+        </select></label>
+        <label>Type: <select id="questionType">
+          <option value="all" selected>Mixed</option>
+          <option value="mcq">Multiple Choice</option>
+          <option value="truefalse">True / False</option>
+        </select></label>
+      </div>
+    </div>
+    <div class="setup-card" id="statsCard">
+      <h2>📈 Your Progress</h2>
+      <div class="stats-section" id="statsSection">
+        <div class="stat-item">🏆 Best: <span class="stat-num" id="bestScore">—</span></div>
+        <div class="stat-item">📝 Attempts: <span class="stat-num" id="totalAttempts">0</span></div>
+        <div class="stat-item">📊 Average: <span class="stat-num" id="avgScore">—</span></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-secondary btn-small" onclick="toggleHistory()">📜 History</button>
+        <button class="btn-secondary btn-small" onclick="clearHistory()">🗑️ Clear Data</button>
+      </div>
+      <div class="history-section" id="historySection">
+        <div id="historyList"></div>
+        <p id="historyEmpty" style="color:#5a8a9a;font-size:0.82rem;padding:10px;text-align:center;">No attempts yet. Complete a quiz to see your history!</p>
+      </div>
+    </div>
+    <div style="text-align:center;"><button class="btn-primary" onclick="startQuiz()">🚀 Start Quiz</button></div>
+  </div>
+  <div id="quizScreen" style="display:none;">
+    <div class="quiz-header">
+      <div><span class="quiz-progress">Question <strong id="currentQ">1</strong> of <strong id="totalQ">10</strong></span></div>
+      <span class="quiz-score">✅ <span id="scoreDisplay">0</span>/<span id="totalCorrect">10</span></span>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="question-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span class="q-type-tag" id="qTypeTag">MCQ</span></div>
+      <div class="question-text" id="qText">Loading question...</div>
+      <div class="options-list" id="optionsList"></div>
+      <div class="feedback-area" id="feedbackArea"></div>
+      <div class="q-actions"><button class="btn-secondary" id="nextBtn" style="display:none;" onclick="nextQuestion()">Next →</button></div>
+    </div>
+  </div>
+  <div id="resultsScreen" style="display:none;">
+    <div class="results-card">
+      <div class="results-score" id="finalScore">0%</div>
+      <div class="results-label">Final Score</div>
+      <div class="results-details">
+        <div class="results-stat"><span class="num" id="rCorrect">0</span><div class="desc">Correct</div></div>
+        <div class="results-stat"><span class="num" id="rIncorrect">0</span><div class="desc">Incorrect</div></div>
+        <div class="results-stat"><span class="num" id="rTotal">0</span><div class="desc">Total</div></div>
+      </div>
+      <div class="results-chart" id="resultsChart">
+        <div class="bar cb" id="correctBar" style="height:40px;"></div>
+        <div class="bar ib" id="incorrectBar" style="height:20px;"></div>
+      </div>
+      <div class="results-msg" id="resultsMsg">Great job!</div>
+      <div class="review-list" id="reviewList"></div>
+      <div class="results-actions" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px;">
+        <button class="btn-primary" onclick="resetQuiz()">🔄 Try Again</button>
+        <button class="btn-secondary" onclick="showSetup()">⚙️ Settings</button>
+      </div>
+    </div>
+  </div>
+</div>
+<footer class="footer">Cambridge AS & A Level 9618 &bull; Topic 18: Artificial Intelligence &bull; Interactive Quiz</footer>
+<script>
+  const QB = [
+    {type:"mcq", q:"What is a graph in the context of AI search algorithms?", options:["A type of chart","A set of nodes (vertices) connected by edges","A mathematical function","A neural network layer"], correct:1, explain:"A graph is a data structure consisting of nodes (vertices) connected by edges, used to model relationships in AI search problems."},
+    {type:"mcq", q:"What is Dijkstra's algorithm used for?", options:["Sorting data","Finding the shortest path between nodes in a graph","Encrypting data","Training neural networks"], correct:1, explain:"Dijkstra's algorithm finds the shortest path from a start node to all other nodes in a weighted graph with non-negative edge weights."},
+    {type:"truefalse", q:"Dijkstra's algorithm works correctly with negative edge weights.", correct:false, explain:"Dijkstra's algorithm assumes non-negative edge weights. Negative weights can cause it to fail. The Bellman-Ford algorithm handles negative weights."},
+    {type:"mcq", q:"What is the evaluation function for the A* algorithm?", options:["f(n) = g(n)","f(n) = h(n)","f(n) = g(n) + h(n)","f(n) = g(n) × h(n)"], correct:2, explain:"A* uses f(n) = g(n) + h(n), where g(n) is the actual cost from start to n, and h(n) is the estimated cost from n to the goal."},
+    {type:"mcq", q:"In A*, what does h(n) represent?", options:["The actual cost from start to node n","The heuristic estimated cost from node n to the goal","The total path cost","The number of nodes visited"], correct:1, explain:"h(n) is the heuristic function — an estimate of the cheapest cost from node n to the goal node."},
+    {type:"truefalse", q:"An admissible heuristic in A* never overestimates the true cost to reach the goal.", correct:true, explain:"An admissible heuristic is optimistic — it always underestimates or equals the true cost. This guarantees A* finds the optimal path."},
+    {type:"mcq", q:"What is a neural network?", options:["A type of computer network","A computing system inspired by biological neural networks","A type of graph","A database management system"], correct:1, explain:"A neural network is a computing system inspired by biological brains, composed of interconnected nodes (neurons) organised in layers."},
+    {type:"mcq", q:"What are the three main types of layers in a neural network?", options:["Input, output, and hidden layers","Start, middle, and end","Primary, secondary, and tertiary","Left, right, and centre"], correct:0, explain:"Neural networks consist of an input layer, one or more hidden layers, and an output layer. Deep learning uses multiple hidden layers."},
+    {type:"truefalse", q:"Deep learning refers to neural networks with many hidden layers.", correct:true, explain:"Deep learning uses deep neural networks with multiple hidden layers (typically 3+), enabling learning of complex hierarchical features."},
+    {type:"mcq", q:"In supervised learning, what type of data is used for training?", options:["Unlabelled data","Data with known input-output pairs (labelled data)","Random data","Only output data"], correct:1, explain:"Supervised learning uses labelled training data where each input has a known correct output. The model learns to map inputs to outputs."},
+    {type:"mcq", q:"Which machine learning type discovers patterns in unlabelled data?", options:["Supervised learning","Unsupervised learning","Reinforcement learning","Deep learning"], correct:1, explain:"Unsupervised learning finds hidden patterns or groupings in unlabelled data (e.g., clustering, dimensionality reduction)."},
+    {type:"truefalse", q:"In reinforcement learning, an agent learns by receiving rewards and punishments based on its actions.", correct:true, explain:"Reinforcement learning uses a reward/penalty system. The agent learns a policy that maximises cumulative reward through trial and error."},
+    {type:"mcq", q:"What is back propagation in neural networks?", options:["A search algorithm","A method for updating weights backwards through the network to minimise error","A type of graph traversal","A data preprocessing technique"], correct:1, explain:"Back propagation computes the gradient of the loss function and propagates error backwards through the network to update weights."},
+    {type:"truefalse", q:"A* is guaranteed to find the shortest path if the heuristic is admissible and consistent.", correct:true, explain:"A* is complete and optimal when using an admissible (never overestimates) and consistent (monotonic) heuristic."},
+    {type:"mcq", q:"How does Dijkstra's algorithm select which node to explore next?", options:["Random selection","The node with the smallest current distance from start","The node closest to the goal","The most recently discovered node"], correct:1, explain:"Dijkstra always explores the unvisited node with the smallest known distance from the start node."},
+    {type:"mcq", q:"What is the main advantage of A* over Dijkstra's algorithm?", options:["A* is always faster","A* uses heuristics to focus search towards the goal, often reducing the number of nodes explored","A* uses less memory","A* can handle negative weights"], correct:1, explain:"A* uses a heuristic h(n) that guides the search towards the goal, potentially exploring fewer nodes than Dijkstra's algorithm."},
+    {type:"truefalse", q:"An activation function in a neural neuron determines whether the neuron 'fires' based on its input.", correct:true, explain:"An activation function (e.g., sigmoid, ReLU, tanh) introduces non-linearity and determines the output of a neuron based on its weighted input sum."},
+    {type:"mcq", q:"What is a perceptron?", options:["A type of graph","The simplest type of artificial neural network — a single-layer binary classifier","A search algorithm","A machine learning dataset"], correct:1, explain:"A perceptron is the simplest neural network: a single-layer model that makes binary classifications based on weighted inputs."},
+    {type:"mcq", q:"Which of the following best describes the training process in supervised learning?", options:["The model generates random outputs","The model is given inputs and predicted outputs without feedback","The model is given inputs with known correct outputs and adjusts to minimise prediction error","The model explores an environment"], correct:2, explain:"In supervised learning, the model is trained on labelled data. It makes predictions, compares them to known correct outputs, and adjusts to reduce error."},
+    {type:"truefalse", q:"Dijkstra's algorithm is a greedy algorithm.", correct:false, explain:"Dijkstra's is not purely greedy — it systematically explores nodes in order of shortest known distance. However, it does use a greedy strategy at each step by selecting the minimum-distance node."},
+    {type:"mcq", q:"What is the role of weights in a neural network?", options:["They determine the strength of connections between neurons","They store the training data","They define the network structure","They replace activation functions"], correct:0, explain:"Weights determine the strength/importance of connections between neurons. Learning involves adjusting these weights to minimise error."},
+    {type:"truefalse", q:"Reinforcement learning requires labelled training data.", correct:false, explain:"Reinforcement learning does not use labelled data. The agent learns from rewards/punishments received through interaction with its environment."},
+    {type:"mcq", q:"What is a key difference between a graph and a tree?", options:["Trees have no cycles; graphs can have cycles","Graphs are always directed","Trees can have multiple root nodes","Graphs cannot have weights"], correct:0, explain:"A tree is a special type of graph with no cycles and a single root. Graphs can contain cycles (loops)."},
+    {type:"truefalse", q:"In a neural network, the input layer applies activation functions to the data.", correct:false, explain:"The input layer receives raw data and passes it to the first hidden layer. Activation functions are typically applied in hidden and output layers."},
+    {type:"mcq", q:"What is the purpose of a loss function in machine learning?", options:["To generate training data","To measure the error between predicted and actual outputs","To initialise weights","To determine the network structure"], correct:1, explain:"A loss (cost) function quantifies the difference between predicted outputs and actual targets. The goal of training is to minimise this loss."},
+  ];
+  let S = { questions: [], current: 0, score: 0, answers: [], answered: false };
+  function startQuiz() {
+    let pool = [...QB]; const typeFilter = document.getElementById('questionType').value;
+    if (typeFilter !== 'all') { pool = pool.filter(q => q.type === typeFilter); if (!pool.length) { alert('No questions of this type available.'); return; } }
+    for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+    let numQ = parseInt(document.getElementById('numQuestions').value);
+    if (numQ === 0 || numQ > pool.length) numQ = pool.length;
+    S.questions = pool.slice(0, numQ); S.current = 0; S.score = 0; S.answers = []; S.answered = false; showScreen('quizScreen'); renderQ();
+  }
+  function renderQ() {
+    const q = S.questions[S.current]; const total = S.questions.length; const idx = S.current;
+    document.getElementById('currentQ').textContent = idx + 1; document.getElementById('totalQ').textContent = total;
+    document.getElementById('scoreDisplay').textContent = S.score; document.getElementById('totalCorrect').textContent = total;
+    document.getElementById('progressFill').style.width = (idx / total * 100) + '%'; document.getElementById('qText').textContent = q.q;
+    document.getElementById('qTypeTag').textContent = q.type === 'truefalse' ? 'True / False' : 'Multiple Choice';
+    const container = document.getElementById('optionsList'); container.innerHTML = '';
+    if (q.type === 'truefalse') {
+      ['True','False'].forEach((text,i) => { const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerHTML = '<span class="opt-letter">'+(i===0?'T':'F')+'</span>'+text; btn.dataset.index = i; btn.addEventListener('click',()=>selectAns(i)); container.appendChild(btn); });
+    } else {
+      const letters = ['A','B','C','D']; q.options.forEach((text,i) => { const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerHTML = '<span class="opt-letter">'+letters[i]+'</span>'+text; btn.dataset.index = i; btn.addEventListener('click',()=>selectAns(i)); container.appendChild(btn); });
+    }
+    const fb = document.getElementById('feedbackArea'); fb.className = 'feedback-area'; fb.textContent = ''; document.getElementById('nextBtn').style.display = 'none'; S.answered = false;
+  }
+  function selectAns(index) {
+    if (S.answered) return; S.answered = true;
+    const q = S.questions[S.current]; const buttons = document.querySelectorAll('.option-btn'); const correct = (index === q.correct);
+    buttons.forEach((btn,i) => { btn.classList.add('disabled'); if (i === q.correct) btn.classList.add('correct'); if (i === index && !correct) btn.classList.add('incorrect'); if (i === index) btn.classList.add('selected'); });
+    if (correct) S.score++; document.getElementById('scoreDisplay').textContent = S.score;
+    const fb = document.getElementById('feedbackArea'); fb.className = 'feedback-area ' + (correct ? 'correct' : 'incorrect');
+    fb.innerHTML = '<span class="fb-label">' + (correct ? '✅ Correct!' : '❌ Incorrect.') + '</span> ' + q.explain;
+    S.answers.push({selected: index, correctIdx: q.correct, question: q, wasCorrect: correct});
+    const nextBtn = document.getElementById('nextBtn'); nextBtn.style.display = 'inline-flex'; nextBtn.textContent = (S.current === S.questions.length - 1) ? '📊 See Results' : 'Next →';
+  }
+  function nextQuestion() { if (S.current >= S.questions.length - 1) { showResults(); return; } S.current++; renderQ(); }
+  function showResults() {
+    showScreen('resultsScreen'); const total = S.questions.length; const correct = S.score; const incorrect = total - correct; const pct = total > 0 ? Math.round(correct/total*100) : 0;
+    document.getElementById('finalScore').textContent = pct+'%'; document.getElementById('rCorrect').textContent = correct; document.getElementById('rIncorrect').textContent = incorrect; document.getElementById('rTotal').textContent = total;
+    const maxH = 80; document.getElementById('correctBar').style.height = (total > 0 ? (correct/total)*maxH : 0) + 'px'; document.getElementById('incorrectBar').style.height = (total > 0 ? (incorrect/total)*maxH : 0) + 'px';
+    const msg = document.getElementById('resultsMsg'); msg.className = 'results-msg';
+    if (pct === 100) { msg.textContent = '🏆 Perfect! You\'ve mastered Artificial Intelligence!'; msg.classList.add('perfect'); }
+    else if (pct >= 80) { msg.textContent = '🌟 Excellent! Strong understanding of AI algorithms and ML.'; msg.classList.add('great'); }
+    else if (pct >= 60) { msg.textContent = '👍 Good effort! Review the incorrect answers below.'; msg.classList.add('good'); }
+    else { msg.textContent = '📚 Keep studying! Review the presentation and try again.'; msg.classList.add('retry'); }
+    const rl = document.getElementById('reviewList'); rl.innerHTML = '<h3 style="font-size:0.92rem;color:#60d4e0;margin-bottom:8px;">📋 Review Answers</h3>';
+    const letters = ['A','B','C','D']; S.answers.forEach((a,i) => {
+      const item = document.createElement('div'); item.className = 'review-item ' + (a.wasCorrect ? 'cr' : 'ir'); const q = a.question; const ya = q.type === 'truefalse' ? (a.selected===0?'True':'False') : letters[a.selected]; const ca = q.type === 'truefalse' ? 'True' : letters[a.correctIdx];
+      item.innerHTML = '<div class="rq">'+(i+1)+'. '+q.q+'</div><div class="ra">'+(a.wasCorrect ? '<span style="color:#8bc34a;">✅ Correct</span>' : '<span class="ya">❌ Your answer: '+ya+'</span> — <span class="ca">Correct: '+ca+'</span>')+'</div><div style="color:#5a9a8a;font-size:0.76rem;margin-top:3px;">'+q.explain+'</div>'; rl.appendChild(item);
+    });
+    saveResult(correct, total);
+  }
+  function resetQuiz() { S.current=0; S.score=0; S.answers=[]; S.answered=false; const pool=S.questions; for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];} showScreen('quizScreen'); renderQ(); }
+  function showSetup() { showScreen('setupScreen'); }
+  function showScreen(id) { ['setupScreen','quizScreen','resultsScreen'].forEach(s=>{const el=document.getElementById(s);if(el)el.style.display=(s===id?'block':'none');}); }
+
+  const QUIZ_TOPIC = 'Artificial Intelligence';
+  function getStorageKey(){return 'quiz9618_'+QUIZ_TOPIC.replace(/[^a-zA-Z0-9]/g,'_');}
+  function getStats(){try{const d=localStorage.getItem(getStorageKey());return d?JSON.parse(d):{best:null,attempts:[]};}catch(e){return{best:null,attempts:[]};}}
+  function saveResult(correct,total){try{const stats=getStats();const pct=Math.round(correct/total*100);const entry={date:new Date().toISOString(),correct,total,pct};stats.attempts.push(entry);if(stats.best===null||pct>stats.best.pct)stats.best=entry;localStorage.setItem(getStorageKey(),JSON.stringify(stats));loadStats();}catch(e){}}
+  function loadStats(){try{const stats=getStats();document.getElementById('bestScore').textContent=stats.best?stats.best.correct+'/'+stats.best.total+' ('+stats.best.pct+'%)':'—';document.getElementById('totalAttempts').textContent=stats.attempts.length;if(stats.attempts.length>0){const avg=Math.round(stats.attempts.reduce((s,a)=>s+a.pct,0)/stats.attempts.length);document.getElementById('avgScore').textContent=avg+'%';}else document.getElementById('avgScore').textContent='—';const hl=document.getElementById('historyList');const he=document.getElementById('historyEmpty');if(hl){hl.innerHTML='';if(stats.attempts.length===0){if(he)he.style.display='block';}else{if(he)he.style.display='none';[...stats.attempts].reverse().slice(0,30).forEach(a=>{const d=new Date(a.date);const ds=d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});const div=document.createElement('div');div.className='history-item';div.innerHTML='<span class="h-date">'+ds+'</span><span class="h-score">'+a.correct+'/'+a.total+'</span><span class="h-pct">'+a.pct+'%</span>';hl.appendChild(div);});}}}catch(e){}}
+  function toggleHistory(){document.getElementById('historySection').classList.toggle('open');}
+  function clearHistory(){try{if(confirm('Clear all saved quiz history for this topic?')){localStorage.removeItem(getStorageKey());loadStats();document.getElementById('historySection').classList.remove('open');}}catch(e){}}
+  document.addEventListener('DOMContentLoaded',loadStats);
+</script>
+</body>
+</html>

@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topic 20: Further Programming — Cambridge 9618</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #080c18;
+    color: #e0e8f0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+  .presentation { position: relative; width: 100vw; height: 100vh; }
+  .slide {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none;
+    flex-direction: column;
+    padding: 36px 50px;
+    background: linear-gradient(135deg, #0a0e1e 0%, #101838 50%, #0a0e1e 100%);
+    overflow-y: auto;
+  }
+  .slide.active { display: flex; }
+  .slide::-webkit-scrollbar { width: 6px; }
+  .slide::-webkit-scrollbar-track { background: #0a0e1e; }
+  .slide::-webkit-scrollbar-thumb { background: #1a5a6a; border-radius: 3px; }
+  h1 { font-size: 2.4rem; font-weight: 700; color: #f0f6ff; margin-bottom: 8px; letter-spacing: -0.5px; }
+  h2 { font-size: 1.6rem; font-weight: 600; color: #b8d4ff; margin-bottom: 6px; border-bottom: 2px solid #1a7a6a; padding-bottom: 4px; }
+  h3 { font-size: 1.2rem; font-weight: 600; color: #8bb8ff; margin-bottom: 5px; }
+  h4 { font-size: 1rem; font-weight: 600; color: #5ae0c0; margin-bottom: 4px; }
+  p, li { font-size: 1rem; line-height: 1.5; color: #d0dcec; margin-bottom: 4px; }
+  ul { padding-left: 20px; margin-bottom: 6px; }
+  li { margin-bottom: 2px; }
+  strong { color: #e8f0ff; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 0.88rem; }
+  th { background: #0e2840; color: #5ae0c0; font-weight: 600; padding: 7px 10px; text-align: left; border: 1px solid #1a5a6a; }
+  td { padding: 6px 10px; border: 1px solid #1a3a4a; color: #c8d8ec; }
+  tr:nth-child(even) td { background: #0a0e1e; }
+  tr:nth-child(odd) td { background: #0e1428; }
+  .code-block { font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; background: #080c18; border: 1px solid #1a5a6a; border-radius: 8px; padding: 10px 14px; font-size: 0.82rem; line-height: 1.5; color: #d4e4ff; overflow-x: auto; margin: 6px 0; white-space: pre; }
+  .inline-code { font-family: 'Cascadia Code', 'Consolas', monospace; background: #080c18; color: #5ae0c0; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; border: 1px solid #1a5a6a; }
+  .flex-row { display: flex; flex-direction: row; gap: 16px; }
+  .flex-col { display: flex; flex-direction: column; gap: 6px; }
+  .flex-1 { flex: 1; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
+  .mt-6 { margin-top: 6px; } .mt-8 { margin-top: 8px; } .mt-10 { margin-top: 10px; } .mt-12 { margin-top: 12px; }
+  .mb-6 { margin-bottom: 6px; } .mb-8 { margin-bottom: 8px; } .mb-10 { margin-bottom: 10px; }
+  .text-center { text-align: center; }
+  .card { background: #0a0e1e; border: 1px solid #1a5a6a; border-radius: 10px; padding: 10px 12px; transition: border-color 0.2s; }
+  .card:hover { border-color: #2ac8a0; }
+  .card h4 { color: #5ae0c0; margin-bottom: 3px; }
+  .diagram-box { background: #080c18; border: 1px solid #1a5a6a; border-radius: 10px; padding: 12px; margin: 8px 0; display: flex; flex-direction: column; align-items: center; }
+  .diagram-box svg { max-width: 100%; height: auto; }
+  .diagram-caption { margin-top: 5px; font-size: 0.78rem; color: #7ab8a8; font-style: italic; text-align: center; }
+  .callout { background: #0a0e1e; border-left: 4px solid #f78c6c; padding: 8px 12px; border-radius: 0 6px 6px 0; margin: 5px 0; font-size: 0.9rem; }
+  .callout.info { border-left-color: #2ac8a0; }
+  .callout.warn { border-left-color: #f78c6c; }
+  .callout.success { border-left-color: #8bc34a; }
+  .section-badge { display: inline-block; background: linear-gradient(135deg, #0a2840, #1a5a6a); color: #5ae0c0; padding: 3px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; margin-bottom: 6px; letter-spacing: 0.5px; text-transform: uppercase; border: 1px solid #2a9a8a; }
+  .objectives-list { list-style: none; padding: 0; }
+  .objectives-list li { padding: 6px 10px 6px 30px; background: #080c18; border-left: 3px solid #2ac8a0; margin-bottom: 6px; border-radius: 0 6px 6px 0; position: relative; }
+  .objectives-list li::before { content: "\25B8"; position: absolute; left: 10px; color: #2ac8a0; font-weight: bold; }
+  .worked-example { background: linear-gradient(135deg, #0c1a20, #0e2828); border: 1px solid #2a9a8a; border-radius: 10px; padding: 12px 16px; margin: 6px 0; }
+  .worked-example h4 { color: #f78c6c; margin-bottom: 5px; }
+  .key-term-box { background: linear-gradient(135deg, #1a0a2e, #2a0a4a); border: 1px solid #6a3aaa; border-radius: 10px; padding: 10px 14px; margin: 6px 0; }
+  .key-term-box h4 { color: #b080f0; } .key-term-box h4::before { content: "\1F511 "; }
+  .exam-tip-box { background: linear-gradient(135deg, #1a1a0a, #2a2a0a); border: 1px solid #c8a020; border-radius: 10px; padding: 8px 14px; margin: 6px 0; }
+  .exam-tip-box h4 { color: #f0c040; } .exam-tip-box h4::before { content: "\1F4A1 "; }
+  .common-mistake-box { background: linear-gradient(135deg, #2a0a0a, #3a1a0a); border: 1px solid #c04040; border-radius: 10px; padding: 8px 14px; margin: 6px 0; }
+  .common-mistake-box h4 { color: #e06060; } .common-mistake-box h4::before { content: "\26A0 "; }
+  .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 8px 20px; background: rgba(8,12,24,0.94); backdrop-filter: blur(10px); border-top: 1px solid #1a3a4a; z-index: 100; }
+  .nav-bar button { background: #0e2840; border: 1px solid #1a5a6a; color: #5ae0c0; padding: 6px 16px; border-radius: 6px; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+  .nav-bar button:hover { background: #1a5a6a; }
+  .nav-bar button:disabled { opacity: 0.35; cursor: default; }
+  .nav-bar .slide-counter { color: #7ab8a8; font-size: 0.82rem; min-width: 80px; text-align: center; }
+  .nav-bar .progress-dots { display: flex; gap: 3px; flex-wrap: wrap; max-width: 400px; justify-content: center; }
+  .nav-bar .dot { width: 6px; height: 6px; border-radius: 50%; background: #1a3a4a; border: none; cursor: pointer; padding: 0; transition: background 0.2s; }
+  .nav-bar .dot.active { background: #2ac8a0; }
+  .nav-bar .dot:hover { background: #3aaa7a; }
+  .kbd-hint { position: fixed; bottom: 52px; right: 16px; color: #2a5a5a; font-size: 0.7rem; z-index: 90; }
+  .chip-group { display: flex; gap: 6px; flex-wrap: wrap; margin: 5px 0; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; background: #080c18; border: 1px solid #1a5a6a; border-radius: 20px; padding: 3px 10px; font-size: 0.78rem; color: #5ae0c0; }
+  .tag { display: inline-block; background: #0e2840; color: #5ae0c0; padding: 2px 10px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; border: 1px solid #1a5a6a; margin-right: 3px; }
+  .asm-code { font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 0.8rem; color: #f0c040; }
+  @media (max-width: 900px) { .slide { padding: 20px 18px; } h1 { font-size: 1.6rem; } h2 { font-size: 1.2rem; } h3 { font-size: 1rem; } .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } .flex-row { flex-direction: column; } .nav-bar .progress-dots { max-width: 200px; } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .slide.active > * { animation: fadeIn 0.35s ease-out; }
+</style>
+</head>
+<body>
+<div class="presentation" id="presentation"></div>
+<div class="nav-bar">
+  <button id="prevBtn" onclick="changeSlide(-1)">&#9664; Prev</button>
+  <span class="slide-counter" id="slideCounter">1 / 1</span>
+  <div class="progress-dots" id="progressDots"></div>
+  <button id="nextBtn" onclick="changeSlide(1)">Next &#9654;</button>
+</div>
+<div class="kbd-hint">&#8592; &#8594; arrow keys to navigate</div>
+<script>
+const slides = [];
+function addSlide(html) { slides.push(html); }
+function renderSlides() {
+  const container = document.getElementById('presentation');
+  slides.forEach((html, i) => {
+    const div = document.createElement('div');
+    div.className = 'slide' + (i === 0 ? ' active' : '');
+    div.dataset.slide = i + 1;
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+  renderDots();
+  updateNav();
+}
+function renderDots() {
+  const dots = document.getElementById('progressDots');
+  if (!dots) return;
+  dots.innerHTML = '';
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'dot' + (i === currentSlide ? ' active' : '');
+    dot.onclick = () => goToSlide(i);
+    dots.appendChild(dot);
+  });
+}
+let currentSlide = 0;
+function changeSlide(dir) {
+  const next = currentSlide + dir;
+  if (next < 0 || next >= slides.length) return;
+  goToSlide(next);
+}
+function goToSlide(idx) {
+  const all = document.querySelectorAll('.slide');
+  all.forEach(s => s.classList.remove('active'));
+  all[idx].classList.add('active');
+  currentSlide = idx;
+  const counter = document.getElementById('slideCounter');
+  if (counter) counter.textContent = (idx + 1) + ' / ' + slides.length;
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === slides.length - 1;
+  renderDots();
+  all[idx].scrollTop = 0;
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+});
+function updateNav() {
+  const counter = document.getElementById('slideCounter');
+  if (counter) counter.textContent = '1 / ' + slides.length;
+  document.getElementById('prevBtn').disabled = true;
+  if (slides.length <= 1) document.getElementById('nextBtn').disabled = true;
+}
+// SLIDES START HERE
+
+// ==================================================================
+// SLIDE 1 – TITLE SLIDE
+// ==================================================================
+addSlide(`
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+    <div class="section-badge" style="margin-bottom:14px;">Cambridge International AS &amp; A Level — 9618</div>
+    <h1 style="font-size:3rem; margin-bottom:6px;">Topic 20</h1>
+    <h1 style="font-size:2.6rem; margin-bottom:8px; color:#5ae0c0;">Further Programming</h1>
+    <div style="width:80px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:18px;"></div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:700px;">
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Low-Level</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Addressing Modes</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Procedural</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">OOP</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Declarative</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">File Processing</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Exception Handling</span>
+    </div>
+    <div style="margin-top:24px; text-align:left; max-width:680px;">
+      <h4 style="color:#b8d4ff; margin-bottom:8px;">Learning Objectives:</h4>
+      <ul>
+        <li>Understand low-level, imperative, OOP and declarative paradigms</li>
+        <li>Write low-level code using addressing modes (immediate, direct, indirect, indexed, relative)</li>
+        <li>Design classes and write OOP code (inheritance, polymorphism, encapsulation)</li>
+        <li>Write declarative code using facts, rules, and goals</li>
+        <li>Perform file processing operations (open, read, write, close)</li>
+        <li>Implement exception handling (try, catch, throw)</li>
+      </ul>
+    </div>
+    <p style="color:#3a6a6a; font-size:0.82rem; margin-top:20px;">Press <span class="inline-code">\u2192</span> or click navigation to begin</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 2 – WHAT IS A PROGRAMMING PARADIGM?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 Programming Paradigms</div>
+  <h2>What Is a Programming Paradigm?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p>A <strong>programming paradigm</strong> is a style or approach to programming.</p>
+        <ul>
+          <li>It influences <strong>how</strong> programs are written</li>
+          <li>It shapes how problems are <strong>broken down</strong></li>
+          <li>Different paradigms suit <strong>different problem types</strong></li>
+          <li>Some languages support <strong>multiple paradigms</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Programming Paradigm:</strong> A way of thinking about how to solve a problem using a program, defining the structure and capability of a programming language.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Analogy:</strong> Different paradigms are like different tools in a toolbox. A hammer is best for nails, a screwdriver for screws. Similarly, different paradigms are suited to different programming problems.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 3 – OVERVIEW OF PROGRAMMING PARADIGMS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 Programming Paradigms</div>
+  <h2>Overview of Programming Paradigms</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>1. Low-Level Programming</h4>
+      <p>Instructions close to machine code. Direct hardware control using mnemonics and addressing modes.</p>
+      <p><em>Example: Assembly language</em></p>
+    </div>
+    <div class="card">
+      <h4>2. Imperative (Procedural)</h4>
+      <p>Step-by-step instructions that change program state. Uses variables, loops, conditionals, procedures and functions.</p>
+      <p><em>Example: Pascal, C, Python</em></p>
+    </div>
+    <div class="card">
+      <h4>3. Object-Oriented (OOP)</h4>
+      <p>Programs are organised around objects containing data and methods. Uses classes, inheritance, polymorphism, encapsulation.</p>
+      <p><em>Example: Java, C++, Python</em></p>
+    </div>
+    <div class="card">
+      <h4>4. Declarative Programming</h4>
+      <p>Program describes <strong>what</strong> the result should be, not <strong>how</strong> to achieve it. Uses facts, rules, and goals.</p>
+      <p><em>Example: Prolog, SQL</em></p>
+    </div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>You need to know the <strong>key characteristics</strong> of each paradigm and be able to give <strong>examples</strong> of programming languages that support each one. Cambridge expects four paradigms: low-level, imperative, OOP, and declarative.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 4 – LOW-LEVEL PROGRAMMING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 Low-Level Programming</div>
+  <h2>Low-Level Programming</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Key Characteristics</h4>
+        <ul>
+          <li>Uses instructions that correspond <strong>directly</strong> to machine code instructions</li>
+          <li>Gives <strong>direct control</strong> over the hardware</li>
+          <li>Uses <strong>mnemonics</strong> (abbreviations) for instructions</li>
+          <li>Uses <strong>addressing modes</strong> to access data</li>
+          <li><strong>Assembly language</strong> is a common example</li>
+          <li>Each instruction typically does <strong>one simple operation</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Low-Level Programming:</strong> Programming using instructions that correspond directly to machine code instructions, giving direct control over hardware.</p>
+      </div>
+      <div class="common-mistake-box mt-6">
+        <h4>Common Mistake</h4>
+        <p>Do not confuse <strong>low-level</strong> with <strong>imperative</strong>. Low-level means close to machine code. Imperative means step-by-step. A high-level language can also be imperative.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 5 – ADDRESSING MODES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 Addressing Modes</div>
+  <h2>Addressing Modes</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="card">
+    <h4>What Is an Addressing Mode?</h4>
+    <p>The addressing mode determines <strong>how the operand</strong> of an instruction is interpreted.</p>
+    <p>Different modes allow different ways to access data in memory.</p>
+  </div>
+  <p style="margin-top:6px;">There are <strong>five</strong> addressing modes you need to know:</p>
+  <div class="grid-2 mt-6">
+    <div class="card"><h4>1. Immediate</h4><p>Operand is the actual value</p></div>
+    <div class="card"><h4>2. Direct</h4><p>Operand is the memory address</p></div>
+    <div class="card"><h4>3. Indirect</h4><p>Operand points to an address containing the address</p></div>
+    <div class="card"><h4>4. Indexed</h4><p>Address = base + index register</p></div>
+    <div class="card"><h4>5. Relative</h4><p>Address = PC + offset</p></div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 6 – IMMEDIATE ADDRESSING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 Addressing Modes</div>
+  <h2>Immediate Addressing</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How It Works</h4>
+        <ul>
+          <li>The operand is the <strong>actual value</strong> to be used</li>
+          <li><strong>No memory access</strong> is needed to get the value</li>
+          <li>The value is part of the instruction itself</li>
+          <li><strong>Fast</strong> but limited to constant values</li>
+        </ul>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>Example</h4>
+        <div class="code-block asm-code">LDM #5    ; Load the value 5 into the accumulator</div>
+        <p>Instruction: LDM (LoaD Immediate)<br>#5 means the value 5 itself, not memory address 5.</p>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Immediate Addressing:</strong> The operand is the actual value to be used in the instruction.</p>
+      </div>
+      <div class="diagram-box mt-6">
+        <svg viewBox="0 0 280 80" style="width:100%; max-width:280px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Immediate Addressing</text>
+          <rect x="10" y="24" width="100" height="26" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5" rx="4"/>
+          <text x="20" y="41" fill="#5ae0c0" font-size="9">LDM #5</text>
+          <line x1="115" y1="37" x2="145" y2="37" stroke="#f0c040" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <circle cx="160" cy="37" r="16" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="155" y="42" fill="#f0c040" font-size="12" font-weight="700">5</text>
+          <text x="135" y="60" fill="#7ab8a8" font-size="7">Accumulator</text>
+          <defs><marker id="arrow" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#f0c040"/></marker></defs>
+        </svg>
+        <div class="diagram-caption">Value 5 goes directly to the accumulator</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 7 – DIRECT ADDRESSING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 Addressing Modes</div>
+  <h2>Direct Addressing</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How It Works</h4>
+        <ul>
+          <li>The operand is the <strong>memory address</strong> where the value is stored</li>
+          <li>The processor accesses <strong>memory</strong> to get the value</li>
+          <li>Common for accessing <strong>variables</strong></li>
+        </ul>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>Example</h4>
+        <div class="code-block asm-code">LDD 200    ; Load the value stored at address 200</div>
+        <p>If memory[200] = 42, the accumulator becomes 42.</p>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Direct Addressing:</strong> The operand is the memory address of the data to be used.</p>
+      </div>
+      <div class="diagram-box mt-6">
+        <svg viewBox="0 0 280 90" style="width:100%; max-width:280px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Direct Addressing</text>
+          <rect x="10" y="24" width="100" height="22" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5" rx="4"/>
+          <text x="20" y="38" fill="#5ae0c0" font-size="9">LDD 200</text>
+          <line x1="115" y1="35" x2="145" y2="35" stroke="#f0c040" stroke-width="1.5"/>
+          <rect x="150" y="24" width="50" height="22" fill="#1a2840" stroke="#f0c040" stroke-width="1.5" rx="3"/>
+          <text x="158" y="39" fill="#f0c040" font-size="9">42</text>
+          <text x="148" y="56" fill="#7ab8a8" font-size="7">Addr 200</text>
+          <line x1="205" y1="35" x2="235" y2="35" stroke="#f0c040" stroke-width="1.5"/>
+          <circle cx="250" cy="35" r="16" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="245" y="40" fill="#f0c040" font-size="12" font-weight="700">42</text>
+          <text x="235" y="58" fill="#7ab8a8" font-size="7">Accumulator</text>
+        </svg>
+        <div class="diagram-caption">Value at address 200 is retrieved and loaded</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 8 – INDIRECT ADDRESSING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 Addressing Modes</div>
+  <h2>Indirect Addressing</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How It Works</h4>
+        <ul>
+          <li>The operand is a memory address that contains <strong>another memory address</strong></li>
+          <li>The processor first gets the <strong>address</strong>, then accesses that address for the <strong>value</strong></li>
+          <li>Useful for implementing <strong>pointers</strong></li>
+        </ul>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>Example</h4>
+        <div class="code-block asm-code">LDI 300    ; Load from address stored at location 300</div>
+        <p>If memory[300] = 400, then the processor loads from memory[400].</p>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Indirect Addressing:</strong> The operand points to a memory location that contains the address of the data.</p>
+      </div>
+      <div class="diagram-box mt-6">
+        <svg viewBox="0 0 300 90" style="width:100%; max-width:300px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Indirect Addressing</text>
+          <rect x="10" y="24" width="100" height="22" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5" rx="4"/>
+          <text x="20" y="38" fill="#5ae0c0" font-size="9">LDI 300</text>
+          <line x1="115" y1="35" x2="145" y2="35" stroke="#f0c040" stroke-width="1.5"/>
+          <rect x="150" y="24" width="40" height="22" fill="#1a2840" stroke="#f0c040" stroke-width="1.5" rx="3"/>
+          <text x="158" y="39" fill="#f0c040" font-size="9">400</text>
+          <text x="148" y="56" fill="#7ab8a8" font-size="7">Addr 300</text>
+          <line x1="195" y1="35" x2="215" y2="35" stroke="#f0c040" stroke-width="1" stroke-dasharray="4,2"/>
+          <rect x="220" y="24" width="35" height="22" fill="#2a2040" stroke="#b080f0" stroke-width="1.5" rx="3"/>
+          <text x="228" y="39" fill="#b080f0" font-size="9">99</text>
+          <text x="218" y="56" fill="#7ab8a8" font-size="7">Addr 400</text>
+          <line x1="260" y1="35" x2="275" y2="35" stroke="#f0c040" stroke-width="1.5"/>
+          <circle cx="288" cy="35" r="12" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="284" y="40" fill="#f0c040" font-size="10" font-weight="700">99</text>
+        </svg>
+        <div class="diagram-caption">Addr 300 holds 400, so load from addr 400</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 9 – INDEXED ADDRESSING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 Addressing Modes</div>
+  <h2>Indexed Addressing</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How It Works</h4>
+        <ul>
+          <li>The effective address = <strong>operand + index register</strong></li>
+          <li>The index register holds an <strong>offset</strong></li>
+          <li>Useful for accessing <strong>arrays</strong> and data structures</li>
+          <li>The index register can be <strong>incremented</strong> to access successive elements</li>
+        </ul>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>Example</h4>
+        <div class="code-block asm-code">LDX 100   ; Load from address 100 + index register</div>
+        <p>If index register = 20, effective address = 100 + 20 = 120.</p>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Indexed Addressing:</strong> The effective address is calculated by adding an index register to the operand.</p>
+      </div>
+      <div class="diagram-box mt-6">
+        <svg viewBox="0 0 300 100" style="width:100%; max-width:300px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Indexed Addressing: LDX 100</text>
+          <text x="10" y="36" fill="#7ab8a8" font-size="8">Base: 100</text>
+          <text x="10" y="50" fill="#f0c040" font-size="8">Index: +20</text>
+          <line x1="10" y1="56" x2="90" y2="56" stroke="#4a7ac8" stroke-width="1"/>
+          <text x="10" y="72" fill="#5ae0c0" font-size="10" font-weight="700">Effective = 120</text>
+          <rect x="120" y="24" width="55" height="60" fill="#1a2840" stroke="#2ac8a0" stroke-width="1.5" rx="4"/>
+          <text x="128" y="40" fill="#7ab8a8" font-size="8">Addr 120</text>
+          <text x="135" y="58" fill="#f0c040" font-size="12" font-weight="700">42</text>
+          <text x="110" y="90" fill="#7ab8a8" font-size="7">Array element</text>
+        </svg>
+        <div class="diagram-caption">Effective address = 100 + index (20) = 120</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 10 – RELATIVE ADDRESSING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 Addressing Modes</div>
+  <h2>Relative Addressing</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How It Works</h4>
+        <ul>
+          <li>The effective address = <strong>Program Counter (PC) + offset</strong></li>
+          <li>The offset can be <strong>positive or negative</strong></li>
+          <li>Used for <strong>branching and jumping</strong> to nearby instructions</li>
+          <li>Allows <strong>position-independent code</strong></li>
+        </ul>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>Example</h4>
+        <div class="code-block asm-code">JMP +5    ; Jump 5 instructions forward from current</div>
+        <p>If PC = 200, the next instruction will be at address 200 + 5 = 205.</p>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Relative Addressing:</strong> The effective address is calculated by adding an offset to the program counter.</p>
+      </div>
+      <div class="diagram-box mt-6">
+        <svg viewBox="0 0 300 80" style="width:100%; max-width:300px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Relative Addressing: JMP +5</text>
+          <rect x="20" y="24" width="80" height="22" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5" rx="4"/>
+          <text x="28" y="38" fill="#5ae0c0" font-size="9">JMP +5</text>
+          <text x="20" y="60" fill="#7ab8a8" font-size="8">PC = 200</text>
+          <line x1="105" y1="35" x2="135" y2="35" stroke="#f0c040" stroke-width="1.5"/>
+          <rect x="140" y="24" width="50" height="22" fill="#1a2840" stroke="#f0c040" stroke-width="1.5" rx="3"/>
+          <text x="148" y="39" fill="#f0c040" font-size="9">+5</text>
+          <line x1="195" y1="35" x2="225" y2="35" stroke="#2ac8a0" stroke-width="1.5"/>
+          <rect x="230" y="24" width="60" height="22" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5" rx="4"/>
+          <text x="238" y="39" fill="#5ae0c0" font-size="9">PC = 205</text>
+        </svg>
+        <div class="diagram-caption">PC + 5 = 205, where the next instruction is fetched</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 11 – ADDRESSING MODES COMPARISON
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 Addressing Modes</div>
+  <h2>Addressing Modes — Comparison</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Mode</th><th>Operand Meaning</th><th>Example</th><th>Use Case</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Immediate</strong></td><td>Actual value</td><td>LDM #5</td><td>Constants</td></tr>
+      <tr><td><strong>Direct</strong></td><td>Memory address</td><td>LDD 200</td><td>Simple variable access</td></tr>
+      <tr><td><strong>Indirect</strong></td><td>Address of address</td><td>LDI 300</td><td>Pointers</td></tr>
+      <tr><td><strong>Indexed</strong></td><td>Base + index register</td><td>LDX 100</td><td>Arrays</td></tr>
+      <tr><td><strong>Relative</strong></td><td>PC + offset</td><td>JMP +5</td><td>Branching / jumps</td></tr>
+    </tbody>
+  </table>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>You may be asked to <strong>identify</strong> which addressing mode is being used in a given instruction, or to <strong>explain</strong> how a particular mode works. Learn the mnemonic-to-mode mapping: LDM=Immediate, LDD=Direct, LDI=Indirect, LDX=Indexed.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 12 – WRITING LOW-LEVEL CODE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 Low-Level Programming</div>
+  <h2>Writing Low-Level Code</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Common Instructions</h4>
+        <table>
+          <tr><th>Mnemonic</th><th>Meaning</th></tr>
+          <tr><td>LDM #n</td><td>Load immediate value n</td></tr>
+          <tr><td>LDD addr</td><td>Load direct from address</td></tr>
+          <tr><td>LDI addr</td><td>Load indirect from address</td></tr>
+          <tr><td>LDX addr</td><td>Load indexed (base + index)</td></tr>
+          <tr><td>STO addr</td><td>Store accumulator to address</td></tr>
+          <tr><td>ADD #n / ADD addr</td><td>Add to accumulator</td></tr>
+          <tr><td>SUB #n / SUB addr</td><td>Subtract from accumulator</td></tr>
+          <tr><td>CMP #n / CMP addr</td><td>Compare accumulator</td></tr>
+          <tr><td>JMP offset</td><td>Jump to relative offset</td></tr>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>Example: Add two numbers</h4>
+        <div class="code-block asm-code">LDM #10     ; Load 10 into accumulator<br>STO 200     ; Store 10 at address 200<br>LDM #20     ; Load 20 into accumulator<br>ADD 200     ; Add value at address 200 (10)<br>STO 300     ; Store result (30) at address 300</div>
+        <p style="margin-top:4px;">Result: memory[300] = 30.</p>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>You may be asked to <strong>write short low-level programs</strong> or <strong>trace</strong> the execution of assembly code. Remember that <strong>comments</strong> (after ;) are not executed.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 13 – IMPERATIVE (PROCEDURAL) PROGRAMMING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 Imperative Programming</div>
+  <h2>Imperative (Procedural) Programming</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Key Characteristics</h4>
+        <ul>
+          <li>Program is a sequence of <strong>step-by-step instructions</strong></li>
+          <li>Uses <strong>variables</strong> to store data</li>
+          <li>Uses <strong>selection</strong> (IF, CASE) and <strong>iteration</strong> (FOR, WHILE)</li>
+          <li>Uses <strong>procedures</strong> and <strong>functions</strong> to organise code</li>
+          <li>Program state <strong>changes</strong> as instructions execute</li>
+          <li>This is what students are most familiar with from Paper 2/4</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>Example: Pseudocode</h4>
+        <div class="code-block">FUNCTION AddNumbers(a, b)<br>    result &larr; a + b<br>    RETURN result<br>ENDFUNCTION<br><br>OUTPUT AddNumbers(5, 3)   // Output: 8</div>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Imperative Programming:</strong> A programming paradigm where programs consist of step-by-step instructions that change program state.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 14 – PROCEDURES AND FUNCTIONS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 Imperative Programming</div>
+  <h2>Procedures and Functions</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Procedure</th><th>Function</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Returns a value?</strong></td><td>No</td><td>Yes</td></tr>
+      <tr><td><strong>Purpose</strong></td><td>Performs an action</td><td>Computes and returns a result</td></tr>
+      <tr><td><strong>Called by</strong></td><td>CALL procedureName</td><td>variable = functionName(args)</td></tr>
+      <tr><td><strong>Side effects</strong></td><td>May change state (e.g., output, modify global)</td><td>Should avoid side effects (ideally)</td></tr>
+      <tr><td><strong>Example</strong></td><td>PrintReport()</td><td>result = CalculateArea(5, 3)</td></tr>
+    </tbody>
+  </table>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>The key difference: a <strong>function returns a value</strong> and can be used in an expression; a <strong>procedure does not return a value</strong> and is called as a standalone statement.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 15 – INTRODUCTION TO OOP
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 OOP</div>
+  <h2>Object-Oriented Programming (OOP)</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Key Concepts</h4>
+        <ul>
+          <li>Programs are organised around <strong>objects</strong></li>
+          <li>An <strong>object</strong> contains <strong>data</strong> (attributes) and <strong>methods</strong> (behaviours)</li>
+          <li>A <strong>class</strong> is a template/blueprint for creating objects</li>
+          <li>Key principles: <strong>encapsulation, inheritance, polymorphism</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Class:</strong> A blueprint that defines the structure (attributes) and behaviour (methods) that objects of that class will have.</p>
+        <p><strong>Object:</strong> An instance of a class, with its own data values.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Analogy:</strong> A class is like a blueprint for a house. The objects are the actual houses built from that blueprint. Each house has the same structure but different values (different address, colour, etc.).
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 16 – ENCAPSULATION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 OOP</div>
+  <h2>Encapsulation</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Encapsulation</strong> means bundling <strong>data</strong> and <strong>methods</strong> together within a class and <strong>restricting direct access</strong> to some of the object's components.</p>
+        <ul>
+          <li><strong>Private</strong> attributes: accessible only within the class</li>
+          <li><strong>Public</strong> methods: provide controlled access to private data</li>
+          <li>Protects data from <strong>unauthorised modification</strong></li>
+          <li>Also called <strong>information hiding</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>Pseudocode Example</h4>
+        <div class="code-block">CLASS BankAccount<br>    PRIVATE balance : INTEGER<br><br>    PUBLIC METHOD Init()<br>        balance &larr; 0<br>    ENDMETHOD<br><br>    PUBLIC METHOD Deposit(amount)<br>        balance &larr; balance + amount<br>    ENDMETHOD<br><br>    PUBLIC METHOD GetBalance()<br>        RETURN balance<br>    ENDMETHOD<br>ENDCLASS</div>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Encapsulation:</strong> Bundling data and methods within a class and restricting external access to the internal data.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 17 – INHERITANCE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 OOP</div>
+  <h2>Inheritance</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Inheritance</strong> allows a class (child/subclass) to inherit <strong>attributes and methods</strong> from another class (parent/superclass).</p>
+        <ul>
+          <li>The child class can <strong>reuse</strong> code from the parent</li>
+          <li>The child class can <strong>add</strong> new attributes and methods</li>
+          <li>The child class can <strong>override</strong> inherited methods</li>
+          <li>Promotes <strong>code reuse</strong> and establishes a <strong>hierarchy</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>Pseudocode Example</h4>
+        <div class="code-block">CLASS Animal<br>    PUBLIC METHOD Speak()<br>        OUTPUT "Animal sound"<br>    ENDMETHOD<br>ENDCLASS<br><br>CLASS Dog INHERITS Animal<br>    PUBLIC METHOD Speak()<br>        OUTPUT "Woof!"<br>    ENDMETHOD<br>ENDCLASS</div>
+        <p>Dog inherits from Animal and overrides Speak().</p>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Inheritance:</strong> A mechanism where a class acquires the properties and methods of another class.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 18 – POLYMORPHISM
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 OOP</div>
+  <h2>Polymorphism</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Polymorphism</strong> means "many forms" — the same method name can behave <strong>differently</strong> for different classes.</p>
+        <ul>
+          <li>Allows objects of different classes to be treated <strong>uniformly</strong></li>
+          <li>Each class implements the method in its <strong>own way</strong></li>
+          <li>Often used with <strong>inheritance</strong> and <strong>method overriding</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>Polymorphism in Action</h4>
+        <div class="code-block">CLASS Animal<br>    METHOD MakeSound()<br>    ENDMETHOD<br>ENDCLASS<br><br>CLASS Dog INHERITS Animal<br>    METHOD MakeSound()<br>        OUTPUT "Woof"<br>    ENDMETHOD<br>ENDCLASS<br><br>CLASS Cat INHERITS Animal<br>    METHOD MakeSound()<br>        OUTPUT "Meow"<br>    ENDMETHOD<br>ENDCLASS</div>
+        <p>Both Dog and Cat have MakeSound(), but the output is different.</p>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Polymorphism:</strong> The ability of different classes to respond to the same method call in their own way.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 19 – OOP: DESIGNING CLASSES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 OOP</div>
+  <h2>Designing Classes</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Step-by-Step: Design a Student Class</h4>
+    <div class="grid-2">
+      <div>
+        <h4>Identify Attributes</h4>
+        <ul>
+          <li>name (STRING)</li>
+          <li>studentID (INTEGER)</li>
+          <li>grades (ARRAY OF INTEGER)</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Identify Methods</h4>
+        <ul>
+          <li>GetName()</li>
+          <li>CalculateAverage()</li>
+          <li>AddGrade(grade)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="code-block mt-6">CLASS Student<br>    PRIVATE name : STRING<br>    PRIVATE studentID : INTEGER<br>    PRIVATE grades : ARRAY OF INTEGER<br><br>    PUBLIC METHOD Init(n, id)<br>        name &larr; n<br>        studentID &larr; id<br>        grades &larr; []<br>    ENDMETHOD<br><br>    PUBLIC METHOD AddGrade(g)<br>        grades.APPEND(g)<br>    ENDMETHOD<br><br>    PUBLIC METHOD CalculateAverage()<br>        total &larr; 0<br>        FOR each g IN grades<br>            total &larr; total + g<br>        NEXT<br>        RETURN total / LENGTH(grades)<br>    ENDMETHOD<br>ENDCLASS</div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 20 – OOP: CREATING AND USING OBJECTS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 OOP</div>
+  <h2>Creating and Using Objects</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Instantiating and Using Objects in Pseudocode</h4>
+    <div class="code-block">// Create (instantiate) objects<br>alice &larr; NEW Student("Alice", 1001)<br>bob &larr; NEW Student("Bob", 1002)<br><br>// Call methods<br>alice.AddGrade(85)<br>alice.AddGrade(92)<br>alice.AddGrade(78)<br><br>OUTPUT alice.CalculateAverage()   // Output: 85.0<br><br>bob.AddGrade(70)<br>bob.AddGrade(88)<br>OUTPUT bob.CalculateAverage()     // Output: 79.0</div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>To create an object, use <strong>NEW</strong> followed by the class name and constructor parameters. To call a method, use <strong>object.MethodName()</strong>. The dot (.) is used to access an object's methods.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 21 – DECLARATIVE PROGRAMMING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 Declarative Programming</div>
+  <h2>Declarative Programming</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Declarative programming</strong> describes <strong>what</strong> the result should be, not <strong>how</strong> to achieve it.</p>
+        <ul>
+          <li>The programmer defines <strong>facts</strong> and <strong>rules</strong></li>
+          <li>The system uses a <strong>query</strong> (goal) to find a solution</li>
+          <li>The programmer does <strong>not</strong> specify the sequence of steps</li>
+          <li>Examples: <strong>Prolog, SQL,</strong> some parts of functional programming</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Declarative Programming:</strong> A paradigm where the programmer specifies what the result should be, leaving the implementation to the system.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Analogy:</strong> Imperative is like giving someone turn-by-turn driving directions. Declarative is like saying "I want to get to this address" and letting the GPS figure out the route.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 22 – FACTS, RULES AND GOALS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 Declarative Programming</div>
+  <h2>Facts, Rules and Goals</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-3">
+    <div class="card">
+      <h4>Facts</h4>
+      <p>Basic statements that are <strong>true</strong> about the world.</p>
+      <div class="code-block" style="font-size:0.78rem;">parent(alice, bob).<br>parent(bob, carol).<br>male(bob).</div>
+      <p>Facts are the <strong>data</strong> in a declarative program.</p>
+    </div>
+    <div class="card">
+      <h4>Rules</h4>
+      <p><strong>Logical implications</strong> that define new relationships.</p>
+      <div class="code-block" style="font-size:0.78rem;">grandparent(X, Y) :-<br>    parent(X, Z),<br>    parent(Z, Y).</div>
+      <p>X is grandparent of Y if X is parent of Z and Z is parent of Y.</p>
+    </div>
+    <div class="card">
+      <h4>Goals (Queries)</h4>
+      <p><strong>Questions</strong> asked of the system.</p>
+      <div class="code-block" style="font-size:0.78rem;">?- grandparent(alice, carol)<br>// Result: true<br><br>?- parent(X, carol)<br>// Result: X = bob</div>
+      <p>The system searches for answers using the facts and rules.</p>
+    </div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>In exams, you may be asked to <strong>write facts and rules</strong> for a given scenario, or to <strong>predict the output</strong> of a query. Remember that variables start with capital letters in Prolog-style syntax.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 23 – DECLARATIVE WORKED EXAMPLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 Declarative Programming</div>
+  <h2>Declarative Programming — Worked Example</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Scenario: Family Relationships</h4>
+    <div class="grid-2">
+      <div>
+        <h4>Facts</h4>
+        <div class="code-block" style="font-size:0.78rem;">parent(ahmed, becky).<br>parent(ahmed, chen).<br>parent(becky, dave).<br>parent(becky, ella).<br>parent(chen, finn).<br>male(ahmed).<br>male(dave).<br>male(finn).<br>female(becky).<br>female(chen).<br>female(ella).</div>
+      </div>
+      <div>
+        <h4>Rules</h4>
+        <div class="code-block" style="font-size:0.78rem;">sibling(X, Y) :-<br>    parent(Z, X),<br>    parent(Z, Y),<br>    X \= Y.<br><br>grandparent(X, Y) :-<br>    parent(X, Z),<br>    parent(Z, Y).</div>
+        <h4>Queries and Results</h4>
+        <div class="code-block" style="font-size:0.78rem;">?- sibling(becky, chen)<br>   true<br>?- grandparent(ahmed, dave)<br>   true<br>?- parent(X, finn)<br>   X = chen</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 24 – IMPERATIVE VS DECLARATIVE COMPARISON
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 Paradigms</div>
+  <h2>Imperative vs Declarative Comparison</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Imperative</th><th>Declarative</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Focus</strong></td><td>How to solve the problem</td><td>What the problem is</td></tr>
+      <tr><td><strong>Program state</strong></td><td>State changes as code runs</td><td>No mutable state</td></tr>
+      <tr><td><strong>Control flow</strong></td><td>Loops, conditionals</td><td>Recursion, rules</td></tr>
+      <tr><td><strong>Programmer controls</strong></td><td>Sequence of steps</td><td>Logic / relationships</td></tr>
+      <tr><td><strong>Examples</strong></td><td>Pascal, C, Python</td><td>Prolog, SQL</td></tr>
+      <tr><td><strong>Best for</strong></td><td>General-purpose, algorithms</td><td>Logic problems, databases, AI</td></tr>
+    </tbody>
+  </table>
+`);
+
+// ==================================================================
+// SLIDE 25 – PARADIGMS SECTION SUMMARY
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.1 Summary</div>
+  <h2>20.1 Programming Paradigms — Summary</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Low-Level</h4>
+      <p>Assembly language. Direct hardware control. Five addressing modes: immediate, direct, indirect, indexed, relative. Mnemonics like LDM, LDD, LDI, LDX, STO.</p>
+    </div>
+    <div class="card">
+      <h4>Imperative (Procedural)</h4>
+      <p>Step-by-step instructions. Variables, loops, selection, procedures and functions. What most students already know from Paper 2/4.</p>
+    </div>
+    <div class="card">
+      <h4>Object-Oriented (OOP)</h4>
+      <p>Classes and objects. Encapsulation, inheritance, polymorphism. Classes define attributes and methods. Objects are instances of classes. NEW keyword to create objects.</p>
+    </div>
+    <div class="card">
+      <h4>Declarative</h4>
+      <p>Facts, rules, and goals. Programmer says what, not how. Prolog-style syntax. Variables start with uppercase. System uses logical inference.</p>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// ===== SECTION 3: 20.2 FILE PROCESSING AND EXCEPTION HANDLING =====
+// ==================================================================
+
+// ==================================================================
+// SLIDE 26 – FILE PROCESSING: OVERVIEW
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.2 File Processing</div>
+  <h2>File Processing — Overview</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Why File Processing?</h4>
+        <ul>
+          <li>Programs often need to <strong>store data permanently</strong></li>
+          <li>Data in memory is <strong>lost</strong> when the program ends</li>
+          <li>Files provide <strong>persistent storage</strong></li>
+          <li>Files allow data to be <strong>shared</strong> between programs</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Basic File Operations</h4>
+        <ol>
+          <li><strong>Open</strong> the file (specify mode: read, write, append)</li>
+          <li><strong>Read from</strong> or <strong>Write to</strong> the file</li>
+          <li><strong>Close</strong> the file</li>
+        </ol>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>File Handle:</strong> A reference to an open file, used to perform read/write operations. Also called a file pointer or file stream.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Important:</strong> Always <strong>close</strong> a file after using it. Failing to close a file can lead to data loss or corruption, and may prevent other programs from accessing the file.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 27 – FILE OPERATIONS IN PSEUDOCODE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.2 File Processing</div>
+  <h2>File Operations in Pseudocode</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Operation</th><th>Pseudocode</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Open for reading</strong></td><td>fileHandle &larr; OPENFILE("data.txt", "r")</td><td>Opens an existing file for reading</td></tr>
+      <tr><td><strong>Open for writing</strong></td><td>fileHandle &larr; OPENFILE("data.txt", "w")</td><td>Creates/overwrites a file for writing</td></tr>
+      <tr><td><strong>Open for appending</strong></td><td>fileHandle &larr; OPENFILE("data.txt", "a")</td><td>Opens file to add data at the end</td></tr>
+      <tr><td><strong>Read a line</strong></td><td>line &larr; READFILE(fileHandle)</td><td>Reads the next line from the file</td></tr>
+      <tr><td><strong>Write a line</strong></td><td>WRITEFILE(fileHandle, text)</td><td>Writes text to the file</td></tr>
+      <tr><td><strong>Close file</strong></td><td>CLOSEFILE(fileHandle)</td><td>Closes the file</td></tr>
+      <tr><td><strong>Check end of file</strong></td><td>NOT EOF(fileHandle)</td><td>True while more data can be read</td></tr>
+    </tbody>
+  </table>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>In Cambridge pseudocode, <strong>EOF</strong> returns <strong>true</strong> when the end of the file has been reached. Use <strong>WHILE NOT EOF(fileHandle)</strong> to read all lines from a file.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 28 – READING FROM A FILE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.2 File Processing</div>
+  <h2>Reading From a File</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Reading All Lines from a File</h4>
+    <div class="code-block">fileHandle &larr; OPENFILE("students.txt", "r")<br><br>WHILE NOT EOF(fileHandle)<br>    name &larr; READFILE(fileHandle)<br>    OUTPUT name<br>ENDWHILE<br><br>CLOSEFILE(fileHandle)</div>
+    <p style="margin-top:6px;">This reads and outputs every line from students.txt until the end of the file is reached.</p>
+  </div>
+  <div class="common-mistake-box mt-6">
+    <h4>Common Mistake</h4>
+    <p>Forgetting to <strong>close</strong> the file after reading. Also, using <strong>WHILE EOF(fileHandle)</strong> instead of <strong>WHILE NOT EOF(fileHandle)</strong> — the loop will never execute! EOF is true when the end has been reached.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 29 – WRITING TO A FILE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.2 File Processing</div>
+  <h2>Writing to a File</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="worked-example">
+      <h4>Writing (Overwrite Mode)</h4>
+      <div class="code-block">fileHandle &larr; OPENFILE("output.txt", "w")<br><br>WRITEFILE(fileHandle, "Hello")<br>WRITEFILE(fileHandle, "World")<br><br>CLOSEFILE(fileHandle)</div>
+      <p>Creates output.txt and writes two lines. If the file already existed, it is <strong>overwritten</strong>.</p>
+    </div>
+    <div class="worked-example">
+      <h4>Appending to a File</h4>
+      <div class="code-block">fileHandle &larr; OPENFILE("log.txt", "a")<br><br>WRITEFILE(fileHandle, "New entry")<br><br>CLOSEFILE(fileHandle)</div>
+      <p>Opens log.txt for appending. New data is added to the <strong>end</strong> of the existing file.</p>
+    </div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>Know the difference between write ("w") and append ("a") modes: <strong>"w" overwrites</strong> the entire file; <strong>"a" adds data</strong> to the end without removing existing content.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 30 – FILE PROCESSING WORKED EXAMPLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.2 File Processing</div>
+  <h2>File Processing — Worked Example</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Read Numbers from a File, Calculate Sum and Average</h4>
+    <div class="code-block">fileHandle &larr; OPENFILE("numbers.txt", "r")<br>total &larr; 0<br>count &larr; 0<br><br>WHILE NOT EOF(fileHandle)<br>    numStr &larr; READFILE(fileHandle)<br>    num &larr; INT(numStr)<br>    total &larr; total + num<br>    count &larr; count + 1<br>ENDWHILE<br><br>CLOSEFILE(fileHandle)<br><br>average &larr; total / count<br>OUTPUT "Sum: ", total<br>OUTPUT "Average: ", average</div>
+  </div>
+  <p>Assume numbers.txt contains one number per line, e.g.:<br><span class="inline-code">5</span> <span class="inline-code">12</span> <span class="inline-code">8</span> <span class="inline-code">3</span></p>
+`);
+
+// ==================================================================
+// SLIDE 31 – EXCEPTION HANDLING: INTRODUCTION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.2 Exception Handling</div>
+  <h2>Exception Handling — Introduction</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>What Is an Exception?</h4>
+        <p>An <strong>exception</strong> is an <strong>unexpected event</strong> that occurs during program execution.</p>
+        <p>Examples:</p>
+        <ul>
+          <li>Trying to <strong>divide by zero</strong></li>
+          <li>Trying to <strong>open a file</strong> that does not exist</li>
+          <li><strong>Array index out of bounds</strong></li>
+          <li>Invalid <strong>user input</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Why Use Exception Handling?</h4>
+        <ul>
+          <li>Prevents <strong>program crashes</strong></li>
+          <li>Provides <strong>meaningful error messages</strong></li>
+          <li>Separates <strong>error-handling code</strong> from normal code</li>
+          <li>Allows programs to <strong>recover gracefully</strong></li>
+          <li>Enables code to <strong>fail safely</strong> and continue running</li>
+        </ul>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Exception:</strong> An unexpected event that occurs during program execution, which can be handled to prevent the program from crashing.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 32 – TRY, CATCH, THROW
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.2 Exception Handling</div>
+  <h2>Try, Catch, Throw</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Keyword</th><th>Purpose</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>TRY</strong></td><td>Protect code</td><td>Marks a block of code that may throw an exception</td></tr>
+      <tr><td><strong>CATCH</strong></td><td>Handle the error</td><td>Defines how to respond to a specific exception type</td></tr>
+      <tr><td><strong>THROW</strong></td><td>Raise an exception</td><td>Generates (raises) an exception manually when a problem is detected</td></tr>
+    </tbody>
+  </table>
+  <div class="diagram-box mt-6">
+    <svg viewBox="0 0 500 70" style="width:100%; max-width:500px;">
+      <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Exception Handling Flow</text>
+      <rect x="10" y="24" width="120" height="30" fill="#0a2840" stroke="#2ac8a0" stroke-width="1.5" rx="5"/>
+      <text x="28" y="44" fill="#5ae0c0" font-size="11">TRY block</text>
+      <line x1="135" y1="39" x2="175" y2="39" stroke="#f0c040" stroke-width="1.5"/>
+      <text x="148" y="32" fill="#f0c040" font-size="8">No error</text>
+      <rect x="180" y="24" width="130" height="30" fill="#14281a" stroke="#8bc34a" stroke-width="1.5" rx="5"/>
+      <text x="200" y="44" fill="#8bc34a" font-size="11">Continue normally</text>
+      <line x1="135" y1="39" x2="175" y2="55" stroke="#e06060" stroke-width="1.5"/>
+      <text x="148" y="58" fill="#e06060" font-size="8">Error!</text>
+      <rect x="180" y="44" width="130" height="22" fill="#2a1010" stroke="#e06060" stroke-width="1.5" rx="5"/>
+      <text x="220" y="59" fill="#e06060" font-size="10">CATCH block</text>
+    </svg>
+    <div class="diagram-caption">If TRY block executes without error, CATCH is skipped. If an error occurs, the CATCH block handles it.</div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 33 – EXCEPTION HANDLING PSEUDOCODE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.2 Exception Handling</div>
+  <h2>Exception Handling in Pseudocode</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Basic Structure</h4>
+    <div class="code-block">TRY<br>    // Code that may cause an error<br>    fileHandle &larr; OPENFILE("data.txt", "r")<br>    content &larr; READFILE(fileHandle)<br>    CLOSEFILE(fileHandle)<br>CATCH<br>    // Code to handle the error<br>    OUTPUT "File could not be read"<br>ENDTRY</div>
+  </div>
+  <div class="grid-2 mt-6">
+    <div class="card">
+      <h4>Multiple Catch Blocks</h4>
+      <p>Some languages allow catching specific exception types:</p>
+      <div class="code-block" style="font-size:0.78rem;">TRY<br>    // risky code<br>CATCH FileNotFoundException<br>    // handle missing file<br>CATCH DivideByZeroException<br>    // handle division by zero<br>ENDTRY</div>
+    </div>
+    <div class="card">
+      <h4>Using THROW</h4>
+      <p>Manually raise an exception:</p>
+      <div class="code-block" style="font-size:0.78rem;">IF age < 0 THEN<br>    THROW "Invalid age"<br>ENDIF</div>
+      <p>The THROW statement creates and raises an exception, which can be caught by a CATCH block.</p>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 34 – EXCEPTION HANDLING WORKED EXAMPLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.2 Exception Handling</div>
+  <h2>Exception Handling — Worked Example</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Safe Division with Exception Handling</h4>
+    <div class="code-block">FUNCTION SafeDivide(a, b)<br>    TRY<br>        IF b = 0 THEN<br>            THROW "Cannot divide by zero"<br>        ENDIF<br>        result &larr; a / b<br>        RETURN result<br>    CATCH<br>        OUTPUT "Error: Division by zero attempted"<br>        RETURN -1<br>    ENDTRY<br>ENDFUNCTION<br><br>// Main program<br>x &larr; SafeDivide(10, 2)  // Returns 5<br>y &larr; SafeDivide(10, 0)  // Outputs error, returns -1<br>OUTPUT x, y</div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>You may be asked to <strong>write code using exception handling</strong> or to <strong>explain</strong> how TRY-CATCH improves program reliability. Key points: prevents crashes, provides graceful error recovery, separates error handling from normal logic.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 35 – FILE PROCESSING WITH EXCEPTION HANDLING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.2 Exception Handling</div>
+  <h2>File Processing with Exception Handling</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Robust File Reading with TRY-CATCH</h4>
+    <div class="code-block">TRY<br>    fileHandle &larr; OPENFILE("grades.txt", "r")<br>    total &larr; 0<br>    count &larr; 0<br>    <br>    WHILE NOT EOF(fileHandle)<br>        line &larr; READFILE(fileHandle)<br>        score &larr; INT(line)<br>        total &larr; total + score<br>        count &larr; count + 1<br>    ENDWHILE<br>    <br>    CLOSEFILE(fileHandle)<br>    average &larr; total / count<br>    OUTPUT "Average grade: ", average<br>CATCH<br>    OUTPUT "Error reading file. Check the file exists and contains valid numbers."<br>ENDTRY</div>
+  </div>
+  <p>The program handles both file-not-found and invalid-data errors gracefully.</p>
+`);
+
+// ==================================================================
+// SLIDE 36 – FILE PROCESSING AND EXCEPTIONS SUMMARY
+// ==================================================================
+addSlide(`
+  <div class="section-badge">20.2 Summary</div>
+  <h2>20.2 File Processing and Exception Handling — Summary</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>File Processing</h4>
+      <ul>
+        <li>OPENFILE, READFILE, WRITEFILE, CLOSEFILE</li>
+        <li>Modes: "r" (read), "w" (write/overwrite), "a" (append)</li>
+        <li>Use WHILE NOT EOF(fileHandle) to read all lines</li>
+        <li>Always close files after use</li>
+        <li>File handle is used to refer to the open file</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Exception Handling</h4>
+      <ul>
+        <li>TRY block: contains risky code</li>
+        <li>CATCH block: handles errors if they occur</li>
+        <li>THROW: manually raise an exception</li>
+        <li>Prevents crashes and enables graceful recovery</li>
+        <li>TRY-CATCH can be nested for different error types</li>
+        <li>Common use: file operations, user input validation</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 37 – PARADIGMS COMPARISON TABLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Revision</div>
+  <h2>Programming Paradigms — Comparison</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Low-Level</th><th>Imperative</th><th>OOP</th><th>Declarative</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Focus</strong></td><td>Hardware control</td><td>Step-by-step</td><td>Objects &amp; classes</td><td>Logic &amp; rules</td></tr>
+      <tr><td><strong>Data</strong></td><td>Registers, memory</td><td>Variables</td><td>Object attributes</td><td>Facts</td></tr>
+      <tr><td><strong>Program structure</strong></td><td>Instruction sequence</td><td>Procedures/functions</td><td>Classes and objects</td><td>Facts, rules, goals</td></tr>
+      <tr><td><strong>Abstraction</strong></td><td>Low (close to hardware)</td><td>Medium</td><td>High</td><td>High</td></tr>
+      <tr><td><strong>Key concepts</strong></td><td>Addressing modes</td><td>Sequence, selection, iteration</td><td>Encapsulation, inheritance, polymorphism</td><td>Facts, rules, queries</td></tr>
+      <tr><td><strong>Example language</strong></td><td>Assembly</td><td>Pascal, C</td><td>Java, C++</td><td>Prolog, SQL</td></tr>
+    </tbody>
+  </table>
+`);
+
+// ==================================================================
+// SLIDE 38 – EXAM PRACTICE QUESTIONS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Exam Practice</div>
+  <h2>Exam Practice Questions</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>20.1 Programming Paradigms</h4>
+      <ol style="padding-left:16px;">
+        <li>Define the term <strong>programming paradigm</strong>. [2]</li>
+        <li>Explain the difference between <strong>immediate</strong> and <strong>direct</strong> addressing. [3]</li>
+        <li>Describe <strong>indirect addressing</strong> and give an example. [3]</li>
+        <li>Explain the purpose of an <strong>index register</strong> in indexed addressing. [2]</li>
+        <li>State the three main principles of <strong>OOP</strong>. [3]</li>
+        <li>Explain the difference between a <strong>class</strong> and an <strong>object</strong>. [3]</li>
+        <li>Write pseudocode for a class called <strong>Car</strong> with attributes make, model, year and a method DisplayInfo(). [6]</li>
+        <li>Explain <strong>encapsulation</strong> and why it is used. [3]</li>
+        <li>Write a <strong>declarative rule</strong> to define "aunt". [4]</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h4>20.2 File Processing / Exceptions</h4>
+      <ol style="padding-left:16px;">
+        <li>Write pseudocode to <strong>read</strong> all lines from a file and output them. [4]</li>
+        <li>Explain the difference between <strong>"w"</strong> and <strong>"a"</strong> file modes. [2]</li>
+        <li>Write pseudocode to <strong>write</strong> user input to a file. [4]</li>
+        <li>Explain the purpose of <strong>TRY-CATCH</strong> in exception handling. [3]</li>
+        <li>Write code that uses <strong>THROW</strong> to validate user input. [5]</li>
+        <li>Explain why <strong>closing files</strong> after use is important. [2]</li>
+        <li>Write a complete program that reads numbers from a file, calculates the sum, and handles any file errors with TRY-CATCH. [7]</li>
+      </ol>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 39 – FINAL EXAM TIPS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Exam Tips</div>
+  <h2>Final Exam Tips</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>For Low-Level / Addressing Questions</h4>
+      <ul>
+        <li>Know the <strong>five addressing modes</strong> and their symbols (LDM=#, LDD=direct, LDI=indirect, LDX=indexed, JMP=relative)</li>
+        <li>Be able to <strong>trace</strong> assembly code execution</li>
+        <li>Understand how the <strong>accumulator</strong> stores intermediate results</li>
+        <li>Remember <strong>comments</strong> start with ; (semicolon)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>For OOP and Declarative Questions</h4>
+      <ul>
+        <li>Use <strong>CLASS ... ENDCLASS</strong> structure in pseudocode</li>
+        <li>Remember <strong>NEW</strong> creates object instances</li>
+        <li>For inheritance: <strong>INHERITS</strong> keyword</li>
+        <li>For declarative: variables start with <strong>uppercase</strong></li>
+        <li>Facts end with a <strong>full stop</strong> (period)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>For File Processing</h4>
+      <ul>
+        <li>Always check for <strong>EOF</strong> when reading</li>
+        <li>Use <strong>INT(line)</strong> to convert strings to numbers</li>
+        <li>Close files in the <strong>opposite order</strong> you opened them</li>
+        <li>Combine file operations with <strong>TRY-CATCH</strong> for robustness</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>General Programming Tips</h4>
+      <ul>
+        <li>Use meaningful <strong>variable names</strong></li>
+        <li>Add <strong>comments</strong> to explain code</li>
+        <li>Follow Cambridge <strong>pseudocode conventions</strong></li>
+        <li>Read the question carefully — know <strong>how many marks</strong> each part is worth</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 40 – TOPIC 20 SUMMARY
+// ==================================================================
+addSlide(`
+  <div class="section-badge">Topic Summary</div>
+  <h2>Topic 20 — Key Takeaways</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>20.1 Programming Paradigms</h4>
+      <ul>
+        <li><strong>Low-level:</strong> Assembly, direct hardware control, 5 addressing modes</li>
+        <li><strong>Imperative:</strong> Step-by-step, procedures/functions, variables, loops</li>
+        <li><strong>OOP:</strong> Classes, objects, encapsulation, inheritance, polymorphism</li>
+        <li><strong>Declarative:</strong> Facts, rules, goals (Prolog-style)</li>
+        <li>Different paradigms suit <strong>different problems</strong></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>20.2 File Processing &amp; Exceptions</h4>
+      <ul>
+        <li>OPENFILE, READFILE, WRITEFILE, CLOSEFILE</li>
+        <li>Modes: "r" read, "w" write/overwrite, "a" append</li>
+        <li>WHILE NOT EOF(handle) to read all lines</li>
+        <li>TRY-CATCH to handle errors gracefully</li>
+        <li>THROW to manually raise exceptions</li>
+        <li>Always close files after use</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 41 – END SLIDE
+// ==================================================================
+addSlide(`
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+    <div class="section-badge" style="margin-bottom:14px;">Cambridge International AS &amp; A Level — 9618</div>
+    <h1 style="font-size:2.8rem; margin-bottom:8px; color:#5ae0c0;">Further Programming</h1>
+    <div style="width:80px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:18px;"></div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:600px; margin-bottom:20px;">
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Revise paradigms</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Know addressing modes</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Write OOP pseudocode</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">File operations</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">TRY-CATCH</span>
+    </div>
+    <div class="card" style="max-width:500px;">
+      <h4>Ready for Exam Practice</h4>
+      <ul>
+        <li>Know the four programming paradigms</li>
+        <li>Memorise the five addressing modes</li>
+        <li>Practise writing OOP class definitions</li>
+        <li>Know file operations and exception handling</li>
+        <li>Use mark schemes to check wording</li>
+      </ul>
+    </div>
+    <p style="color:#3a6a6a; font-size:0.82rem; margin-top:20px;">\u2190 Revise again | Use the navigation bar \u2192</p>
+  </div>
+`);
+
+// ==================================================================
+// RENDER ALL SLIDES
+// ==================================================================
+renderSlides();
+</script></body>
+</html>

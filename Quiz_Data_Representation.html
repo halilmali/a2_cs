@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AS & A Level 9618 — Data Representation Quiz</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0a0e1a;
+    color: #d0e4ec;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .bg-grid {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      linear-gradient(rgba(42, 200, 176, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(42, 200, 176, 0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: 0; pointer-events: none;
+  }
+  .header {
+    position: relative; z-index: 1;
+    text-align: center; padding: 28px 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .header h1 { font-size: 1.5rem; font-weight: 700; color: #f0faff; }
+  .header h1 span { background: linear-gradient(135deg, #2ac8b0, #80e0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .header .badge { display: inline-block; background: #0a2a24; border: 1px solid #1a8a7a; color: #7ae8d4; padding: 2px 14px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; margin-bottom: 6px; }
+  .header p { font-size: 0.85rem; color: #5a9a8a; margin-top: 4px; }
+  .main { position: relative; z-index: 1; max-width: 780px; width: 100%; margin: 0 auto; padding: 20px; flex: 1; display: flex; flex-direction: column; }
+  #setupScreen { animation: fadeIn 0.4s ease-out; }
+  .setup-card { background: rgba(10,14,26,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 20px 24px; backdrop-filter: blur(10px); margin-bottom: 16px; }
+  .setup-card h2 { font-size: 1.05rem; font-weight: 600; color: #7ae8d4; margin-bottom: 10px; }
+  .setup-card p { font-size: 0.88rem; color: #5a9a8a; line-height: 1.5; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(135deg, #0a3a32, #1a6a5a);
+    border: 1px solid #1a8a7a; color: #7ae8d4;
+    padding: 12px 32px; border-radius: 10px;
+    font-size: 1rem; font-weight: 600; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { background: linear-gradient(135deg, #1a5a4a, #2a8a7a); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(42,200,176,0.2); }
+  .btn-secondary {
+    background: rgba(10,14,26,0.6); border: 1px solid #1a4a42;
+    color: #5a9a8a; padding: 10px 24px; border-radius: 8px;
+    font-size: 0.9rem; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: #2ac8b0; color: #7ae8d4; }
+  .btn-small { font-size:0.82rem; padding:6px 16px; }
+  .stats-section { background:rgba(10,14,26,0.5); border:1px solid rgba(255,255,255,0.04); border-radius:10px; padding:14px 18px; margin-bottom:10px; display:flex; flex-wrap:wrap; gap:20px; align-items:center; }
+  .stats-section .stat-item { display:flex; align-items:center; gap:8px; font-size:0.85rem; }
+  .stats-section .stat-item .stat-num { font-size:1.2rem; font-weight:700; color:#f0faff; }
+  .stats-section .stat-item .stat-label { color:#5a9a8a; }
+  .history-section { max-height:0; overflow:hidden; transition:max-height 0.35s ease; }
+  .history-section.open { max-height:420px; overflow-y:auto; }
+  .history-item { display:flex; justify-content:space-between; padding:7px 10px; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.82rem; }
+  .history-item:last-child { border-bottom:none; }
+  .history-item .h-date { color:#5a9a8a; }
+  .history-item .h-score { font-weight:600; color:#d0e4ec; }
+  .history-item .h-pct { color:#8bc34a; font-weight:600; }
+  .quiz-options { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .quiz-options label { font-size: 0.88rem; color: #5a9a8a; }
+  .quiz-options select {
+    background: #0a0f1e; border: 1px solid #1a4a42; border-radius: 6px;
+    color: #d0e4ec; padding: 6px 10px; font-size: 0.88rem;
+  }
+  .quiz-options select:focus { outline: none; border-color: #2ac8b0; }
+  .topic-chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+  .topic-chip { display: inline-block; background: #0a2a24; border: 1px solid #1a4a42; border-radius: 16px; padding: 4px 12px; font-size: 0.75rem; color: #7ae8d4; }
+  .quiz-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
+  }
+  .quiz-progress { font-size: 0.85rem; color: #5a9a8a; }
+  .quiz-progress strong { color: #d0e4ec; }
+  .quiz-score { font-size: 0.85rem; color: #8bc34a; }
+  .q-type-tag { display: inline-block; padding: 1px 10px; border-radius: 10px; font-size: 0.68rem; font-weight: 600; background: rgba(42,200,176,0.15); color: #7ae8d4; }
+  .progress-bar-wrap { width: 100%; height: 5px; background: #0a0f1e; border-radius: 3px; overflow: hidden; margin-bottom: 16px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #2ac8b0, #80e0ff); transition: width 0.4s ease; border-radius: 3px; }
+  .question-card { background: rgba(10,14,26,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 24px; backdrop-filter: blur(10px); }
+  .question-text { font-size: 1.1rem; font-weight: 600; color: #f0faff; line-height: 1.5; margin-bottom: 18px; }
+  .options-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .option-btn {
+    display: block; width: 100%; text-align: left;
+    padding: 12px 16px; border-radius: 10px;
+    background: rgba(10,14,26,0.4); border: 1px solid rgba(255,255,255,0.06);
+    color: #c0d8e0; font-size: 0.95rem; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .option-btn:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.02); }
+  .option-btn.selected { border-color: #2ac8b0; background: rgba(42,200,176,0.1); }
+  .option-btn.correct { border-color: #8bc34a; background: rgba(139,195,74,0.1); color: #c3e88d; }
+  .option-btn.incorrect { border-color: #e57373; background: rgba(229,115,115,0.1); color: #ffb8b8; }
+  .option-btn.disabled { cursor: default; pointer-events: none; }
+  .option-btn .opt-letter { display: inline-block; width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.04); text-align: center; line-height: 26px; font-size: 0.78rem; font-weight: 600; margin-right: 10px; }
+  .feedback-area {
+    padding: 12px 16px; border-radius: 10px;
+    margin-bottom: 14px; display: none;
+    font-size: 0.88rem; line-height: 1.5;
+  }
+  .feedback-area.correct { display: block; background: rgba(139,195,74,0.08); border: 1px solid rgba(139,195,74,0.2); color: #b8d8a0; }
+  .feedback-area.incorrect { display: block; background: rgba(229,115,115,0.08); border: 1px solid rgba(229,115,115,0.2); color: #e0b0b0; }
+  .feedback-area .fb-label { font-weight: 700; }
+  .q-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .results-card { background: rgba(10,14,26,0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 28px 24px; backdrop-filter: blur(10px); text-align: center; }
+  .results-score { font-size: 3.5rem; font-weight: 800; background: linear-gradient(135deg, #2ac8b0, #80e0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; }
+  .results-label { font-size: 1rem; color: #5a9a8a; margin-top: 4px; }
+  .results-details { display: flex; gap: 20px; justify-content: center; margin: 14px 0; flex-wrap: wrap; }
+  .results-stat { text-align: center; }
+  .results-stat .num { font-size: 1.3rem; font-weight: 700; color: #f0faff; }
+  .results-stat .desc { font-size: 0.76rem; color: #5a7a7a; }
+  .results-msg { font-size: 0.95rem; padding: 10px; border-radius: 8px; margin: 14px 0; }
+  .results-msg.perfect { background: rgba(255,215,0,0.08); color: #ffd700; border: 1px solid rgba(255,215,0,0.15); }
+  .results-msg.great { background: rgba(139,195,74,0.08); color: #8bc34a; border: 1px solid rgba(139,195,74,0.15); }
+  .results-msg.good { background: rgba(240,160,48,0.08); color: #f0a030; border: 1px solid rgba(240,160,48,0.15); }
+  .results-msg.retry { background: rgba(229,115,115,0.08); color: #e57373; border: 1px solid rgba(229,115,115,0.15); }
+  .results-chart { display: flex; gap: 8px; justify-content: center; margin: 14px 0; }
+  .results-chart .bar { width: 36px; border-radius: 4px 4px 0 0; transition: height 0.6s ease; }
+  .results-chart .bar.cb { background: #8bc34a; }
+  .results-chart .bar.ib { background: #e57373; }
+  .review-list { margin-top: 14px; text-align: left; }
+  .review-item { padding: 10px 14px; border-radius: 8px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.04); }
+  .review-item.cr { border-left: 3px solid #8bc34a; }
+  .review-item.ir { border-left: 3px solid #e57373; }
+  .review-item .rq { font-size: 0.85rem; color: #d0e4ec; margin-bottom: 3px; }
+  .review-item .ra { font-size: 0.8rem; }
+  .review-item .ra .ya { color: #e57373; }
+  .review-item .ra .ca { color: #8bc34a; }
+  .footer { position: relative; z-index: 1; text-align: center; padding: 14px; color: #3a5a5a; font-size: 0.72rem; border-top: 1px solid rgba(255,255,255,0.04); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 600px) {
+    .header h1 { font-size: 1.2rem; }
+    .setup-card { padding: 14px; }
+    .question-card { padding: 16px; }
+    .question-text { font-size: 1rem; }
+    .results-score { font-size: 2.5rem; }
+    .quiz-options { flex-direction: column; align-items: stretch; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<header class="header">
+  <div class="badge">Cambridge AS & A Level 9618</div>
+  <h1>📊 <span>Data Representation</span></h1>
+  <p>Interactive Quiz — User-Defined Types, File Organisation, Hashing & Floating-Point</p>
+</header>
+<div class="main">
+  <div id="setupScreen">
+    <div class="setup-card">
+      <h2>🎯 Topic Coverage</h2>
+      <p>This quiz tests your knowledge of user-defined types (enumerated, pointer, record, set, class), file organisation (serial, sequential, indexed sequential, random), hashing algorithms, and floating-point representation (mantissa, exponent, normalisation).</p>
+      <div class="topic-chips">
+        <span class="topic-chip">User-Defined Types</span>
+        <span class="topic-chip">Enumerated</span>
+        <span class="topic-chip">Pointer</span>
+        <span class="topic-chip">Record</span>
+        <span class="topic-chip">Set</span>
+        <span class="topic-chip">Class</span>
+        <span class="topic-chip">File Organisation</span>
+        <span class="topic-chip">Hashing</span>
+        <span class="topic-chip">Floating-Point</span>
+        <span class="topic-chip">Normalisation</span>
+      </div>
+    </div>
+    <div class="setup-card">
+      <h2>⚙️ Quiz Settings</h2>
+      <div class="quiz-options">
+        <label>Questions: <select id="numQuestions">
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+          <option value="0">All (25)</option>
+        </select></label>
+        <label>Type: <select id="questionType">
+          <option value="all" selected>Mixed</option>
+          <option value="mcq">Multiple Choice</option>
+          <option value="truefalse">True / False</option>
+        </select></label>
+      </div>
+    </div>
+    <div class="setup-card" id="statsCard">
+      <h2>📈 Your Progress</h2>
+      <div class="stats-section" id="statsSection">
+        <div class="stat-item">🏆 Best: <span class="stat-num" id="bestScore">—</span></div>
+        <div class="stat-item">📝 Attempts: <span class="stat-num" id="totalAttempts">0</span></div>
+        <div class="stat-item">📊 Average: <span class="stat-num" id="avgScore">—</span></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-secondary btn-small" onclick="toggleHistory()">📜 History</button>
+        <button class="btn-secondary btn-small" onclick="clearHistory()">🗑️ Clear Data</button>
+      </div>
+      <div class="history-section" id="historySection">
+        <div id="historyList"></div>
+        <p id="historyEmpty" style="color:#5a9a8a;font-size:0.82rem;padding:10px;text-align:center;">No attempts yet. Complete a quiz to see your history!</p>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <button class="btn-primary" onclick="startQuiz()">🚀 Start Quiz</button>
+    </div>
+  </div>
+  <div id="quizScreen" style="display:none;">
+    <div class="quiz-header">
+      <div>
+        <span class="quiz-progress">Question <strong id="currentQ">1</strong> of <strong id="totalQ">10</strong></span>
+      </div>
+      <span class="quiz-score">✅ <span id="scoreDisplay">0</span>/<span id="totalCorrect">10</span></span>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="question-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span class="q-type-tag" id="qTypeTag">MCQ</span>
+      </div>
+      <div class="question-text" id="qText">Loading question...</div>
+      <div class="options-list" id="optionsList"></div>
+      <div class="feedback-area" id="feedbackArea"></div>
+      <div class="q-actions">
+        <button class="btn-secondary" id="nextBtn" style="display:none;" onclick="nextQuestion()">Next →</button>
+      </div>
+    </div>
+  </div>
+  <div id="resultsScreen" style="display:none;">
+    <div class="results-card">
+      <div class="results-score" id="finalScore">0%</div>
+      <div class="results-label">Final Score</div>
+      <div class="results-details">
+        <div class="results-stat"><span class="num" id="rCorrect">0</span><div class="desc">Correct</div></div>
+        <div class="results-stat"><span class="num" id="rIncorrect">0</span><div class="desc">Incorrect</div></div>
+        <div class="results-stat"><span class="num" id="rTotal">0</span><div class="desc">Total</div></div>
+      </div>
+      <div class="results-chart" id="resultsChart">
+        <div class="bar cb" id="correctBar" style="height:40px;"></div>
+        <div class="bar ib" id="incorrectBar" style="height:20px;"></div>
+      </div>
+      <div class="results-msg" id="resultsMsg">Great job!</div>
+      <div class="review-list" id="reviewList"></div>
+      <div class="results-actions" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px;">
+        <button class="btn-primary" onclick="resetQuiz()">🔄 Try Again</button>
+        <button class="btn-secondary" onclick="showSetup()">⚙️ Settings</button>
+      </div>
+    </div>
+  </div>
+</div>
+<footer class="footer">Cambridge AS & A Level 9618 &bull; Topic 13: Data Representation &bull; Interactive Quiz</footer>
+<script>
+  const QB = [
+    {type:"mcq", q:"Which of the following is a NON-composite user-defined type?",
+      options:["Record","Set","Enumerated","Class"], correct:2,
+      explain:"Enumerated and pointer types are non-composite — they hold a single value, not built from other types."},
+    {type:"mcq", q:"What does an enumerated type define?",
+      options:["A set of numeric ranges","A fixed set of named values","A pointer to a memory address","A collection of records"], correct:1,
+      explain:"An enumerated type is a user-defined type with a fixed set of named, ordered values (e.g., DayOfWeek = (Mon, Tue, Wed))."},
+    {type:"truefalse", q:"In Cambridge pseudocode, enumerated values can be compared using comparison operators like < and >.",
+      correct:true, explain:"Enumerated types are ordered. Monday < Tuesday < Wednesday, so comparisons like IF today > Monday are valid."},
+    {type:"mcq", q:"A pointer type stores what kind of value?",
+      options:["A floating-point number","A memory address","A string of characters","A Boolean value"], correct:1,
+      explain:"A pointer stores the memory address of another variable, allowing indirect access and dynamic data structures."},
+    {type:"mcq", q:"Which user-defined type is most appropriate for representing a single student with a name, ID, and date of birth?",
+      options:["Enumerated","Set","Record","Pointer"], correct:2,
+      explain:"A record groups related fields of possibly different types, ideal for representing a single entity like a student."},
+    {type:"mcq", q:"What keyword is used to create an instance of a class in Cambridge pseudocode?",
+      options:["CREATE","NEW","INSTANCE","MAKE"], correct:1,
+      explain:"Objects (instances) are created using the NEW keyword: alice ← NEW Student(\"Alice\", 1001)."},
+    {type:"truefalse", q:"A set stores an ordered collection of values and allows duplicates.",
+      correct:false, explain:"A set is an unordered collection of distinct values. Each element can appear at most once, and order is not guaranteed."},
+    {type:"mcq", q:"Which file organisation stores records in the order they were added?",
+      options:["Sequential","Indexed Sequential","Serial","Random"], correct:2,
+      explain:"Serial organisation stores records in the order they were added, typically by appending to the end of the file."},
+    {type:"mcq", q:"Which file organisation uses a key order and requires rewriting the file for insertions?",
+      options:["Serial","Random","Indexed Sequential","Sequential"], correct:3,
+      explain:"Sequential organisation stores records in key order. To insert a new record, the file must be rewritten because there is no space between existing records."},
+    {type:"mcq", q:"What does ISAM stand for?",
+      options:["Indexed Sequential Access Method","Integrated System Access Module","Instruction Set Architecture Model","Indexed Storage Allocation Method"], correct:0,
+      explain:"ISAM (Indexed Sequential Access Method) combines sequential storage with an index for faster direct access."},
+    {type:"truefalse", q:"Random (direct) file organisation requires records to be stored in key order.",
+      correct:false, explain:"Random organisation does not require records to be in key order. A hashing algorithm converts the key directly to a record address."},
+    {type:"mcq", q:"Which hashing method uses the formula: address = key MOD tableSize?",
+      options:["Mid-square method","Digit extraction","Division method","Folding"], correct:2,
+      explain:"The division method uses the modulus operator: address = key MOD tableSize. Choosing a prime table size helps reduce collisions."},
+    {type:"mcq", q:"What is a collision in hashing?",
+      options:["When the table is full","When two keys hash to the same address","When the key is too large","When the file is corrupted"], correct:1,
+      explain:"A collision occurs when two different keys produce the same hash address. Solutions include open addressing and separate chaining."},
+    {type:"truefalse", q:"In a floating-point number, the exponent determines the significant digits.",
+      correct:false, explain:"The mantissa holds the significant digits. The exponent indicates where the binary point is placed (value = mantissa × 2^exponent)."},
+    {type:"mcq", q:"A floating-point number with mantissa 0.1010000 and exponent 0011 (4-bit, two's complement) has what denary value?",
+      options:["5.0","10.0","2.5","0.625"], correct:0,
+      explain:"Mantissa = 0.1010000, exponent = +3. Shift right 3: 0101.000 = 4 + 1 = 5.0"},
+    {type:"mcq", q:"What is the purpose of normalising a floating-point number?",
+      options:["To make the number positive","To maximise precision for a given number of bits","To convert to denary","To increase the exponent"], correct:1,
+      explain:"Normalisation ensures the mantissa is in standard form (first two bits different: 01 for positive, 10 for negative), maximising precision."},
+    {type:"truefalse", q:"For a normalised positive floating-point number, the first two bits of the mantissa must be 01.",
+      correct:true, explain:"For positive numbers, normalisation requires the first bit to be 0 and second bit to be 1. For negative numbers, first bit is 1 and second is 0."},
+    {type:"mcq", q:"What is the denary value of the 8-bit two's complement number 11010110?",
+      options:["-42","-22","214","-106"], correct:0,
+      explain:"In two's complement: -128 + 64 + 0 + 16 + 0 + 4 + 2 + 0 = -128 + 86 = -42"},
+    {type:"mcq", q:"Which of the following is NOT a method of resolving hash collisions?",
+      options:["Open addressing","Separate chaining","Rehashing","Binary search"], correct:3,
+      explain:"Binary search is a searching algorithm, not a collision resolution method. Open addressing, separate chaining, and rehashing are all valid collision resolution techniques."},
+    {type:"truefalse", q:"A class type supports encapsulation through public and private attributes.",
+      correct:true, explain:"A class bundles data (attributes) and methods together and supports encapsulation using PUBLIC and PRIVATE access modifiers."},
+    {type:"mcq", q:"Which file organisation provides the fastest access for individual record lookups?",
+      options:["Serial","Sequential","Indexed Sequential","Random (Direct)"], correct:3,
+      explain:"Random (direct) access uses a hashing algorithm to go straight to the record, providing the fastest individual record access."},
+    {type:"mcq", q:"Overflow in floating-point representation occurs when:",
+      options:["The mantissa is too small","The exponent exceeds the available bit range","The denary value is negative","The file is full"], correct:1,
+      explain:"Overflow occurs when the exponent becomes too large (or too small, underflow) to be represented in the available exponent bits."},
+    {type:"truefalse", q:"A serial file is the best choice for a customer database that requires frequent individual lookups.",
+      correct:false, explain:"Serial files are best for log files and appended data. Random (direct) or indexed sequential files are better for frequent individual lookups."},
+    {type:"mcq", q:"Which of the following is a composite user-defined type?",
+      options:["Enumerated","Pointer","Set","Both A and B"], correct:2,
+      explain:"Composite types (record, set, class) hold multiple values. Non-composite types (enumerated, pointer) hold a single value."},
+    {type:"truefalse", q:"The denary fraction 0.1 (one-tenth) can be represented exactly in binary floating-point.",
+      correct:false, explain:"The denary fraction 0.1 is a recurring fraction in binary (0.0001100110011...). Floating-point rounding errors occur because some denary fractions cannot be represented exactly in binary."},
+  ];
+  let S = { questions: [], current: 0, score: 0, answers: [], answered: false };
+  function startQuiz() {
+    let pool = [...QB];
+    const typeFilter = document.getElementById('questionType').value;
+    if (typeFilter !== 'all') { pool = pool.filter(q => q.type === typeFilter); if (!pool.length) { alert('No questions of this type available.'); return; } }
+    for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+    let numQ = parseInt(document.getElementById('numQuestions').value);
+    if (numQ === 0 || numQ > pool.length) numQ = pool.length;
+    S.questions = pool.slice(0, numQ); S.current = 0; S.score = 0; S.answers = []; S.answered = false;
+    showScreen('quizScreen'); renderQ();
+  }
+  function renderQ() {
+    const q = S.questions[S.current]; const total = S.questions.length; const idx = S.current;
+    document.getElementById('currentQ').textContent = idx + 1; document.getElementById('totalQ').textContent = total;
+    document.getElementById('scoreDisplay').textContent = S.score; document.getElementById('totalCorrect').textContent = total;
+    document.getElementById('progressFill').style.width = (idx / total * 100) + '%'; document.getElementById('qText').textContent = q.q;
+    document.getElementById('qTypeTag').textContent = q.type === 'truefalse' ? 'True / False' : 'Multiple Choice';
+    const container = document.getElementById('optionsList'); container.innerHTML = '';
+    if (q.type === 'truefalse') {
+      ['True','False'].forEach((text,i) => {
+        const btn = document.createElement('button'); btn.className = 'option-btn';
+        btn.innerHTML = '<span class="opt-letter">' + (i===0?'T':'F') + '</span>' + text;
+        btn.dataset.index = i; btn.addEventListener('click',() => selectAns(i)); container.appendChild(btn);
+      });
+    } else {
+      const letters = ['A','B','C','D'];
+      q.options.forEach((text,i) => {
+        const btn = document.createElement('button'); btn.className = 'option-btn';
+        btn.innerHTML = '<span class="opt-letter">' + letters[i] + '</span>' + text;
+        btn.dataset.index = i; btn.addEventListener('click',() => selectAns(i)); container.appendChild(btn);
+      });
+    }
+    const fb = document.getElementById('feedbackArea'); fb.className = 'feedback-area'; fb.textContent = '';
+    document.getElementById('nextBtn').style.display = 'none'; S.answered = false;
+  }
+  function selectAns(index) {
+    if (S.answered) return; S.answered = true;
+    const q = S.questions[S.current]; const buttons = document.querySelectorAll('.option-btn'); const correct = (index === q.correct);
+    buttons.forEach((btn,i) => {
+      btn.classList.add('disabled');
+      if (i === q.correct) btn.classList.add('correct');
+      if (i === index && !correct) btn.classList.add('incorrect');
+      if (i === index) btn.classList.add('selected');
+    });
+    if (correct) S.score++;
+    document.getElementById('scoreDisplay').textContent = S.score;
+    const fb = document.getElementById('feedbackArea');
+    fb.className = 'feedback-area ' + (correct ? 'correct' : 'incorrect');
+    fb.innerHTML = '<span class="fb-label">' + (correct ? '✅ Correct!' : '❌ Incorrect.') + '</span> ' + q.explain;
+    S.answers.push({selected: index, correctIdx: q.correct, question: q, wasCorrect: correct});
+    const nextBtn = document.getElementById('nextBtn'); nextBtn.style.display = 'inline-flex';
+    nextBtn.textContent = (S.current === S.questions.length - 1) ? '📊 See Results' : 'Next →';
+  }
+  function nextQuestion() { if (S.current >= S.questions.length - 1) { showResults(); return; } S.current++; renderQ(); }
+  function showResults() {
+    showScreen('resultsScreen'); const total = S.questions.length; const correct = S.score; const incorrect = total - correct; const pct = total > 0 ? Math.round(correct/total*100) : 0;
+    document.getElementById('finalScore').textContent = pct + '%'; document.getElementById('rCorrect').textContent = correct;
+    document.getElementById('rIncorrect').textContent = incorrect; document.getElementById('rTotal').textContent = total;
+    const maxH = 80; document.getElementById('correctBar').style.height = (total > 0 ? (correct/total)*maxH : 0) + 'px'; document.getElementById('incorrectBar').style.height = (total > 0 ? (incorrect/total)*maxH : 0) + 'px';
+    const msg = document.getElementById('resultsMsg'); msg.className = 'results-msg';
+    if (pct === 100) { msg.textContent = '🏆 Perfect! You\'ve mastered Data Representation!'; msg.classList.add('perfect'); }
+    else if (pct >= 80) { msg.textContent = '🌟 Excellent! Strong understanding of types, files and floating-point.'; msg.classList.add('great'); }
+    else if (pct >= 60) { msg.textContent = '👍 Good effort! Review the incorrect answers below.'; msg.classList.add('good'); }
+    else { msg.textContent = '📚 Keep studying! Review the presentation and try again.'; msg.classList.add('retry'); }
+    const rl = document.getElementById('reviewList'); rl.innerHTML = '<h3 style="font-size:0.92rem;color:#7ae8d4;margin-bottom:8px;">📋 Review Answers</h3>';
+    const letters = ['A','B','C','D'];
+    S.answers.forEach((a,i) => {
+      const item = document.createElement('div'); item.className = 'review-item ' + (a.wasCorrect ? 'cr' : 'ir');
+      const q = a.question; const ya = q.type === 'truefalse' ? (a.selected===0?'True':'False') : letters[a.selected];
+      const ca = q.type === 'truefalse' ? 'True' : letters[a.correctIdx];
+      item.innerHTML = '<div class="rq">' + (i+1) + '. ' + q.q + '</div><div class="ra">' + (a.wasCorrect ? '<span style="color:#8bc34a;">✅ Correct</span>' : '<span class="ya">❌ Your answer: ' + ya + '</span> — <span class="ca">Correct: ' + ca + '</span>') + '</div><div style="color:#5a9a8a;font-size:0.76rem;margin-top:3px;">' + q.explain + '</div>';
+      rl.appendChild(item);
+    });
+    // Save to localStorage
+    saveResult(correct, total);
+  }
+  function resetQuiz() { S.current=0; S.score=0; S.answers=[]; S.answered=false; const pool=S.questions; for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];} showScreen('quizScreen'); renderQ(); }
+  function showSetup() { showScreen('setupScreen'); }
+  function showScreen(id) { ['setupScreen','quizScreen','resultsScreen'].forEach(s=>{const el=document.getElementById(s);if(el)el.style.display=(s===id?'block':'none');}); }
+
+  // ========================================================================
+  // LOCALSTORAGE PERSISTENCE — track scores over time
+  // ========================================================================
+  const QUIZ_TOPIC = 'Data Representation';
+  function getStorageKey() { return 'quiz9618_' + QUIZ_TOPIC.replace(/[^a-zA-Z0-9]/g,'_'); }
+  function getStats() { try { const d = localStorage.getItem(getStorageKey()); return d ? JSON.parse(d) : { best: null, attempts: [] }; } catch(e) { return { best: null, attempts: [] }; } }
+  function saveResult(correct, total) {
+    try {
+      const stats = getStats();
+      const pct = Math.round(correct/total*100);
+      const entry = { date: new Date().toISOString(), correct, total, pct };
+      stats.attempts.push(entry);
+      if (stats.best === null || pct > stats.best.pct) stats.best = entry;
+      localStorage.setItem(getStorageKey(), JSON.stringify(stats));
+      loadStats();
+    } catch(e) { /* localStorage unavailable */ }
+  }
+  function loadStats() {
+    try {
+      const stats = getStats();
+      const bestEl = document.getElementById('bestScore');
+      const attemptsEl = document.getElementById('totalAttempts');
+      const avgEl = document.getElementById('avgScore');
+      if (stats.best) bestEl.textContent = stats.best.correct+'/'+stats.best.total+' ('+stats.best.pct+'%)';
+      else bestEl.textContent = '—';
+      attemptsEl.textContent = stats.attempts.length;
+      if (stats.attempts.length > 0) {
+        const avg = Math.round(stats.attempts.reduce((s,a)=>s+a.pct,0)/stats.attempts.length);
+        avgEl.textContent = avg+'%';
+      } else avgEl.textContent = '—';
+      const hl = document.getElementById('historyList');
+      const he = document.getElementById('historyEmpty');
+      if (hl) {
+        hl.innerHTML = '';
+        if (stats.attempts.length === 0) { if(he) he.style.display = 'block'; }
+        else {
+          if(he) he.style.display = 'none';
+          [...stats.attempts].reverse().slice(0,30).forEach(a => {
+            const d = new Date(a.date);
+            const ds = d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+            const div = document.createElement('div'); div.className = 'history-item';
+            div.innerHTML = '<span class="h-date">'+ds+'</span><span class="h-score">'+a.correct+'/'+a.total+'</span><span class="h-pct">'+a.pct+'%</span>';
+            hl.appendChild(div);
+          });
+        }
+      }
+    } catch(e) { /* ignore */ }
+  }
+  function toggleHistory() { document.getElementById('historySection').classList.toggle('open'); }
+  function clearHistory() {
+    try {
+      if (confirm('Clear all saved quiz history for this topic?')) {
+        localStorage.removeItem(getStorageKey());
+        loadStats();
+        document.getElementById('historySection').classList.remove('open');
+      }
+    } catch(e) { /* ignore */ }
+  }
+  // Init stats on page load
+  document.addEventListener('DOMContentLoaded', loadStats);
+</script>
+</body>
+</html>

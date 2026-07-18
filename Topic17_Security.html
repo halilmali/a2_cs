@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Topic 17: Security — Cambridge 9618</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #080c18;
+    color: #e0e8f0;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+  .presentation { position: relative; width: 100vw; height: 100vh; }
+  .slide {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: none;
+    flex-direction: column;
+    padding: 36px 50px;
+    background: linear-gradient(135deg, #0a0e1e 0%, #101838 50%, #0a0e1e 100%);
+    overflow-y: auto;
+  }
+  .slide.active { display: flex; }
+  .slide::-webkit-scrollbar { width: 6px; }
+  .slide::-webkit-scrollbar-track { background: #0a0e1e; }
+  .slide::-webkit-scrollbar-thumb { background: #1a5a6a; border-radius: 3px; }
+  h1 { font-size: 2.4rem; font-weight: 700; color: #f0f6ff; margin-bottom: 8px; letter-spacing: -0.5px; }
+  h2 { font-size: 1.6rem; font-weight: 600; color: #b8d4ff; margin-bottom: 6px; border-bottom: 2px solid #1a7a6a; padding-bottom: 4px; }
+  h3 { font-size: 1.2rem; font-weight: 600; color: #8bb8ff; margin-bottom: 5px; }
+  h4 { font-size: 1rem; font-weight: 600; color: #5ae0c0; margin-bottom: 4px; }
+  p, li { font-size: 1rem; line-height: 1.5; color: #d0dcec; margin-bottom: 4px; }
+  ul { padding-left: 20px; margin-bottom: 6px; }
+  li { margin-bottom: 2px; }
+  strong { color: #e8f0ff; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 0.88rem; }
+  th { background: #0e2840; color: #5ae0c0; font-weight: 600; padding: 7px 10px; text-align: left; border: 1px solid #1a5a6a; }
+  td { padding: 6px 10px; border: 1px solid #1a3a4a; color: #c8d8ec; }
+  tr:nth-child(even) td { background: #0a0e1e; }
+  tr:nth-child(odd) td { background: #0e1428; }
+  .code-block { font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; background: #080c18; border: 1px solid #1a5a6a; border-radius: 8px; padding: 10px 14px; font-size: 0.82rem; line-height: 1.5; color: #d4e4ff; overflow-x: auto; margin: 6px 0; white-space: pre; }
+  .inline-code { font-family: 'Cascadia Code', 'Consolas', monospace; background: #080c18; color: #5ae0c0; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; border: 1px solid #1a5a6a; }
+  .flex-row { display: flex; flex-direction: row; gap: 16px; }
+  .flex-col { display: flex; flex-direction: column; gap: 6px; }
+  .flex-1 { flex: 1; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
+  .mt-6 { margin-top: 6px; } .mt-8 { margin-top: 8px; } .mt-10 { margin-top: 10px; } .mt-12 { margin-top: 12px; }
+  .mb-6 { margin-bottom: 6px; } .mb-8 { margin-bottom: 8px; } .mb-10 { margin-bottom: 10px; }
+  .text-center { text-align: center; }
+  .card { background: #0a0e1e; border: 1px solid #1a5a6a; border-radius: 10px; padding: 10px 12px; transition: border-color 0.2s; }
+  .card:hover { border-color: #2ac8a0; }
+  .card h4 { color: #5ae0c0; margin-bottom: 3px; }
+  .diagram-box { background: #080c18; border: 1px solid #1a5a6a; border-radius: 10px; padding: 12px; margin: 8px 0; display: flex; flex-direction: column; align-items: center; }
+  .diagram-box svg { max-width: 100%; height: auto; }
+  .diagram-caption { margin-top: 5px; font-size: 0.78rem; color: #7ab8a8; font-style: italic; text-align: center; }
+  .callout { background: #0a0e1e; border-left: 4px solid #f78c6c; padding: 8px 12px; border-radius: 0 6px 6px 0; margin: 5px 0; font-size: 0.9rem; }
+  .callout.info { border-left-color: #2ac8a0; }
+  .callout.warn { border-left-color: #f78c6c; }
+  .callout.success { border-left-color: #8bc34a; }
+  .section-badge { display: inline-block; background: linear-gradient(135deg, #0a2840, #1a5a6a); color: #5ae0c0; padding: 3px 14px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; margin-bottom: 6px; letter-spacing: 0.5px; text-transform: uppercase; border: 1px solid #2a9a8a; }
+  .objectives-list { list-style: none; padding: 0; }
+  .objectives-list li { padding: 6px 10px 6px 30px; background: #080c18; border-left: 3px solid #2ac8a0; margin-bottom: 6px; border-radius: 0 6px 6px 0; position: relative; }
+  .objectives-list li::before { content: "▸"; position: absolute; left: 10px; color: #2ac8a0; font-weight: bold; }
+  .worked-example { background: linear-gradient(135deg, #0c1a20, #0e2828); border: 1px solid #2a9a8a; border-radius: 10px; padding: 12px 16px; margin: 6px 0; }
+  .worked-example h4 { color: #f78c6c; margin-bottom: 5px; }
+  .key-term-box { background: linear-gradient(135deg, #1a0a2e, #2a0a4a); border: 1px solid #6a3aaa; border-radius: 10px; padding: 10px 14px; margin: 6px 0; }
+  .key-term-box h4 { color: #b080f0; } .key-term-box h4::before { content: "🔑 "; }
+  .exam-tip-box { background: linear-gradient(135deg, #1a1a0a, #2a2a0a); border: 1px solid #c8a020; border-radius: 10px; padding: 8px 14px; margin: 6px 0; }
+  .exam-tip-box h4 { color: #f0c040; } .exam-tip-box h4::before { content: "💡 "; }
+  .common-mistake-box { background: linear-gradient(135deg, #2a0a0a, #3a1a0a); border: 1px solid #c04040; border-radius: 10px; padding: 8px 14px; margin: 6px 0; }
+  .common-mistake-box h4 { color: #e06060; } .common-mistake-box h4::before { content: "⚠️ "; }
+  .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 8px 20px; background: rgba(8,12,24,0.94); backdrop-filter: blur(10px); border-top: 1px solid #1a3a4a; z-index: 100; }
+  .nav-bar button { background: #0e2840; border: 1px solid #1a5a6a; color: #5ae0c0; padding: 6px 16px; border-radius: 6px; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+  .nav-bar button:hover { background: #1a5a6a; }
+  .nav-bar button:disabled { opacity: 0.35; cursor: default; }
+  .nav-bar .slide-counter { color: #7ab8a8; font-size: 0.82rem; min-width: 80px; text-align: center; }
+  .nav-bar .progress-dots { display: flex; gap: 3px; flex-wrap: wrap; max-width: 400px; justify-content: center; }
+  .nav-bar .dot { width: 6px; height: 6px; border-radius: 50%; background: #1a3a4a; border: none; cursor: pointer; padding: 0; transition: background 0.2s; }
+  .nav-bar .dot.active { background: #2ac8a0; }
+  .nav-bar .dot:hover { background: #3aaa7a; }
+  .slide-number { position: absolute; bottom: 48px; right: 20px; color: #1a2a3a; font-size: 0.78rem; font-weight: 600; z-index: 1; }
+  .kbd-hint { position: fixed; bottom: 52px; right: 16px; color: #2a5a5a; font-size: 0.7rem; z-index: 90; }
+  .chip-group { display: flex; gap: 6px; flex-wrap: wrap; margin: 5px 0; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; background: #080c18; border: 1px solid #1a5a6a; border-radius: 20px; padding: 3px 10px; font-size: 0.78rem; color: #5ae0c0; }
+  .tag { display: inline-block; background: #0e2840; color: #5ae0c0; padding: 2px 10px; border-radius: 12px; font-size: 0.72rem; font-weight: 600; border: 1px solid #1a5a6a; margin-right: 3px; }
+  @media (max-width: 900px) { .slide { padding: 20px 18px; } h1 { font-size: 1.6rem; } h2 { font-size: 1.2rem; } h3 { font-size: 1rem; } .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } .flex-row { flex-direction: column; } .nav-bar .progress-dots { max-width: 200px; } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .slide.active > * { animation: fadeIn 0.35s ease-out; }
+</style>
+</head>
+<body>
+<div class="presentation" id="presentation"></div>
+
+<div class="nav-bar">
+  <button id="prevBtn" onclick="changeSlide(-1)">◀ Prev</button>
+  <span class="slide-counter" id="slideCounter">1 / 1</span>
+  <div class="progress-dots" id="progressDots"></div>
+  <button id="nextBtn" onclick="changeSlide(1)">Next ▶</button>
+</div>
+<div class="kbd-hint">← → arrow keys to navigate</div>
+
+<script>
+const slides = [];
+function addSlide(html) { slides.push(html); }
+
+function renderSlides() {
+  const container = document.getElementById('presentation');
+  slides.forEach((html, i) => {
+    const div = document.createElement('div');
+    div.className = 'slide' + (i === 0 ? ' active' : '');
+    div.dataset.slide = i + 1;
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+  renderDots();
+  updateNav();
+}
+
+function renderDots() {
+  const dots = document.getElementById('progressDots');
+  if (!dots) return;
+  dots.innerHTML = '';
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'dot' + (i === currentSlide ? ' active' : '');
+    dot.onclick = () => goToSlide(i);
+    dots.appendChild(dot);
+  });
+}
+
+let currentSlide = 0;
+
+function changeSlide(dir) {
+  const next = currentSlide + dir;
+  if (next < 0 || next >= slides.length) return;
+  goToSlide(next);
+}
+
+function goToSlide(idx) {
+  const all = document.querySelectorAll('.slide');
+  all.forEach(s => s.classList.remove('active'));
+  all[idx].classList.add('active');
+  currentSlide = idx;
+  const counter = document.getElementById('slideCounter');
+  if (counter) counter.textContent = (idx + 1) + ' / ' + slides.length;
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === slides.length - 1;
+  renderDots();
+  all[idx].scrollTop = 0;
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+});
+
+function updateNav() {
+  const counter = document.getElementById('slideCounter');
+  if (counter) counter.textContent = '1 / ' + slides.length;
+  document.getElementById('prevBtn').disabled = true;
+  if (slides.length <= 1) document.getElementById('nextBtn').disabled = true;
+}
+
+// ==================================================================
+// ALL SLIDES START HERE
+// ==================================================================
+
+// ==================================================================
+// SLIDE 1 – TITLE SLIDE
+// ==================================================================
+addSlide(`
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+    <div class="section-badge" style="margin-bottom:14px;">Cambridge International AS &amp; A Level — 9618</div>
+    <h1 style="font-size:3rem; margin-bottom:6px;">Topic 17</h1>
+    <h1 style="font-size:2.6rem; margin-bottom:8px; color:#5ae0c0;">Security</h1>
+    <div style="width:80px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:18px;"></div>
+    <h3 style="margin-bottom:12px;">17.1 Encryption, Encryption Protocols and Digital Certificates</h3>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:700px;">
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Symmetric Encryption</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Asymmetric Encryption</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">SSL/TLS</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Digital Certificates</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Digital Signatures</span>
+      <span class="tag" style="font-size:0.85rem; padding:4px 16px;">Quantum Cryptography</span>
+    </div>
+    <div style="margin-top:24px; text-align:left; max-width:650px;">
+      <h4 style="color:#b8d4ff; margin-bottom:8px;">Learning Objectives:</h4>
+      <ul>
+        <li>Explain symmetric and asymmetric key cryptography</li>
+        <li>Describe how public and private keys are used</li>
+        <li>Explain how to send private and verified messages</li>
+        <li>Understand quantum cryptography</li>
+        <li>Explain the purpose and use of SSL/TLS</li>
+        <li>Explain digital certificates and certificate authorities</li>
+        <li>Explain how digital signatures are produced and verified</li>
+      </ul>
+    </div>
+    <p style="color:#3a6a6a; font-size:0.82rem; margin-top:20px;">Press <span class="inline-code">→</span> or click navigation to begin</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 2 – WHY IS ENCRYPTION NEEDED?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Encryption</div>
+  <h2>Why Is Encryption Needed?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>The Problem</h4>
+        <ul>
+          <li>Data often travels across <strong>public or shared networks</strong></li>
+          <li>Attackers may <strong>intercept</strong> data (eavesdropping)</li>
+          <li>Data may be <strong>read, copied, modified or impersonated</strong></li>
+          <li><strong>Sensitive data</strong> must be protected</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Examples of Sensitive Data</h4>
+        <ul>
+          <li>Passwords and login credentials</li>
+          <li>Bank details and payment information</li>
+          <li>Medical records</li>
+          <li>Personal messages and emails</li>
+          <li>Login tokens and session cookies</li>
+          <li>Confidential business documents</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Confidentiality:</strong> Ensuring that only authorised people can read data. Encryption is the primary method of maintaining confidentiality over networks.</p>
+      </div>
+      <div class="diagram-box mt-6">
+        <svg viewBox="0 0 300 100" style="width:100%; max-width:300px;">
+          <rect x="8" y="8" width="80" height="30" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="18" y="28" fill="#5ae0c0" font-size="9" font-weight="600">Sender</text>
+          <rect x="110" y="8" width="80" height="30" rx="4" fill="#1a1a0a" stroke="#e06060" stroke-width="1.5"/>
+          <text x="112" y="28" fill="#e06060" font-size="9" font-weight="600">Attacker</text>
+          <rect x="210" y="8" width="80" height="30" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="218" y="28" fill="#5ae0c0" font-size="9" font-weight="600">Receiver</text>
+          <line x1="88" y1="23" x2="110" y2="23" stroke="#4a7ac8" stroke-width="1.5"/>
+          <line x1="190" y1="23" x2="210" y2="23" stroke="#4a7ac8" stroke-width="1.5"/>
+          <text x="100" y="60" fill="#b8d4ff" font-size="7">Encrypted data protects</text>
+          <text x="100" y="72" fill="#b8d4ff" font-size="7">against intercepting attackers</text>
+        </svg>
+        <div class="diagram-caption">Encryption protects data from attackers who may intercept it in transit</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 3 – KEY TERMS: PLAIN TEXT AND CIPHER TEXT
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Encryption</div>
+  <h2>Key Terms — Plain Text and Cipher Text</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definitions</h4>
+        <ul>
+          <li><strong>Plain text:</strong> Original readable data before encryption</li>
+          <li><strong>Cipher text:</strong> Scrambled unreadable data after encryption</li>
+          <li><strong>Encryption:</strong> Converting plain text into cipher text</li>
+          <li><strong>Decryption:</strong> Converting cipher text back into plain text</li>
+          <li><strong>Key:</strong> A value used by an encryption algorithm to encrypt or decrypt</li>
+        </ul>
+      </div>
+      <div class="worked-example mt-6">
+        <h4>Example</h4>
+        <div class="code-block" style="font-size:0.8rem;">
+Plain text:  "MEET AT 5"
+Cipher text: "XQ91#KZ"
+        </div>
+        <p>The actual transformation uses a mathematical algorithm and a key — not random scrambling.</p>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 320 120" style="width:100%; max-width:320px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Encryption Process</text>
+          <rect x="8" y="24" width="70" height="30" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="14" y="44" fill="#5ae0c0" font-size="8" font-weight="600">Plain Text</text>
+          <text x="82" y="44" fill="#b8d4ff" font-size="14">→</text>
+          <rect x="100" y="24" width="90" height="30" rx="4" fill="#1a2840" stroke="#f0c040" stroke-width="1.5"/>
+          <text x="114" y="40" fill="#f0c040" font-size="7" font-weight="600">Encryption</text>
+          <text x="114" y="50" fill="#f0c040" font-size="7" font-weight="600">(algorithm + key)</text>
+          <text x="194" y="44" fill="#b8d4ff" font-size="14">→</text>
+          <rect x="212" y="24" width="70" height="30" rx="4" fill="#2a1a0a" stroke="#e06060" stroke-width="1.5"/>
+          <text x="218" y="44" fill="#e06060" font-size="8" font-weight="600">Cipher Text</text>
+          <text x="8" y="90" fill="#b8d4ff" font-size="9" font-weight="600">Decryption Process</text>
+          <rect x="8" y="100" width="70" height="30" rx="4" fill="#2a1a0a" stroke="#e06060" stroke-width="1.5"/>
+          <text x="14" y="120" fill="#e06060" font-size="8" font-weight="600">Cipher Text</text>
+          <text x="82" y="120" fill="#b8d4ff" font-size="14">→</text>
+          <rect x="100" y="100" width="90" height="30" rx="4" fill="#1a2840" stroke="#f0c040" stroke-width="1.5"/>
+          <text x="114" y="116" fill="#f0c040" font-size="7" font-weight="600">Decryption</text>
+          <text x="114" y="126" fill="#f0c040" font-size="7" font-weight="600">(algorithm + key)</text>
+          <text x="194" y="120" fill="#b8d4ff" font-size="14">→</text>
+          <rect x="212" y="100" width="70" height="30" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="218" y="120" fill="#5ae0c0" font-size="8" font-weight="600">Plain Text</text>
+        </svg>
+        <div class="diagram-caption">Encryption and decryption are inverse processes using an algorithm and key</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 4 – ENCRYPTION ALGORITHMS AND KEYS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Encryption</div>
+  <h2>Encryption Algorithms and Keys</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Key Points</h4>
+        <ul>
+          <li>An <strong>encryption algorithm</strong> is a set of rules or mathematical steps</li>
+          <li>The <strong>key</strong> controls the exact output of the algorithm</li>
+          <li>Same algorithm with <strong>different keys</strong> produces different cipher text</li>
+          <li>Strong encryption depends on both a secure algorithm <strong>and</strong> a secret/private key</li>
+        </ul>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Important:</strong> The algorithm is often <strong>public</strong> (e.g., AES, RSA). The security comes from keeping the correct <strong>key</strong> secret.
+      </div>
+    </div>
+    <div>
+      <div class="worked-example">
+        <h4>Analogy: Lock and Key</h4>
+        <p>The encryption algorithm is like a <strong>lock mechanism</strong> — anyone can know how the lock works.</p>
+        <p style="margin-top:4px;">The <strong>key</strong> is the actual physical key that opens the lock. As long as the key is secret, the locked box is secure — even if everyone knows how the lock works.</p>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>Do NOT write “encryption hides the data by making it invisible.” Instead, say it <strong>converts plain text into cipher text</strong> using an algorithm and key.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 5 – WHAT IS SYMMETRIC KEY CRYPTOGRAPHY?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Symmetric Encryption</div>
+  <h2>What Is Symmetric Key Cryptography?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Symmetric key cryptography</strong> uses the <strong>same secret key</strong> for both encryption and decryption.</p>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Symmetric key:</strong> One shared secret key used by both sender and receiver for encryption and decryption.</p>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 340 140" style="width:100%; max-width:340px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Symmetric Encryption</text>
+          <rect x="8" y="24" width="70" height="28" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="14" y="42" fill="#5ae0c0" font-size="8" font-weight="600">Plain Text</text>
+          <text x="82" y="42" fill="#b8d4ff" font-size="12">→</text>
+          <rect x="98" y="24" width="80" height="28" rx="4" fill="#1a2840" stroke="#f0c040" stroke-width="1.5"/>
+          <text x="104" y="42" fill="#f0c040" font-size="8" font-weight="600">Encrypt</text>
+          <text x="182" y="42" fill="#b8d4ff" font-size="12">→</text>
+          <rect x="198" y="24" width="70" height="28" rx="4" fill="#2a1a0a" stroke="#e06060" stroke-width="1.5"/>
+          <text x="204" y="42" fill="#e06060" font-size="8" font-weight="600">Cipher Text</text>
+          <text x="140" y="62" fill="#f0c040" font-size="6">↓ Same Secret Key</text>
+          <rect x="8" y="76" width="70" height="28" rx="4" fill="#2a1a0a" stroke="#e06060" stroke-width="1.5"/>
+          <text x="14" y="94" fill="#e06060" font-size="8" font-weight="600">Cipher Text</text>
+          <text x="82" y="94" fill="#b8d4ff" font-size="12">→</text>
+          <rect x="98" y="76" width="80" height="28" rx="4" fill="#1a2840" stroke="#f0c040" stroke-width="1.5"/>
+          <text x="104" y="94" fill="#f0c040" font-size="8" font-weight="600">Decrypt</text>
+          <text x="140" y="114" fill="#f0c040" font-size="6">↓ Same Secret Key</text>
+          <text x="182" y="94" fill="#b8d4ff" font-size="12">→</text>
+          <rect x="198" y="76" width="70" height="28" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="204" y="94" fill="#5ae0c0" font-size="8" font-weight="600">Plain Text</text>
+        </svg>
+        <div class="diagram-caption">Same key is used for both encryption and decryption</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 6 – SYMMETRIC ENCRYPTION STEP-BY-STEP
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Symmetric Encryption</div>
+  <h2>Symmetric Encryption — Step by Step</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Scenario: Alice wants to send Bob a private message</h4>
+    <ol>
+      <li>Alice and Bob already <strong>share the same secret key</strong> (they agreed on it earlier through a secure channel)</li>
+      <li>Alice encrypts the plain text using the <strong>secret key</strong></li>
+      <li>The <strong>cipher text</strong> is sent across the network</li>
+      <li>Bob decrypts the cipher text using the <strong>same secret key</strong></li>
+      <li>Bob reads the original <strong>plain text</strong></li>
+    </ol>
+  </div>
+  <div class="diagram-box mt-6">
+    <svg viewBox="0 0 400 70" style="width:100%; max-width:400px;">
+      <rect x="8" y="8" width="60" height="24" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+      <text x="14" y="24" fill="#5ae0c0" font-size="8" font-weight="600">Alice</text>
+      <text x="72" y="24" fill="#b8d4ff" font-size="12">→</text>
+      <rect x="88" y="8" width="80" height="24" rx="4" fill="#2a1a0a" stroke="#e06060" stroke-width="1.5"/>
+      <text x="94" y="24" fill="#e06060" font-size="8" font-weight="600">Encrypted</text>
+      <text x="172" y="24" fill="#b8d4ff" font-size="12">→</text>
+      <rect x="188" y="8" width="100" height="24" rx="4" fill="#1a1a0a" stroke="#f78c6c" stroke-width="1.5"/>
+      <text x="194" y="24" fill="#f78c6c" font-size="8" font-weight="600">Network (public)</text>
+      <text x="292" y="24" fill="#b8d4ff" font-size="12">→</text>
+      <rect x="308" y="8" width="80" height="24" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+      <text x="314" y="24" fill="#5ae0c0" font-size="8" font-weight="600">Bob</text>
+      <text x="100" y="52" fill="#b8d4ff" font-size="7">🔒 Attacker intercepts but cannot read without the key</text>
+    </svg>
+    <div class="diagram-caption">The attacker sees cipher text but cannot decrypt without the shared secret key</div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 7 – BENEFITS AND DRAWBACKS OF SYMMETRIC
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Symmetric Encryption</div>
+  <h2>Symmetric Encryption — Benefits and Drawbacks</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>✅ Benefits</h4>
+      <ul>
+        <li><strong>Fast</strong> encryption and decryption</li>
+        <li><strong>Efficient</strong> for large amounts of data</li>
+        <li>Uses fewer <strong>processing resources</strong></li>
+        <li>Suitable for encrypting <strong>files, databases</strong> and bulk data</li>
+        <li><strong>Simpler</strong> to implement in hardware/software</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>❌ Drawbacks</h4>
+      <ul>
+        <li><strong>Key distribution problem</strong> — sender and receiver must share the secret key securely</li>
+        <li>If the key is <strong>intercepted</strong>, all messages can be decrypted</li>
+        <li>Many <strong>keys to manage</strong> if communicating with many parties</li>
+        <li>Does not prove <strong>who sent the message</strong> by itself</li>
+      </ul>
+    </div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>The main weakness of symmetric encryption is <strong>not the algorithm</strong>. It is the problem of <strong>securely sharing the secret key</strong> between sender and receiver.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 8 – COMMON USES OF SYMMETRIC ENCRYPTION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Symmetric Encryption</div>
+  <h2>Common Uses of Symmetric Encryption</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>🔐 Everyday Examples</h4>
+      <ul>
+        <li>Encrypting files on a <strong>hard drive</strong> (e.g., BitLocker, FileVault)</li>
+        <li>Encrypting <strong>databases</strong> containing sensitive information</li>
+        <li>Encrypting <strong>VPN</strong> traffic</li>
+        <li>Encrypting data after a secure <strong>session key</strong> has been established (e.g., TLS)</li>
+        <li><strong>Wi-Fi</strong> encryption (WPA2/WPA3)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Key Point</h4>
+      <p>Symmetric encryption is often used for the <strong>actual bulk data transfer</strong> after a secure session key has been agreed, because it is <strong>fast and efficient</strong>.</p>
+      <p style="margin-top:6px;">Even in HTTPS, the majority of the data is encrypted using symmetric encryption — the asymmetric is used only for the initial key exchange.</p>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 9 – WHAT IS ASYMMETRIC KEY CRYPTOGRAPHY?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Asymmetric Encryption</div>
+  <h2>What Is Asymmetric Key Cryptography?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Asymmetric key cryptography</strong> uses a <strong>pair of mathematically related keys</strong>: a <strong>public key</strong> and a <strong>private key</strong>.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Key Pair Properties</h4>
+        <ul>
+          <li>The <strong>public key</strong> can be shared with anyone</li>
+          <li>The <strong>private key</strong> must be kept secret by its owner</li>
+          <li>Data encrypted with one key can only be decrypted with the <strong>matching key</strong></li>
+          <li>It is <strong>computationally infeasible</strong> to derive the private key from the public key</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Terms</h4>
+        <p><strong>Public key:</strong> A key that can be shared openly with anyone.</p>
+        <p><strong>Private key:</strong> A secret key known only to its owner, never shared.</p>
+      </div>
+      <div class="diagram-box mt-6">
+        <svg viewBox="0 0 280 70" style="width:100%; max-width:280px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Key Pair</text>
+          <rect x="8" y="24" width="120" height="28" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="20" y="44" fill="#5ae0c0" font-size="9" font-weight="600">🔓 Public Key</text>
+          <text x="136" y="44" fill="#b8d4ff" font-size="14">↔</text>
+          <rect x="156" y="24" width="120" height="28" rx="4" fill="#2a1a0a" stroke="#e06060" stroke-width="1.5"/>
+          <text x="168" y="44" fill="#e06060" font-size="9" font-weight="600">🔑 Private Key</text>
+        </svg>
+        <div class="diagram-caption">Mathematically linked pair — one cannot be deduced from the other</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 10 – PUBLIC AND PRIVATE KEY PAIR
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Asymmetric Encryption</div>
+  <h2>Public and Private Key Pair</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>How the Key Pair Works</h4>
+        <ul>
+          <li>Each user or organisation generates a <strong>key pair</strong></li>
+          <li>The <strong>public key</strong> is distributed to others — published openly</li>
+          <li>The <strong>private key</strong> is stored securely and <strong>never shared</strong></li>
+          <li>The two keys are <strong>mathematically linked</strong> but it must be computationally infeasible to derive the private key from the public key</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="diagram-box">
+        <svg viewBox="0 0 300 100" style="width:100%; max-width:300px;">
+          <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Organisation Key Distribution</text>
+          <rect x="8" y="24" width="130" height="30" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+          <text x="14" y="44" fill="#5ae0c0" font-size="10" font-weight="600">🔓 Public Key</text>
+          <text x="142" y="44" fill="#b8d4ff" font-size="12">→</text>
+          <text x="156" y="44" fill="#7ab8a8" font-size="8">Published openly</text>
+          <text x="156" y="56" fill="#7ab8a8" font-size="8">(website, directory)</text>
+          <rect x="8" y="74" width="130" height="30" rx="4" fill="#2a1a0a" stroke="#e06060" stroke-width="1.5"/>
+          <text x="14" y="94" fill="#e06060" font-size="10" font-weight="600">🔑 Private Key</text>
+          <text x="142" y="94" fill="#b8d4ff" font-size="12">→</text>
+          <text x="156" y="94" fill="#7ab8a8" font-size="8">Kept secret on server</text>
+        </svg>
+        <div class="diagram-caption">Public key is shared freely; private key is kept secret</div>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 11 – SENDING A PRIVATE MESSAGE (ASYMMETRIC)
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Asymmetric Encryption</div>
+  <h2>Sending a Private Message Using Asymmetric Keys</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Scenario: A customer sends confidential bank details to their bank</h4>
+    <ol>
+      <li>The bank <strong>publishes its public key</strong> (on its website, in a directory)</li>
+      <li>The customer <strong>gets the bank's public key</strong></li>
+      <li>The customer <strong>encrypts the message</strong> using the bank's public key</li>
+      <li>The encrypted message is <strong>sent</strong> to the bank</li>
+      <li>The bank <strong>decrypts</strong> using its <strong>private key</strong> — only the bank can do this</li>
+    </ol>
+  </div>
+  <div class="diagram-box mt-6">
+    <svg viewBox="0 0 360 80" style="width:100%; max-width:360px;">
+      <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Private Message Flow</text>
+      <rect x="8" y="22" width="70" height="20" rx="3" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+      <text x="14" y="36" fill="#5ae0c0" font-size="7" font-weight="600">Customer</text>
+      <rect x="8" y="46" width="70" height="18" rx="3" fill="#1a2840" stroke="#f0c040" stroke-width="1"/>
+      <text x="14" y="58" fill="#f0c040" font-size="6">Bank's pub key</text>
+      <text x="82" y="44" fill="#b8d4ff" font-size="14">→</text>
+      <rect x="100" y="22" width="80" height="40" rx="3" fill="#2a1a0a" stroke="#e06060" stroke-width="1"/>
+      <text x="106" y="42" fill="#e06060" font-size="7" font-weight="600">Encrypted</text>
+      <text x="106" y="54" fill="#e06060" font-size="7" font-weight="600">Message</text>
+      <text x="184" y="44" fill="#b8d4ff" font-size="14">→</text>
+      <rect x="202" y="22" width="70" height="18" rx="3" fill="#2a1a0a" stroke="#e06060" stroke-width="1"/>
+      <text x="208" y="36" fill="#e06060" font-size="7">Network</text>
+      <text x="184" y="70" fill="#b8d4ff" font-size="14">→</text>
+      <rect x="202" y="52" width="70" height="18" rx="3" fill="#1a1a0a" stroke="#f78c6c" stroke-width="1"/>
+      <text x="208" y="64" fill="#f78c6c" font-size="6">🔒 Attacker</text>
+      <text x="276" y="44" fill="#b8d4ff" font-size="14">→</text>
+      <rect x="294" y="22" width="60" height="20" rx="3" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+      <text x="298" y="36" fill="#5ae0c0" font-size="7" font-weight="600">Bank</text>
+      <rect x="294" y="46" width="60" height="18" rx="3" fill="#2a1a0a" stroke="#f0c040" stroke-width="1"/>
+      <text x="298" y="58" fill="#f0c040" font-size="6">Private key</text>
+    </svg>
+    <div class="diagram-caption">Anyone can encrypt using bank's public key; only the bank can decrypt with its private key</div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 12 – SOLVING THE KEY DISTRIBUTION PROBLEM
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Asymmetric Encryption</div>
+  <h2>Why Public-Key Encryption Solves the Key Distribution Problem</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>The Problem It Solves</h4>
+        <ul>
+          <li>With symmetric encryption, both parties must <strong>share a secret key</strong> — but how do you send the key securely in the first place?</li>
+          <li>With asymmetric encryption, the <strong>encryption key can be shared publicly</strong></li>
+          <li>The <strong>private decryption key is never transmitted</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Key distribution problem:</strong> The challenge of securely sharing encryption keys between parties who may have no prior secure channel.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Key insight:</strong> An attacker can know the public key but still cannot decrypt the message. This makes asymmetric encryption ideal for secure communication with <strong>strangers</strong> over the internet.
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>For a private message to an organisation, <strong>encrypt using the receiver's public key</strong>, not the sender's private key. This is a common exam mistake.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 13 – BENEFITS AND DRAWBACKS OF ASYMMETRIC
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Asymmetric Encryption</div>
+  <h2>Asymmetric Encryption — Benefits and Drawbacks</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>✅ Benefits</h4>
+      <ul>
+        <li><strong>Solves the key distribution problem</strong></li>
+        <li>Public key can be <strong>shared openly</strong></li>
+        <li>Supports secure communication with <strong>unknown parties</strong></li>
+        <li>Can be used for <strong>authentication</strong> and digital signatures</li>
+        <li>Enables <strong>non-repudiation</strong> (sender cannot deny signing)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>❌ Drawbacks</h4>
+      <ul>
+        <li><strong>Slower</strong> than symmetric encryption</li>
+        <li>Requires more <strong>processing power</strong></li>
+        <li>Needs a way to prove that a public key really belongs to the claimed owner (digital certificates)</li>
+        <li>Usually not used alone for encrypting large amounts of data</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout info mt-6">
+    <strong>Key idea:</strong> Asymmetric encryption is often used to exchange a <strong>symmetric session key</strong>, then symmetric encryption is used for the main data transfer.
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 14 – SYMMETRIC VS ASYMMETRIC COMPARISON
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Encryption</div>
+  <h2>Symmetric vs Asymmetric — Comparison</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Symmetric</th><th>Asymmetric</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Keys used</strong></td><td>One shared secret key</td><td>Public/private key pair</td></tr>
+      <tr><td><strong>Encryption key</strong></td><td>Same as decryption key</td><td>Different but mathematically related</td></tr>
+      <tr><td><strong>Speed</strong></td><td>Faster</td><td>Slower</td></tr>
+      <tr><td><strong>Main issue</strong></td><td>Secure key sharing</td><td>Verifying public-key ownership</td></tr>
+      <tr><td><strong>Best use</strong></td><td>Bulk data encryption</td><td>Key exchange, digital signatures</td></tr>
+      <tr><td><strong>Example</strong></td><td>Encrypting files on a disk</td><td>HTTPS handshake / code signing</td></tr>
+      <tr><td><strong>Algorithm examples</strong></td><td>AES, 3DES, Blowfish</td><td>RSA, ECC, ElGamal</td></tr>
+    </tbody>
+  </table>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>Do NOT say asymmetric encryption is “always better.” It is more flexible for key exchange and authentication, but it is <strong>slower</strong> than symmetric encryption. Each has its appropriate use.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 15 – SENDING A VERIFIED MESSAGE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Digital Signatures</div>
+  <h2>Sending a Verified Message to the Public</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Different Goal</h4>
+        <ul>
+          <li><strong>Private message</strong> = confidentiality (only the intended receiver can read it)</li>
+          <li><strong>Verified message</strong> = authenticity + integrity (recipients know who sent it and that it hasn't been changed)</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Scenario</h4>
+        <p>An organisation wants to publish a software update and prove it <strong>really came from them</strong> and hasn't been tampered with.</p>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Idea</h4>
+        <p>The sender uses their <strong>private key</strong> to create a digital signature. Anyone can use the sender's <strong>public key</strong> to verify it.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Note:</strong> A verified message can still be read by anyone. Verification is about <strong>who created it</strong>, not about hiding the content.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 16 – PRIVATE KEY FOR SIGNING, PUBLIC KEY FOR VERIFYING
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Digital Signatures</div>
+  <h2>Private Key for Signing, Public Key for Verifying</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Creating a Digital Signature</h4>
+    <ol>
+      <li>Sender creates a <strong>message</strong></li>
+      <li>Sender creates a <strong>hash</strong> of the message (a fixed-length digest)</li>
+      <li>Sender <strong>encrypts the hash</strong> using their <strong>private key</strong></li>
+      <li>The encrypted hash becomes the <strong>digital signature</strong></li>
+      <li>Sender publishes the <strong>message + signature</strong></li>
+    </ol>
+  </div>
+  <div class="worked-example mt-6">
+    <h4>Verifying a Digital Signature</h4>
+    <ol>
+      <li>Receiver gets the message + signature</li>
+      <li>Receiver <strong>decrypts the signature</strong> using the sender's <strong>public key</strong> → obtains the original hash</li>
+      <li>Receiver <strong>hashes the received message</strong> using the same algorithm</li>
+      <li>Receiver <strong>compares both hashes</strong></li>
+      <li>If they match → message is authentic and unchanged</li>
+    </ol>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 17 – WHAT A DIGITAL SIGNATURE PROVES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Digital Signatures</div>
+  <h2>What a Digital Signature Proves</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>✅ What It Provides</h4>
+      <ul>
+        <li><strong>Authentication:</strong> The message came from the claimed sender (because only the sender has the private key that created the signature)</li>
+        <li><strong>Integrity:</strong> The message has not been altered since signing (because the hash comparison would fail if changed)</li>
+        <li><strong>Non-repudiation:</strong> The sender cannot easily deny having signed the message</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>❌ What It Does NOT Provide</h4>
+      <ul>
+        <li><strong>Confidentiality</strong> — the message itself may still be readable by anyone</li>
+        <li>Protection from someone <strong>reading</strong> the message</li>
+      </ul>
+    </div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>Do <strong>NOT</strong> confuse encryption for privacy with digital signatures for verification. They use similar key ideas but solve different problems.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 18 – PRIVATE MESSAGE VS VERIFIED MESSAGE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Encryption vs Signatures</div>
+  <h2>Private Message vs Verified Message — Comparison</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Private Message</th><th>Verified Message</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Purpose</strong></td><td>Confidentiality (secrecy)</td><td>Authenticity + integrity</td></tr>
+      <tr><td><strong>Key used first</strong></td><td>Receiver's <strong>public key</strong> (to encrypt)</td><td>Sender's <strong>private key</strong> (to sign)</td></tr>
+      <tr><td><strong>Who can decrypt/verify?</strong></td><td>Receiver using private key</td><td>Anyone using sender's public key</td></tr>
+      <tr><td><strong>Result</strong></td><td>Only intended recipient can read</td><td>Anyone can verify the source</td></tr>
+      <tr><td><strong>Example</strong></td><td>Customer sends bank details to bank</td><td>Software company signs an update</td></tr>
+    </tbody>
+  </table>
+`);
+
+// ==================================================================
+// SLIDE 19 – WHY COMBINE ENCRYPTION METHODS?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Hybrid Encryption</div>
+  <h2>Why Combine Symmetric and Asymmetric Encryption?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>The Reasoning</h4>
+        <ul>
+          <li><strong>Symmetric</strong> encryption is fast but has the key-sharing problem</li>
+          <li><strong>Asymmetric</strong> encryption solves key sharing but is slower</li>
+          <li>Many secure systems combine both methods = <strong>hybrid encryption</strong></li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Typical Hybrid Process</h4>
+        <ol>
+          <li>Asymmetric encryption is used to <strong>securely exchange a session key</strong></li>
+          <li>Symmetric encryption uses the session key to <strong>encrypt the main data</strong></li>
+          <li>The session key is <strong>temporary</strong> and discarded after the session</li>
+        </ol>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Session key:</strong> A temporary symmetric key used for one communication session. It is generated fresh for each new connection and discarded afterward.</p>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Exam Tip</h4>
+        <p>This hybrid approach is central to <strong>SSL/TLS</strong>. Asymmetric methods help establish trust and exchange keys; symmetric encryption handles the bulk data because it is faster.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 20 – HYBRID ENCRYPTION DIAGRAM
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Hybrid Encryption</div>
+  <h2>Hybrid Encryption — Client-Server Flow</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="diagram-box">
+    <svg viewBox="0 0 500 120" style="width:100%; max-width:500px;">
+      <text x="8" y="14" fill="#b8d4ff" font-size="10" font-weight="600">Hybrid Encryption: Asymmetric + Symmetric</text>
+      <rect x="8" y="24" width="100" height="30" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+      <text x="18" y="44" fill="#5ae0c0" font-size="8" font-weight="600">Client</text>
+      <text x="112" y="44" fill="#b8d4ff" font-size="12">→</text>
+      <rect x="128" y="24" width="120" height="30" rx="4" fill="#1a2840" stroke="#f0c040" stroke-width="1.5"/>
+      <text x="134" y="40" fill="#f0c040" font-size="7" font-weight="600">Asymmetric Phase</text>
+      <text x="134" y="50" fill="#f0c040" font-size="7">(certificate + key exchange)</text>
+      <text x="252" y="44" fill="#b8d4ff" font-size="12">→</text>
+      <rect x="268" y="24" width="120" height="30" rx="4" fill="#1a2820" stroke="#80c8a0" stroke-width="1.5"/>
+      <text x="274" y="40" fill="#80c8a0" font-size="7" font-weight="600">Symmetric Phase</text>
+      <text x="274" y="50" fill="#80c8a0" font-size="7">(session key encryption)</text>
+      <text x="392" y="44" fill="#b8d4ff" font-size="12">→</text>
+      <rect x="408" y="24" width="80" height="30" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+      <text x="418" y="44" fill="#5ae0c0" font-size="8" font-weight="600">Server</text>
+      <text x="140" y="80" fill="#f0c040" font-size="7">Identity verification</text>
+      <text x="140" y="90" fill="#f0c040" font-size="7">Session key agreement</text>
+      <text x="290" y="80" fill="#80c8a0" font-size="7">Fast encrypted data transfer</text>
+    </svg>
+    <div class="diagram-caption">Asymmetric for trust/keys, symmetric for speed</div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 21 – WHAT IS QUANTUM CRYPTOGRAPHY?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Quantum Cryptography</div>
+  <h2>What Is Quantum Cryptography?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p><strong>Quantum cryptography</strong> uses principles of <strong>quantum physics</strong> to support secure communication, especially <strong>secure key distribution</strong>.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Main Idea: QKD</h4>
+        <p>The syllabus focuses on <strong>Quantum Key Distribution (QKD)</strong> — using quantum methods to securely establish a shared secret key.</p>
+        <ul>
+          <li>Information is sent using <strong>quantum states</strong> (e.g., photons)</li>
+          <li>Measuring or intercepting the quantum data <strong>changes it</strong></li>
+          <li>This makes <strong>eavesdropping detectable</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Quantum Key Distribution (QKD):</strong> A method of securely distributing encryption keys using quantum physics. Any attempt to intercept the key changes the quantum state, revealing the eavesdropping.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Key insight:</strong> Unlike traditional cryptography which relies on mathematical difficulty, quantum cryptography's security is based on <strong>physical laws</strong>.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 22 – PURPOSE OF QUANTUM CRYPTOGRAPHY
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Quantum Cryptography</div>
+  <h2>Purpose of Quantum Cryptography</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Why Use Quantum Cryptography?</h4>
+      <ul>
+        <li>To <strong>securely distribute encryption keys</strong> between parties</li>
+        <li>To <strong>detect attempted interception</strong> — if someone tries to eavesdrop, the quantum state changes and both parties know</li>
+        <li>To strengthen communication security against <strong>future threats</strong></li>
+        <li>To provide security based on <strong>physical laws</strong> rather than only mathematical difficulty</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Example Scenario</h4>
+      <p>Two organisations use QKD to establish a <strong>shared symmetric key</strong>. They then use that key for encrypted communication using conventional symmetric encryption.</p>
+      <p style="margin-top:6px;">If an attacker tries to eavesdrop on the QKD process, the <strong>interception is detected</strong> and the key is discarded.</p>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 23 – BENEFITS AND DRAWBACKS OF QUANTUM CRYPTOGRAPHY
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Quantum Cryptography</div>
+  <h2>Quantum Cryptography — Benefits and Drawbacks</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>✅ Benefits</h4>
+      <ul>
+        <li><strong>Eavesdropping can be detected</strong> — any interception changes the quantum state</li>
+        <li>Helps solve the <strong>key distribution problem</strong></li>
+        <li>Security is based on <strong>quantum physics</strong>, not just mathematical difficulty</li>
+        <li>Offers protection against some future attacks from <strong>powerful computers</strong></li>
+        <li>Useful for <strong>highly sensitive communication</strong> (government, defence, finance)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>❌ Drawbacks</h4>
+      <ul>
+        <li><strong>Expensive</strong> to implement — requires specialist hardware</li>
+        <li><strong>Distance limitations</strong> — signal degrades over long distances</li>
+        <li>Difficult to <strong>integrate with existing networks</strong></li>
+        <li>Not widely <strong>available for everyday use</strong></li>
+        <li>Does not replace all normal encryption methods</li>
+        <li>Practical systems may still have <strong>implementation weaknesses</strong></li>
+      </ul>
+    </div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>Quantum cryptography is mainly about <strong>secure key distribution</strong>. Do not simply write "it is unbreakable encryption." Mention the benefits (detection of eavesdropping) and the limitations (cost, distance, practicality).</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 24 – WHAT ARE SSL AND TLS?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 SSL/TLS</div>
+  <h2>What Are SSL and TLS?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definitions</h4>
+        <ul>
+          <li><strong>SSL</strong> = Secure Socket Layer</li>
+          <li><strong>TLS</strong> = Transport Layer Security</li>
+          <li>Both are <strong>protocols</strong> used to secure communication between clients and servers</li>
+          <li><strong>TLS</strong> is the modern replacement for SSL (SSL is deprecated)</li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>Purpose of SSL/TLS</h4>
+        <ul>
+          <li><strong>Encrypt</strong> data in transit</li>
+          <li><strong>Authenticate</strong> the server (and optionally the client)</li>
+          <li>Help protect against <strong>eavesdropping</strong> and <strong>tampering</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>TLS:</strong> A cryptographic protocol used to create a secure, encrypted communication channel between a client and server over a network.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Note:</strong> Although SSL is the older name, people often say "SSL" when they actually mean TLS. In modern systems, TLS is always used.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 25 – WHY SSL/TLS IS NEEDED
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 SSL/TLS</div>
+  <h2>Why SSL/TLS Is Needed</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Without SSL/TLS</h4>
+        <ul>
+          <li>Data may travel as <strong>readable plain text</strong></li>
+          <li>Attackers may <strong>intercept</strong> usernames and passwords</li>
+          <li>Attackers may <strong>modify</strong> data in transit</li>
+          <li>Users may connect to an <strong>impersonated server</strong></li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>With SSL/TLS</h4>
+        <ul>
+          <li>The <strong>server can be authenticated</strong> using a digital certificate</li>
+          <li>A secure <strong>session key</strong> is established</li>
+          <li>Data is <strong>encrypted</strong> during transmission</li>
+          <li><strong>Message integrity</strong> checks help detect tampering</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 26 – SSL/TLS CLIENT-SERVER COMMUNICATION
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 SSL/TLS</div>
+  <h2>SSL/TLS in Client-Server Communication</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Example: A web browser connects to an online banking website</h4>
+    <ol>
+      <li>Client requests <strong>secure connection</strong></li>
+      <li>Server sends <strong>digital certificate</strong></li>
+      <li>Client checks the certificate is <strong>trusted</strong></li>
+      <li>Client and server <strong>agree encryption methods</strong> (cipher suite negotiation)</li>
+      <li>A <strong>session key</strong> is established</li>
+      <li>Data is exchanged <strong>securely</strong> using symmetric encryption</li>
+    </ol>
+  </div>
+  <div class="diagram-box mt-6">
+    <svg viewBox="0 0 360 60" style="width:100%; max-width:360px;">
+      <rect x="8" y="8" width="80" height="28" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+      <text x="20" y="26" fill="#5ae0c0" font-size="8" font-weight="600">Browser</text>
+      <text x="92" y="26" fill="#b8d4ff" font-size="12">🔒</text>
+      <rect x="108" y="8" width="80" height="28" rx="4" fill="#1a2840" stroke="#f0c040" stroke-width="1.5"/>
+      <text x="114" y="26" fill="#f0c040" font-size="8" font-weight="600">TLS Handshake</text>
+      <text x="192" y="26" fill="#b8d4ff" font-size="12">→</text>
+      <rect x="208" y="8" width="80" height="28" rx="4" fill="#1a2820" stroke="#80c8a0" stroke-width="1.5"/>
+      <text x="216" y="26" fill="#80c8a0" font-size="8" font-weight="600">Encrypted Data</text>
+      <text x="292" y="26" fill="#b8d4ff" font-size="12">→</text>
+      <rect x="308" y="8" width="80" height="28" rx="4" fill="#0e2840" stroke="#2ac8a0" stroke-width="1.5"/>
+      <text x="318" y="26" fill="#5ae0c0" font-size="8" font-weight="600">Web Server</text>
+    </svg>
+    <div class="diagram-caption">Browser ↔ Web server: certificate check → key agreement → encrypted data transfer</div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 27 – SIMPLIFIED TLS HANDSHAKE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 SSL/TLS</div>
+  <h2>Simplified TLS Handshake</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>TLS Handshake Sequence</h4>
+    <ol>
+      <li><strong>Client Hello:</strong> Client sends supported TLS versions and cipher suites</li>
+      <li><strong>Server Hello:</strong> Server chooses compatible settings</li>
+      <li><strong>Certificate:</strong> Server sends its digital certificate containing its public key</li>
+      <li><strong>Verification:</strong> Client checks certificate against trusted CAs</li>
+      <li><strong>Key exchange:</strong> Client and server establish a shared session key</li>
+      <li><strong>Secure communication:</strong> All further data is encrypted using the session key</li>
+    </ol>
+  </div>
+  <div class="diagram-box mt-6">
+    <svg viewBox="0 0 380 90" style="width:100%; max-width:380px;">
+      <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">TLS Handshake Overview</text>
+      <rect x="8" y="22" width="60" height="18" rx="3" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+      <text x="14" y="34" fill="#5ae0c0" font-size="6">Client</text>
+      <text x="72" y="34" fill="#b8d4ff" font-size="10">─── 1. Client Hello ───→</text>
+      <text x="72" y="40" fill="#b8d4ff" font-size="10">←── 2. Server Hello ────</text>
+      <text x="72" y="46" fill="#b8d4ff" font-size="10">←── 3. Certificate ─────</text>
+      <text x="72" y="52" fill="#b8d4ff" font-size="10">─── 4. Verify ──────────→</text>
+      <text x="72" y="58" fill="#b8d4ff" font-size="10">←── 5. Key Exchange ────→</text>
+      <text x="72" y="64" fill="#80c8a0" font-size="10">═══ 6. Encrypted Data ════</text>
+      <rect x="280" y="22" width="60" height="18" rx="3" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+      <text x="286" y="34" fill="#5ae0c0" font-size="6">Server</text>
+    </svg>
+    <div class="diagram-caption">Conceptual handshake — keep at AS/A Level depth</div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 28 – APPROPRIATE SITUATIONS FOR SSL/TLS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 SSL/TLS</div>
+  <h2>Appropriate Situations for SSL/TLS</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <p>Use SSL/TLS whenever <strong>privacy, authentication or integrity</strong> is needed:</p>
+  <div class="grid-3">
+    <div class="card">
+      <h4>🌐 Web</h4>
+      <ul>
+        <li>Logging into websites</li>
+        <li>Online banking</li>
+        <li>Online shopping</li>
+        <li>Submitting forms with personal data</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>📧 Communication</h4>
+      <ul>
+        <li>Webmail access</li>
+        <li>Email sending/receiving</li>
+        <li>Secure messaging apps</li>
+        <li>Video conferencing</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>🔧 Technical</h4>
+      <ul>
+        <li>API calls over the internet</li>
+        <li>Secure cloud service access</li>
+        <li>VPN connections</li>
+        <li>Remote desktop access</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 29 – RECOGNISING TLS IN EVERYDAY USE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 SSL/TLS</div>
+  <h2>Recognising TLS in Everyday Use</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>🔒 Signs of TLS</h4>
+        <ul>
+          <li><strong>HTTPS</strong> in the URL bar indicates HTTP over TLS</li>
+          <li><strong>Padlock icon</strong> in the browser address bar</li>
+          <li>Clicking the padlock shows <strong>certificate details</strong></li>
+        </ul>
+      </div>
+      <div class="card mt-6">
+        <h4>⚠️ Certificate Warnings</h4>
+        <p>A browser warning may mean:</p>
+        <ul>
+          <li>Expired certificate</li>
+          <li>Wrong domain name</li>
+          <li>Untrusted certificate authority</li>
+          <li>Possible interception or misconfiguration</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="exam-tip-box">
+        <h4>Exam Tip</h4>
+        <p>The padlock does NOT mean the website is morally trustworthy or safe. It means the <strong>connection is encrypted</strong> and the <strong>certificate checks passed</strong>. A legitimate malicious site can also have a valid certificate.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Remember:</strong> TLS secures the <strong>connection</strong>, not the <strong>website itself</strong>.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 30 – WHAT IS A DIGITAL CERTIFICATE?
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Digital Certificates</div>
+  <h2>What Is a Digital Certificate?</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Definition</h4>
+        <p>A <strong>digital certificate</strong> is an electronic document that <strong>binds an identity to a public key</strong>.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>What a Certificate Contains</h4>
+        <ul>
+          <li><strong>Subject name</strong> — domain or organisation name</li>
+          <li><strong>Public key</strong> — the organisation's public key</li>
+          <li><strong>Issuer</strong> — the certificate authority that issued it</li>
+          <li><strong>Validity period</strong> — from/to dates</li>
+          <li><strong>Serial number</strong> — unique identifier</li>
+          <li><strong>Digital signature</strong> — signed by the CA</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="key-term-box">
+        <h4>Key Term</h4>
+        <p><strong>Certificate Authority (CA):</strong> A trusted organisation that verifies identities and issues digital certificates. Examples: DigiCert, Let's Encrypt, GlobalSign.</p>
+      </div>
+      <div class="callout info mt-6">
+        <strong>Analogy:</strong> A digital certificate is like a <strong>passport</strong> or <strong>ID card</strong> for a website or organisation. It proves that the public key really belongs to the claimed owner.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 31 – WHY DIGITAL CERTIFICATES ARE NEEDED
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Digital Certificates</div>
+  <h2>Why Digital Certificates Are Needed</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>The Problem</h4>
+        <p>If <strong>anyone</strong> can publish a public key, how do we know who it really belongs to?</p>
+        <p style="margin-top:6px;">An attacker could publish a public key claiming to be a bank. Without verification, users would send encrypted data to the attacker.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>The Solution</h4>
+        <ul>
+          <li>A trusted <strong>Certificate Authority (CA)</strong> verifies the owner's identity</li>
+          <li>The CA <strong>signs</strong> the certificate with its own private key</li>
+          <li><strong>Browsers and operating systems</strong> trust recognised CAs</li>
+          <li>Users can trust that the public key belongs to the named organisation</li>
+        </ul>
+      </div>
+      <div class="key-term-box mt-6">
+        <h4>Key Term</h4>
+        <p><strong>Chain of trust:</strong> A hierarchy where a trusted root CA signs intermediate CA certificates, which in turn sign end-entity certificates. This allows trust to be delegated.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 32 – HOW A DIGITAL CERTIFICATE IS ACQUIRED
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Digital Certificates</div>
+  <h2>How a Digital Certificate Is Acquired</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Step-by-Step Certificate Issuing Process</h4>
+    <ol>
+      <li>Organisation generates a <strong>public/private key pair</strong></li>
+      <li>Organisation creates a <strong>Certificate Signing Request (CSR)</strong></li>
+      <li>The CSR is <strong>sent to a Certificate Authority</strong></li>
+      <li>CA <strong>verifies</strong> the organisation or domain identity</li>
+      <li>CA <strong>issues</strong> a digital certificate</li>
+      <li>CA <strong>digitally signs</strong> the certificate</li>
+      <li>Certificate is <strong>installed</strong> on the organisation's server</li>
+    </ol>
+  </div>
+  <div class="diagram-box mt-6">
+    <svg viewBox="0 0 400 60" style="width:100%; max-width:400px;">
+      <text x="8" y="14" fill="#b8d4ff" font-size="8" font-weight="600">Certificate Issuing</text>
+      <rect x="8" y="22" width="70" height="24" rx="3" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+      <text x="12" y="38" fill="#5ae0c0" font-size="7" font-weight="600">Organisation</text>
+      <text x="82" y="38" fill="#b8d4ff" font-size="12">→</text>
+      <rect x="98" y="22" width="70" height="24" rx="3" fill="#1a2840" stroke="#f0c040" stroke-width="1"/>
+      <text x="104" y="38" fill="#f0c040" font-size="7" font-weight="600">CSR</text>
+      <text x="172" y="38" fill="#b8d4ff" font-size="12">→</text>
+      <rect x="188" y="22" width="90" height="24" rx="3" fill="#2a1a0a" stroke="#f78c6c" stroke-width="1"/>
+      <text x="196" y="38" fill="#f78c6c" font-size="7" font-weight="600">Certificate</text>
+      <text x="196" y="48" fill="#f78c6c" font-size="6" font-weight="600">Authority</text>
+      <text x="282" y="38" fill="#b8d4ff" font-size="12">→</text>
+      <rect x="298" y="22" width="90" height="24" rx="3" fill="#1a2820" stroke="#80c8a0" stroke-width="1"/>
+      <text x="306" y="38" fill="#80c8a0" font-size="7" font-weight="600">Signed Cert.</text>
+      <text x="98" y="58" fill="#b8d4ff" font-size="7">← Verification of identity →</text>
+    </svg>
+    <div class="diagram-caption">Organisation → CSR → CA → signed certificate → server</div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 33 – CERTIFICATE VALIDATION LEVELS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Digital Certificates</div>
+  <h2>Certificate Validation Levels</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Level</th><th>Checks Performed</th><th>Use Case</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Domain Validation (DV)</strong></td>
+        <td>Proves control of domain (e.g., respond to email or DNS)</td>
+        <td>Basic websites, blogs</td>
+      </tr>
+      <tr>
+        <td><strong>Organisation Validation (OV)</strong></td>
+        <td>Checks organisation identity + domain control</td>
+        <td>Business websites</td>
+      </tr>
+      <tr>
+        <td><strong>Extended Validation (EV)</strong></td>
+        <td>More detailed organisation checks (legal, physical, operational)</td>
+        <td>Banking, e-commerce (browser shows green bar)</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="callout info mt-6">
+    <strong>Key idea:</strong> The CA verifies the applicant's identity <strong>before</strong> issuing the certificate. The level of verification determines how much confidence users can have in the certificate.
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 34 – HOW A BROWSER USES A DIGITAL CERTIFICATE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Digital Certificates</div>
+  <h2>How a Browser Uses a Digital Certificate</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>When Visiting an HTTPS Website</h4>
+    <ol>
+      <li>Server sends its <strong>digital certificate</strong> during the TLS handshake</li>
+      <li>Browser checks the certificate has <strong>not expired</strong></li>
+      <li>Browser checks the <strong>domain name matches</strong> the certificate</li>
+      <li>Browser checks the <strong>CA signature is trusted</strong> (CA in trusted root store)</li>
+      <li>Browser <strong>extracts the public key</strong> from the certificate for use in key exchange</li>
+    </ol>
+  </div>
+  <div class="callout warn mt-6">
+    <strong>If checks fail:</strong> Browser may show a <strong>security warning</strong> and the connection may be blocked or marked unsafe.
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 35 – DIGITAL CERTIFICATES VS DIGITAL SIGNATURES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Certificates vs Signatures</div>
+  <h2>Digital Certificates vs Digital Signatures</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>Digital Certificate</th><th>Digital Signature</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Purpose</strong></td><td>Binds identity to a public key</td><td>Proves origin and integrity of data</td></tr>
+      <tr><td><strong>Created by</strong></td><td>Certificate Authority (CA)</td><td>Sender / signing software</td></tr>
+      <tr><td><strong>Contains</strong></td><td>Public key + identity details</td><td>Encrypted hash of the data</td></tr>
+      <tr><td><strong>Key used</strong></td><td>CA's private key to sign; subject's public key inside</td><td>Sender's private key to create; sender's public key to verify</td></tr>
+      <tr><td><strong>Used for</strong></td><td>Trusting a public key's owner</td><td>Verifying a message/document</td></tr>
+      <tr><td><strong>Example</strong></td><td>Website TLS certificate</td><td>Signed software update</td></tr>
+    </tbody>
+  </table>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>A <strong>certificate</strong> is NOT the same as a <strong>signature</strong>. A certificate proves <strong>who owns a public key</strong>. A signature proves <strong>a message was signed</strong> using the matching private key.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 36 – PRODUCING A DIGITAL SIGNATURE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Digital Signatures</div>
+  <h2>Producing a Digital Signature</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Step-by-Step: Creating a Digital Signature</h4>
+    <ol>
+      <li>Sender creates a <strong>message or document</strong></li>
+      <li>A <strong>hash algorithm</strong> creates a fixed-length message digest</li>
+      <li>Sender <strong>encrypts the digest</strong> using their <strong>private key</strong></li>
+      <li>The encrypted digest is the <strong>digital signature</strong></li>
+      <li>Sender provides their <strong>digital certificate</strong> alongside the signed message</li>
+    </ol>
+  </div>
+  <div class="diagram-box mt-6">
+    <svg viewBox="0 0 400 80" style="width:100%; max-width:400px;">
+      <text x="8" y="14" fill="#b8d4ff" font-size="9" font-weight="600">Creating a Digital Signature</text>
+      <rect x="8" y="22" width="70" height="20" rx="3" fill="#0e2840" stroke="#2ac8a0" stroke-width="1"/>
+      <text x="14" y="36" fill="#5ae0c0" font-size="7">Document</text>
+      <text x="82" y="36" fill="#b8d4ff" font-size="10">→</text>
+      <rect x="96" y="22" width="50" height="20" rx="3" fill="#1a2840" stroke="#7ab8ff" stroke-width="1"/>
+      <text x="100" y="36" fill="#7ab8ff" font-size="7">Hash</text>
+      <text x="150" y="36" fill="#b8d4ff" font-size="10">→</text>
+      <rect x="164" y="16" width="90" height="32" rx="3" fill="#2a1a0a" stroke="#f78c6c" stroke-width="1"/>
+      <text x="168" y="30" fill="#f78c6c" font-size="7">Encrypt with</text>
+      <text x="168" y="42" fill="#f78c6c" font-size="7">private key</text>
+      <text x="258" y="36" fill="#b8d4ff" font-size="10">→</text>
+      <rect x="272" y="22" width="80" height="20" rx="3" fill="#0e2840" stroke="#f0c040" stroke-width="1"/>
+      <text x="278" y="36" fill="#f0c040" font-size="7">Signature</text>
+      <text x="8" y="66" fill="#b8d4ff" font-size="7">Sender's private key ↓</text>
+      <text x="8" y="76" fill="#b8d4ff" font-size="7">Result: Document + Signature + Certificate → sent to receiver</text>
+    </svg>
+    <div class="diagram-caption">Document → hash → encrypted with private key → digital signature</div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 37 – VERIFYING A DIGITAL SIGNATURE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Digital Signatures</div>
+  <h2>Verifying a Digital Signature</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Step-by-Step: Verifying a Digital Signature</h4>
+    <ol>
+      <li>Receiver obtains sender's <strong>digital certificate</strong></li>
+      <li>Receiver checks the certificate is <strong>valid and trusted</strong></li>
+      <li>Receiver <strong>extracts the sender's public key</strong> from the certificate</li>
+      <li>Receiver uses the public key to <strong>decrypt the digital signature</strong> → obtains the original hash</li>
+      <li>Receiver <strong>hashes the received document</strong> using the same algorithm</li>
+      <li>Receiver <strong>compares both hashes</strong></li>
+    </ol>
+  </div>
+  <div class="grid-2 mt-6">
+    <div class="callout success">
+      <strong>✅ Hashes match:</strong> The message is authentic and unchanged. The signature is valid.
+    </div>
+    <div class="callout warn">
+      <strong>❌ Hashes differ:</strong> Message was altered or signature is invalid. Do not trust.
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 38 – WHAT DIGITAL SIGNATURES PROVIDE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Digital Signatures</div>
+  <h2>What Digital Signatures Provide</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>✅ Digital Signatures Provide</h4>
+        <ul>
+          <li><strong>Authentication:</strong> Confirms who signed the data (only the sender has the private key)</li>
+          <li><strong>Integrity:</strong> Detects any changes made after signing (hash comparison reveals tampering)</li>
+          <li><strong>Non-repudiation:</strong> The signer cannot easily deny having signed</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>❌ Digital Signatures Do NOT Automatically Provide</h4>
+        <ul>
+          <li><strong>Confidentiality</strong> — the message may still be readable by anyone</li>
+          <li>Protection from someone <strong>reading</strong> the message</li>
+        </ul>
+      </div>
+      <div class="callout info mt-6">
+        <strong>To keep a signed message private:</strong> First <strong>sign</strong> it for verification, then <strong>encrypt</strong> it for confidentiality. Both can be used together.
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 39 – WORKED SCENARIO: SECURE SOFTWARE DOWNLOAD
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Digital Signatures</div>
+  <h2>Worked Scenario — Secure Software Download</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="worked-example">
+    <h4>Scenario: A software company publishes an update</h4>
+    <div class="grid-2 mt-6">
+      <div>
+        <p><strong>Company Side:</strong></p>
+        <ol>
+          <li>Company hashes the update file</li>
+          <li>Company signs the hash using its <strong>private key</strong></li>
+          <li>Company publishes the update + <strong>signature + certificate</strong></li>
+        </ol>
+      </div>
+      <div>
+        <p><strong>User Side:</strong></p>
+        <ol>
+          <li>User downloads update, signature and certificate</li>
+          <li>User's device <strong>verifies the certificate</strong> is trusted</li>
+          <li>User's device <strong>checks the signature</strong> using the company's public key</li>
+          <li>If valid, the update is <strong>trusted and unchanged</strong></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="exam-tip-box mt-6">
+    <h4>Exam Tip</h4>
+    <p>Digital signatures are especially useful for <strong>software updates</strong> because users need to know both <strong>who produced</strong> the file and whether it was <strong>modified</strong>. A signature provides both without needing a pre-shared secret.</p>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 40 – COMMON EXAM MISTAKES
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Exam Focus</div>
+  <h2>Common Exam Mistakes</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <div class="grid-2">
+    <div class="common-mistake-box">
+      <h4>❌ Confusing public and private keys</h4>
+      <p>For a private message, encrypt with the <strong>receiver's</strong> public key, not the sender's.</p>
+    </div>
+    <div class="common-mistake-box">
+      <h4>❌ Saying public keys must be secret</h4>
+      <p>Public keys are designed to be <strong>shared openly</strong>. Only private keys must be secret.</p>
+    </div>
+    <div class="common-mistake-box">
+      <h4>❌ Signatures = confidentiality</h4>
+      <p>Digital signatures provide <strong>authentication and integrity</strong>, NOT confidentiality.</p>
+    </div>
+    <div class="common-mistake-box">
+      <h4>❌ SSL and TLS are exactly the same</h4>
+      <p>TLS is the <strong>successor</strong> to SSL. Modern systems use TLS.</p>
+    </div>
+    <div class="common-mistake-box">
+      <h4>❌ Forgetting TLS uses certificates</h4>
+      <p>TLS relies on digital certificates for <strong>server authentication</strong> during the handshake.</p>
+    </div>
+    <div class="common-mistake-box">
+      <h4>❌ Quantum is "impossible to hack"</h4>
+      <p>Quantum cryptography has <strong>benefits</strong> (eavesdrop detection) but also <strong>limitations</strong> (cost, distance).</p>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 41 – KEY COMPARISON SUMMARY TABLE
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Summary</div>
+  <h2>Key Comparison — Summary Table</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:8px;"></div>
+  <table>
+    <thead>
+      <tr><th>Concept</th><th>Main Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Encryption</strong></td><td>Converts plain text to cipher text for confidentiality</td></tr>
+      <tr><td><strong>Symmetric key</strong></td><td>Fast encryption using one shared secret key</td></tr>
+      <tr><td><strong>Asymmetric key</strong></td><td>Uses a public/private key pair for flexible security</td></tr>
+      <tr><td><strong>Public key</strong></td><td>Shared openly; used to encrypt or verify</td></tr>
+      <tr><td><strong>Private key</strong></td><td>Kept secret by owner; used to decrypt or sign</td></tr>
+      <tr><td><strong>Digital certificate</strong></td><td>Binds a public key to a verified identity</td></tr>
+      <tr><td><strong>Digital signature</strong></td><td>Verifies sender and detects tampering</td></tr>
+      <tr><td><strong>SSL/TLS</strong></td><td>Secures client-server communication over a network</td></tr>
+      <tr><td><strong>Quantum cryptography</strong></td><td>Supports secure key distribution with eavesdropping detection</td></tr>
+    </tbody>
+  </table>
+`);
+
+// ==================================================================
+// SLIDE 42 – TOPIC SUMMARY
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Summary</div>
+  <h2>Topic 17.1 — Summary</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:10px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <h4>Encryption Basics</h4>
+      <ul>
+        <li>Encryption protects data by converting <strong>plain text</strong> into <strong>cipher text</strong></li>
+        <li><strong>Symmetric</strong> encryption uses one shared secret key (fast, but key distribution problem)</li>
+        <li><strong>Asymmetric</strong> encryption uses a public/private key pair (solves key distribution, but slower)</li>
+        <li><strong>Hybrid</strong> encryption combines both: asymmetric for key exchange, symmetric for bulk data</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>Key Usage Rules</h4>
+      <ul>
+        <li>To send a <strong>private message</strong>: encrypt using the <strong>receiver's public key</strong></li>
+        <li>To send a <strong>verified message</strong>: sign using the <strong>sender's private key</strong></li>
+        <li>Digital signatures prove <strong>authenticity, integrity and non-repudiation</strong></li>
+        <li>Digital certificates bind <strong>public keys to trusted identities</strong> via CAs</li>
+        <li><strong>SSL/TLS</strong> secures client-server communication using certificates + hybrid encryption</li>
+        <li><strong>Quantum cryptography</strong> can detect eavesdropping but is expensive</li>
+      </ul>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 43 – EXAM PRACTICE QUESTIONS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Exam Practice</div>
+  <h2>Exam Practice Questions</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:10px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="card">
+        <h4>Q1 [2 marks]</h4>
+        <p>Define the terms <strong>plain text</strong> and <strong>cipher text</strong>.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Q2 [3 marks]</h4>
+        <p>Explain how <strong>symmetric encryption</strong> is used to send an encrypted message.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Q3 [2 marks]</h4>
+        <p>State <strong>one benefit</strong> and <strong>one drawback</strong> of symmetric encryption.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Q4 [4 marks]</h4>
+        <p>Explain how a member of the public can send a <strong>private message</strong> to an organisation using asymmetric encryption.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Q5 [4 marks]</h4>
+        <p>Explain how an organisation can send a <strong>verified message</strong> to the public using a digital signature.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h4>Q6 [4 marks]</h4>
+        <p><strong>Compare</strong> symmetric and asymmetric encryption.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Q7 [3 marks]</h4>
+        <p>Explain the <strong>purpose of SSL/TLS</strong> in client-server communication.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Q8 [2 marks]</h4>
+        <p>Describe <strong>two situations</strong> where SSL/TLS would be appropriate.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Q9 [4 marks]</h4>
+        <p>Describe how an organisation <strong>acquires a digital certificate</strong>.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Q10 [4 marks]</h4>
+        <p>Explain how a digital certificate is used when <strong>verifying a digital signature</strong>.</p>
+      </div>
+      <div class="card mt-6">
+        <h4>Q11 [2 marks]</h4>
+        <p>State <strong>one benefit</strong> and <strong>one drawback</strong> of quantum cryptography.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 44 – FINAL EXAM TIPS
+// ==================================================================
+addSlide(`
+  <div class="section-badge">17.1 Exam Focus</div>
+  <h2>Final Exam Tips — Topic 17</h2>
+  <div style="width:60px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:10px;"></div>
+  <div class="grid-2">
+    <div>
+      <div class="exam-tip-box">
+        <h4>Use Exact Key Terminology</h4>
+        <p>Plain text, cipher text, encryption, decryption, symmetric, asymmetric, public/private key, digital signature, digital certificate, CA, TLS.</p>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Private Messages</h4>
+        <p>For private messages: encrypt using the <strong>receiver's public key</strong>. Only the receiver's private key can decrypt.</p>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Verified Messages</h4>
+        <p>For verified messages: sign using the <strong>sender's private key</strong>. Anyone can verify with the sender's public key.</p>
+      </div>
+    </div>
+    <div>
+      <div class="exam-tip-box">
+        <h4>Digital Signatures</h4>
+        <p>Digital signatures do <strong>not hide</strong> the message. They provide authentication and integrity, not confidentiality.</p>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Digital Certificates</h4>
+        <p>Digital certificates prove <strong>public-key ownership</strong>. They are issued and signed by a trusted CA.</p>
+      </div>
+      <div class="exam-tip-box mt-6">
+        <h4>Evaluation Questions</h4>
+        <p>If asked to evaluate, always state <strong>both</strong> benefits and drawbacks. Use step-by-step explanations for cryptography questions.</p>
+      </div>
+    </div>
+  </div>
+`);
+
+// ==================================================================
+// SLIDE 45 – END SLIDE
+// ==================================================================
+addSlide(`
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+    <div class="section-badge" style="margin-bottom:16px;">Cambridge International AS &amp; A Level — 9618</div>
+    <h1 style="font-size:2.8rem; margin-bottom:8px; color:#5ae0c0;">17 Security</h1>
+    <p style="font-size:1.3rem; color:#7ab8a8; margin-bottom:8px;">Encryption, TLS and Digital Certificates</p>
+    <div style="width:80px; height:3px; background:#2ac8a0; border-radius:2px; margin-bottom:18px;"></div>
+    <p style="font-size:1.1rem; color:#7ab8a8; margin-bottom:24px;">Ready for Exam Practice!</p>
+    <div class="grid-2" style="max-width:600px;">
+      <div class="card">
+        <h4>📝 Know Key Terms</h4>
+        <p style="font-size:0.85rem;">Plain text, cipher text, symmetric, asymmetric, public/private key</p>
+      </div>
+      <div class="card">
+        <h4>🔑 Memorise Key Roles</h4>
+        <p style="font-size:0.85rem;">Receiver's public key for privacy; sender's private key for signing</p>
+      </div>
+      <div class="card">
+        <h4>📊 Practise Diagrams</h4>
+        <p style="font-size:0.85rem;">Message-flow diagrams: encryption, signatures, certificates, TLS</p>
+      </div>
+      <div class="card">
+        <h4>✅ Use Precise Language</h4>
+        <p style="font-size:0.85rem;">Use exact Cambridge terminology; avoid vague statements</p>
+      </div>
+    </div>
+    <p style="color:#3a6a6a; font-size:0.85rem; margin-top:24px;">Good luck with your revision!</p>
+  </div>
+`);
+</script>
+<script>renderSlides();</script>
+</body>
+</html>
